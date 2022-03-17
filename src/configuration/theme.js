@@ -9,10 +9,10 @@ export default {
   streetArrowsColor: '#e0d68d',
 
   // Altura das flechas que apontam a direcao da rua
-  streetArrowHeight: 6,
+  streetArrowHeight: 10,
 
   // Intervalo em que as setas sao desenhadas
-  streetArrowInterval: 15,
+  streetArrowInterval: 20,
 
   //=== RUAS
 
@@ -20,5 +20,5 @@ export default {
   streetColor: '#c6b955',
 
   // A largura das ruas, em pixels
-  streetWidth: 10,
+  streetWidth: 20,
 }

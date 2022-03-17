@@ -1,7 +1,10 @@
 import appConfig from '../configuration/appConfig'
+import theme from '../configuration/theme'
 
 // Facil acesso
 const { pixelsPerKilometer } = appConfig
+
+const { streetWidth, streetColor } = theme
 
 // Define um vertice
 export default class Vertex {
@@ -48,5 +51,17 @@ export default class Vertex {
 
     // Registrar vertice
     Vertex.vertices[id] = this
+  }
+
+  // Se desenha
+  draw(context) {
+    // Desenha um arco em sua posicao
+    context.fillStyle = streetColor
+
+    context.beginPath()
+
+    context.arc(this.x, this.y, streetWidth / 2, 0, Math.PI * 2)
+
+    context.fill()
   }
 }
