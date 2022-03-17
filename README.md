@@ -4,16 +4,16 @@ Bem vindo ao nosso projeto humilde!
 
 ## Referencia Rapida: Emojis de Commits
 
-| Emoji 😊 |        Meaning        |
-| :------: | :-------------------: |
-|    ✨    |      New Feature      |
-|    🔨    | Existing Feature Task |
-|    🧹    |      Refactoring      |
-|    🐛    |        Bug Fix        |
-|    ✅    |     Test Related      |
-|    📃    |     Documentation     |
-|    🎨    |      Aesthetics       |
-|    🃏    |         Meta          |
+| Emoji 😊 |                Meaning                |
+| :------: | :-----------------------------------: |
+|    ✨    |          Nova funcionalidade          |
+|    🔨    | Tarefa em funcionalidade preexistente |
+|    🧹    |              Refatoração              |
+|    🐛    |                Bug Fix                |
+|    ✅    |         Relacionado a Testes          |
+|    📃    |             Documentação              |
+|    🎨    |               Estética                |
+|    🃏    |                 Meta                  |
 
 ## Setup
 
