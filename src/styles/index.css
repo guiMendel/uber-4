@@ -1,0 +1,79 @@
+/* CSS RESET */
+
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Remove ugly style for links */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Stuff that should look like everything else but doesn't */
+button,
+input,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
+/* STYLES */
+
+:root {
+  font-size: 18px;
+}
+
+#root {
+  font-family: 'Josefin Sans', 'Source Sans Pro', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  text-align: center;
+
+  min-height: 100vh;
+
+  color: rgb(75, 75, 75);
+}
+
+button,
+a,
+input[type='submit'],
+input[type='button'] {
+  cursor: pointer;
+}
+
+/* Use flexbox always */
+div,
+main,
+section,
+header,
+footer,
+form,
+button,
+p,
+span {
+  display: flex;
+  align-items: flex-start;
+}
+
+input,
+textarea,
+button {
+  padding: 0.5rem 1rem;
+}
+
+h1 {
+  font-size: 1.3rem;
+  font-weight: 500;
+}
