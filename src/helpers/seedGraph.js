@@ -5,11 +5,11 @@ import appConfig from '../configuration/appConfig'
 const { pixelsPerKilometer } = appConfig
 
 // Gera grafos e arestas aleatorios para fins de teste
-export default function seedGraph(
-  numberOfVertices = 100,
-  numberOfEdges = 200,
-  mapPadding = 30
-) {
+export default function seedGraph(numberOfVertices = 10, mapPadding = 20) {
+  // Destroi os anteriormente definidos
+  Vertex.vertices = {}
+  Edge.edges = {}
+
   if (numberOfVertices <= 1)
     throw new Error('Necessita de pelo menos 2 vertices')
 
@@ -18,7 +18,7 @@ export default function seedGraph(
     mapPadding + Math.random() * (length - mapPadding * 2)
 
   // Gerar vertices
-  for (const vertexId = 0; vertexId < numberOfVertices; vertexId++) {
+  for (let vertexId = 0; vertexId < numberOfVertices; vertexId++) {
     new Vertex(
       vertexId,
       randomForLength(window.innerWidth),
@@ -48,14 +48,15 @@ export default function seedGraph(
     )
   }
 
-  // Gerar arestas
-  for (const edgeId = 0; edgeId < numberOfEdges; edgeId++) {
-    const sourceVertexId = randomVertexId()
+  // Gerar arestas para cada vertice
+  for (let edgeId = 0; edgeId < numberOfVertices; edgeId++) {
     new Edge(
       edgeId,
-      Vertex.vertices[sourceVertexId],
-      Vertex.vertices[randomVertexIdExcept(sourceVertexId)],
-      { mapSpeed: randomSpeed() }
+      Vertex.vertices[edgeId],
+      Vertex.vertices[randomVertexIdExcept(edgeId)],
+      {
+        mapSpeed: randomSpeed(),
+      }
     )
   }
 }

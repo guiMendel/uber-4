@@ -1,8 +1,6 @@
 import { useEffect, useRef } from 'react'
-import delay from '../../helpers/delay'
-import theme from '../../configuration/theme'
-import appConfig from '../../configuration/appConfig'
 import configurateCanvas from './configurateCanvas'
+import Map from '../../classes/Map'
 
 export default function Canvas() {
   // Pega a referencia do canvas
@@ -23,20 +21,8 @@ export default function Canvas() {
     if (context == null) throw new Error('Falha em obter o contexto')
 
     // Comecar a renderizar as figuras no canvas
-    startRendering(context)
+    new Map(context)
   }, [])
-
-  async function startRendering(context) {
-    // Loop infinito dos frames
-    while (true) {
-      // Limpa desenhos e carrega background
-      context.fillStyle = theme.mapBackground
-      context.fillRect(0, 0, window.innerWidth, window.innerHeight)
-
-      // Espera o tempo de fps
-      await delay(1 / appConfig.maxFramesPerSecond)
-    }
-  }
 
   return (
     <canvas ref={canvasRef}>
