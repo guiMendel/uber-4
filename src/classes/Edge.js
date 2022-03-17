@@ -11,14 +11,14 @@ export default class Edge {
     return (mapDistance * realSpeed) / realDistance
   }
 
+  get mapDistance() {
+    return Vertex.getDistance(this.source, this.destination)
+  }
+
   // Se for fornecido um mapSpeed, ele eh utilizado. Se nao, usa-se os valores reais para calcular o mapSpeed
   constructor(id, source, destination, { mapSpeed, realDistance, realSpeed }) {
     // Encontra a velocidade de mapa, se ja nao estiver definida
-    mapSpeed ??= Edge.getMapSpeed(
-      realDistance,
-      Vertex.getDistance(source, destination),
-      realSpeed
-    )
+    mapSpeed ??= Edge.getMapSpeed(realDistance, this.mapDistance, realSpeed)
 
     // Se este id ja tiver sido previamente declarado
     if (Edge.edges[id] != undefined) {
