@@ -1,10 +1,13 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import configurateCanvas from './configurateCanvas'
 import Map from '../../classes/Map'
 
 export default function Canvas() {
   // Pega a referencia do canvas
   const canvasRef = useRef(null)
+
+  // Guarda o map gerado
+  const [map, setMap] = useState(null)
 
   useEffect(() => {
     // Garantir que o canvas tenha sido referenciado
@@ -21,7 +24,8 @@ export default function Canvas() {
     if (context == null) throw new Error('Falha em obter o contexto')
 
     // Comecar a renderizar as figuras no canvas
-    new Map(context)
+    if (map != null) map.disable()
+    setMap(new Map(context))
   }, [])
 
   return (

@@ -25,9 +25,12 @@ export default class Map {
     // Armazena o contexto para desenhar
     this.context = canvasContext
 
+    // Tempo pelo qual permanece ativo
+    this.active = true
+
     // Inica as iteracoes
     const start = async () => {
-      while (true) {
+      while (this.active) {
         // Renderiza uma frame
         this.renderFrame()
 
@@ -37,6 +40,10 @@ export default class Map {
     }
 
     start()
+  }
+
+  disable() {
+    this.active = false
   }
 
   renderFrame() {
