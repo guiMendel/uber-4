@@ -17,7 +17,11 @@ export default {
   //=== RUAS
 
   // A cor das ruas
-  streetColor: '#c6b955',
+  // Slowest sera quando a rua tiver a menor velocidade possivel
+  streetColorSlowest: '#c19f2e',
+
+  // Highest sera quando a rua tiver a maior velocidade possivel
+  streetColorHighest: '#b4d112',
 
   // A largura das ruas, em pixels
   streetWidth: 20,

@@ -5,7 +5,7 @@ import Drawable from './Drawable'
 // Facil acesso
 const { pixelsPerKilometer } = appConfig
 
-const { streetWidth, streetColor } = theme
+const { streetWidth, streetColorSlowest } = theme
 
 // Define um vertice
 export default class Vertex extends Drawable {
@@ -38,7 +38,7 @@ export default class Vertex extends Drawable {
   // Se desenha
   draw(context) {
     // Desenha um arco em sua posicao
-    context.fillStyle = streetColor
+    context.fillStyle = streetColorSlowest
 
     context.beginPath()
 
