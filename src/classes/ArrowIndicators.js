@@ -37,9 +37,9 @@ export default class ArrowIndicators extends Drawable {
       // Enquanto ainda couberem flechas
       while (displacement + streetArrowHeight <= edge.mapDistance) {
         this.drawArrow(
-          edge.source.x + displacement * sin(edge.angle),
-          edge.source.y + displacement * cos(edge.angle),
-          edge.angle,
+          edge.source.x + displacement * sin(edge.angle + 90),
+          edge.source.y + displacement * cos(edge.angle + 90),
+          edge.angle + 90,
           context
         )
 

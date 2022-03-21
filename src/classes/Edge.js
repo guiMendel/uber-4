@@ -25,6 +25,12 @@ export default class Edge extends Drawable {
 
   // Se for fornecido um mapSpeed, ele eh utilizado. Se nao, usa-se os valores reais para calcular o mapSpeed
   constructor(id, source, destination, { mapSpeed, realDistance, realSpeed }) {
+    // Erro se source e destination forem iguais
+    if (source.id == destination.id)
+      throw new Error(
+        `Tentativa de criar aresta saindo e chegando no mesmo vertice de id ${source.id}`
+      )
+
     // Encontra a velocidade de mapa, se ja nao estiver definida
     mapSpeed ??= Edge.getMapSpeed(realDistance, this.mapDistance, realSpeed)
 
@@ -33,6 +39,8 @@ export default class Edge extends Drawable {
 
     // Atualiza as ruas mais rapida e lenta
     this.updateRecordEdges()
+
+    // console.log(`from ${source.id} to ${destination.id}`)
   }
 
   // Se desenha
@@ -53,13 +61,14 @@ export default class Edge extends Drawable {
   // Retorna o angulo desta aresta
   get angle() {
     return (
-      (Math.atan(
-        (this.destination.x - this.source.x) /
-          (this.destination.y - this.source.y)
-      ) *
-        180) /
+      -(
+        Math.atan(
+          (this.destination.y - this.source.y) /
+            (this.destination.x - this.source.x)
+        ) * 180
+      ) /
         Math.PI +
-      (this.destination.y < this.source.y ? 180 : 0)
+      (this.destination.x < this.source.x ? 180 : 0)
     )
   }
 
@@ -70,6 +79,9 @@ export default class Edge extends Drawable {
 
   // Calcula a cor desta rua
   get streetColor() {
+    if (Edge.slowestEdge.mapSpeed == Edge.fastestEdge.mapSpeed)
+      return streetColorHighest
+
     // Descobre qual a posicao desta rua no ranking de velocidade (de 0 a 1)
     const edgeRanking =
       (this.mapSpeed - Edge.slowestEdge.mapSpeed) /
@@ -128,8 +140,8 @@ export default class Edge extends Drawable {
 
     // Encontramos as coordenadas da projecao aplicando o deslocamento em source
     return [
-      this.source.x + sin(this.angle) * displacement,
-      this.source.y + cos(this.angle) * displacement,
+      this.source.x + sin(this.angle + 90) * displacement,
+      this.source.y + cos(this.angle + 90) * displacement,
     ]
   }
 }

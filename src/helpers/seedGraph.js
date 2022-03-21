@@ -38,7 +38,7 @@ export default function seedGraph(
   const randomVertexIdExcept = (exceptId = null) => {
     const vertexId = randomVertexId()
     // Se gerou o mesmo id de except, tente outra vez
-    return exceptId == vertexId ? randomVertexIdExcept() : vertexId
+    return exceptId == vertexId ? randomVertexIdExcept(exceptId) : vertexId
   }
 
   // Gera uma velocidade aleatoria
@@ -83,8 +83,8 @@ export default function seedGraph(
     new Car(
       carId,
       edge,
-      edge.source.x + sin(edge.angle) * displacement,
-      edge.source.y + cos(edge.angle) * displacement
+      edge.source.x + sin(edge.angle + 90) * displacement,
+      edge.source.y + cos(edge.angle + 90) * displacement
     )
   }
 }
