@@ -1,3 +1,4 @@
+import Drawable from '../classes/Drawable'
 import Edge from '../classes/Edge'
 import Vertex from '../classes/Vertex'
 import appConfig from '../configuration/appConfig'
@@ -7,8 +8,7 @@ const { pixelsPerKilometer } = appConfig
 // Gera grafos e arestas aleatorios para fins de teste
 export default function seedGraph(numberOfVertices = 10, mapPadding = 20) {
   // Destroi os anteriormente definidos
-  Vertex.vertices = {}
-  Edge.edges = {}
+  Drawable.drawableInstances = {}
 
   if (numberOfVertices <= 1)
     throw new Error('Necessita de pelo menos 2 vertices')
@@ -52,8 +52,8 @@ export default function seedGraph(numberOfVertices = 10, mapPadding = 20) {
   for (let edgeId = 0; edgeId < numberOfVertices; edgeId++) {
     new Edge(
       edgeId,
-      Vertex.vertices[edgeId],
-      Vertex.vertices[randomVertexIdExcept(edgeId)],
+      Drawable.drawableInstances[Vertex.name][edgeId],
+      Drawable.drawableInstances[Vertex.name][randomVertexIdExcept(edgeId)],
       {
         mapSpeed: randomSpeed(),
       }

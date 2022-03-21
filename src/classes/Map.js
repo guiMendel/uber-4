@@ -1,12 +1,11 @@
 import delay from '../helpers/delay'
 import theme from '../configuration/theme'
 import appConfig from '../configuration/appConfig'
-import Vertex from './Vertex'
-import Edge from './Edge'
 import whiteCar from '../assets/white-car.png'
+import Drawable from './Drawable'
 
 // Extrai valores uteis
-const { mapBackground, streetWidth } = theme
+const { streetWidth } = theme
 
 // Classe que governa o mapa, os desenhos do mapa e suas atualizacoes
 export default class Map {
@@ -21,7 +20,7 @@ export default class Map {
     const start = async () => {
       while (this.active) {
         // Renderiza uma frame
-        this.renderFrame()
+        Drawable.drawScreen(this.context)
 
         // Espera o tempo de fps
         await delay(1 / appConfig.maxFramesPerSecond)
@@ -34,36 +33,6 @@ export default class Map {
 
   disable() {
     this.active = false
-  }
-
-  renderFrame() {
-    // Limpa desenhos e carrega background
-    this.context.fillStyle = mapBackground
-    this.context.fillRect(0, 0, window.innerWidth, window.innerHeight)
-
-    // Renderiza os vertices e arestas
-    this.renderGraph()
-
-    // Renderiza os carros
-    this.context.drawImage(
-      this.carImage,
-      50,
-      50,
-      this.carImage.width,
-      this.carImage.height
-    )
-  }
-
-  renderGraph() {
-    // Para cada vertice
-    for (const vertex of Object.values(Vertex.vertices))
-      vertex.draw(this.context)
-
-    // Para cada aresta
-    for (const edge of Object.values(Edge.edges)) edge.draw(this.context)
-
-    // Rendreiza as indicacoes de sentido das ruas
-    Edge.drawStreetPointers(this.context)
   }
 
   async loadAssets() {

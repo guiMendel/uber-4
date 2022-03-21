@@ -1,5 +1,6 @@
 import appConfig from '../configuration/appConfig'
 import theme from '../configuration/theme'
+import Drawable from './Drawable'
 
 // Facil acesso
 const { pixelsPerKilometer } = appConfig
@@ -7,10 +8,7 @@ const { pixelsPerKilometer } = appConfig
 const { streetWidth, streetColor } = theme
 
 // Define um vertice
-export default class Vertex {
-  // Um objeto que vai mapear todos os IDs de vertices para os vertices correspondentes
-  static vertices = {}
-
+export default class Vertex extends Drawable {
   // Fornece a distancia no mapa entre dois vertices
   static getDistance(vertexA, vertexB) {
     const xDistance = Math.pow(vertexA.x - vertexB.x, 2)
@@ -33,24 +31,8 @@ export default class Vertex {
       ? { x: realX, y: realY }
       : Vertex.realToMap({ x: realX, y: realY })
 
-    // Se este id ja tiver sido previamente declarado
-    if (Vertex.vertices[id] != undefined) {
-      const existingVertex = Vertex.vertices[id]
-
-      // Verifique que as coordenadas fornecidas coincidem. Se sim, apenas retorne o vertice preexistente
-      if (existingVertex.x == x && existingVertex.y == y) return existingVertex
-
-      throw new Error(
-        `Tentativa de redefinir vertice de id "${id}". Coordenadas previamente definidas: (${existingVertex.x}, ${existingVertex.y}), novas coordenadas: (${x}, ${y})`
-      )
-    }
-
-    // Coordenadas
-    this.x = x
-    this.y = y
-
-    // Registrar vertice
-    Vertex.vertices[id] = this
+    // Invoca construtor pai
+    super(id, { x, y })
   }
 
   // Se desenha
