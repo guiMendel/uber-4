@@ -123,8 +123,8 @@ export default class Edge extends Drawable {
 
     // Usamos uma equacao para encontrar o quao longe na aresta esta esta projecao, saido de source
     const displacement =
-      (sourceDistance - destinationDistance) / this.mapDistance +
-      this.mapDistance
+      (sourceDistance - destinationDistance) / (2 * this.mapDistance) +
+      this.mapDistance / 2
 
     // Encontramos as coordenadas da projecao aplicando o deslocamento em source
     return [

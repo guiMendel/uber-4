@@ -1,12 +1,12 @@
 // Define as cores do aplicativo
 export default {
   // A cor do plano de fundo do mapa
-  mapBackground: '#749154',
+  mapBackground: '#cccccc',
 
   //=== SETAS DE SENTIDO DA RUA
 
   // A cor das setas que indica o sentido das ruas
-  streetArrowsColor: '#e0d68d',
+  streetArrowsColor: '#ffffff',
 
   // Altura das flechas que apontam a direcao da rua
   streetArrowHeight: 10,
@@ -18,10 +18,10 @@ export default {
 
   // A cor das ruas
   // Slowest sera quando a rua tiver a menor velocidade possivel
-  streetColorSlowest: '#c19f2e',
+  streetColorSlowest: '#fccbab',
 
   // Highest sera quando a rua tiver a maior velocidade possivel
-  streetColorHighest: '#b4d112',
+  streetColorHighest: '#8bf9f9',
 
   // A largura das ruas, em pixels
   streetWidth: 20,
