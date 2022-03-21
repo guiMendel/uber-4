@@ -2,23 +2,37 @@ import delay from '../helpers/delay'
 import theme from '../configuration/theme'
 import appConfig from '../configuration/appConfig'
 import whiteCar from '../assets/white-car.png'
+import seedGraph from '../helpers/seedGraph'
 import Drawable from './Drawable'
+import ArrowIndicators from './ArrowIndicators'
 
 // Extrai valores uteis
 const { streetWidth } = theme
 
-// Classe que governa o mapa, os desenhos do mapa e suas atualizacoes
+// Classe singleton que governa o mapa, os desenhos do mapa e suas atualizacoes
 export default class Map {
+  // Guarda a unica instancia do mapa
+  static instance = null
+
   constructor(canvasContext) {
+    // Se ja ha uma instancia, use ela
+    if (Map.instance != undefined) return Map.instance
+
+    // Define o singleton
+    Map.instance = this
+
     // Armazena o contexto para desenhar
     this.context = canvasContext
-    // this.context.imageSmoothingEnabled = false
-    // Tempo pelo qual permanece ativo
-    this.active = true
 
     // Inica as iteracoes
     const start = async () => {
-      while (this.active) {
+      // Gera um grafo de teste
+      seedGraph()
+
+      // Cria o singleton ArrowIndicators
+      new ArrowIndicators()
+
+      while (true) {
         // Renderiza uma frame
         Drawable.drawScreen(this.context)
 
@@ -29,10 +43,6 @@ export default class Map {
 
     // Carrega as imagens, e entao inicia o app
     this.loadAssets().then(start)
-  }
-
-  disable() {
-    this.active = false
   }
 
   async loadAssets() {

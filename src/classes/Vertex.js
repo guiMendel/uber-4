@@ -9,12 +9,16 @@ const { streetWidth, streetColorSlowest } = theme
 
 // Define um vertice
 export default class Vertex extends Drawable {
-  // Fornece a distancia no mapa entre dois vertices
-  static getDistance(vertexA, vertexB) {
+  static getSquaredDistance(vertexA, vertexB) {
     const xDistance = Math.pow(vertexA.x - vertexB.x, 2)
     const yDistance = Math.pow(vertexA.y - vertexB.y, 2)
 
-    return Math.sqrt(xDistance + yDistance)
+    return xDistance + yDistance
+  }
+
+  // Fornece a distancia no mapa entre dois vertices
+  static getDistance(vertexA, vertexB) {
+    return Math.sqrt(Vertex.getSquaredDistance(vertexA, vertexB))
   }
 
   // Converte de quilometros para pixels, mas tambem centraliza coordenada (0,0) no centro do mapa

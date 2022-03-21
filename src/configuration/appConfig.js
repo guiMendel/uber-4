@@ -7,5 +7,5 @@ export default {
   pixelsPerKilometer: 100,
 
   // Em qual ordem cada classe sera desenhada. As primeiras ficam embaixo
-  drawOrder: ['Vertex', 'Edge', 'ArrowIndicators'],
+  drawOrder: ['Vertex', 'Edge', 'ArrowIndicators', 'Car'],
 }

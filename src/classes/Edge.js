@@ -5,6 +5,11 @@ import Vertex from './Vertex'
 // Extrai valores uteis
 const { streetColorSlowest, streetWidth, streetColorHighest } = theme
 
+// Helpers
+// Trigonometry
+const sin = (angle) => Math.sin(angle * (Math.PI / 180))
+const cos = (angle) => Math.cos(angle * (Math.PI / 180))
+
 // Define uma aresta
 export default class Edge extends Drawable {
   // Descobre a real velocidade da aresta, com base no seu comprimento e velocidade bruta
@@ -106,5 +111,25 @@ export default class Edge extends Drawable {
       if (previousMin.mapSpeed >= newStreet.mapSpeed) return previousMin
       else return newStreet
     })
+  }
+
+  // Dado um ponto de coordenadas x e y, encontra as coordenadas da projecao deste ponto na reta desta aresta
+  getProjectionCoordinates(x, y) {
+    // Encontramos as distancias do ponto para source e destination
+    const [sourceDistance, destinationDistance] = [
+      Vertex.getSquaredDistance(this.source, { x, y }),
+      Vertex.getSquaredDistance(this.destination, { x, y }),
+    ]
+
+    // Usamos uma equacao para encontrar o quao longe na aresta esta esta projecao, saido de source
+    const displacement =
+      (sourceDistance - destinationDistance) / this.mapDistance +
+      this.mapDistance
+
+    // Encontramos as coordenadas da projecao aplicando o deslocamento em source
+    return [
+      this.source.x + sin(this.angle) * displacement,
+      this.source.y + cos(this.angle) * displacement,
+    ]
   }
 }

@@ -59,6 +59,16 @@ export default class Drawable {
     context.fillStyle = mapBackground
     context.fillRect(0, 0, window.innerWidth, window.innerHeight)
 
+    // Garante que todas as subclasses de Drawable estejam definidos em drawOrder
+    const missingClass = Object.keys(Drawable.drawableInstances).find(
+      (element) => !drawOrder.includes(element)
+    )
+
+    if (missingClass != undefined)
+      throw new Error(
+        `Voce esqueceu de definir o drawOrder para a seguinte classe Drawable: ${missingClass}`
+      )
+
     // Renderiza as instancias em ordem
     for (const drawableClassName of drawOrder) {
       if (Drawable.drawableInstances[drawableClassName] == undefined) continue

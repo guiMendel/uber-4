@@ -1,12 +1,18 @@
+import Car from '../classes/Car'
 import Drawable from '../classes/Drawable'
 import Edge from '../classes/Edge'
 import Vertex from '../classes/Vertex'
 import appConfig from '../configuration/appConfig'
+import { sin, cos } from './trygonometry'
 
 const { pixelsPerKilometer } = appConfig
 
 // Gera grafos e arestas aleatorios para fins de teste
-export default function seedGraph(numberOfVertices = 10, mapPadding = 20) {
+export default function seedGraph(
+  numberOfVertices = 10,
+  mapPadding = 20,
+  numberOfCars = 4
+) {
   // Destroi os anteriormente definidos
   Drawable.drawableInstances = {}
 
@@ -57,6 +63,28 @@ export default function seedGraph(numberOfVertices = 10, mapPadding = 20) {
       {
         mapSpeed: randomSpeed(),
       }
+    )
+  }
+
+  // Pega uma aresta aleatoria
+  const getRandomEdge = () =>
+    Drawable.drawableInstances[Edge.name][
+      Math.floor(Math.random() * numberOfVertices)
+    ]
+
+  // Gerar carros
+  for (let carId = 0; carId < numberOfCars; carId++) {
+    // Pega uma aresta
+    const edge = getRandomEdge()
+
+    // Pega um deslocamento
+    const displacement = edge.mapDistance * Math.random()
+
+    new Car(
+      carId,
+      edge,
+      edge.source.x + sin(edge.angle) * displacement,
+      edge.source.y + cos(edge.angle) * displacement
     )
   }
 }

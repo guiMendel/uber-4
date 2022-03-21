@@ -6,9 +6,6 @@ export default function Canvas() {
   // Pega a referencia do canvas
   const canvasRef = useRef(null)
 
-  // Guarda o map gerado
-  const [map, setMap] = useState(null)
-
   useEffect(() => {
     // Garantir que o canvas tenha sido referenciado
     if (canvasRef == null) throw new Error('Falha em referenciar o canvas')
@@ -24,8 +21,7 @@ export default function Canvas() {
     if (context == null) throw new Error('Falha em obter o contexto')
 
     // Comecar a renderizar as figuras no canvas
-    if (map != null) map.disable()
-    setMap(new Map(context))
+    new Map(context)
   }, [])
 
   return (
