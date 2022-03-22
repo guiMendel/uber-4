@@ -33,10 +33,7 @@ const {
 } = appConfig
 
 // Encontra as rotas mais rapidas par aque um cliente chegue em seu destino, e com quais carros
-export default function getBestRoutesFor(client) {
-  // Subconjunto de carros para analise
-  const cars = getSubsetOfCarsFor(client)
-
+export default async function getBestRoutesFor(client) {
   // Inicializa um cache para armazenar os valores calculados de h
   // A chave sera o id da aresta, o valor sera o objeto resultado de executar h com essa aresta
   const hCache = {}
@@ -44,14 +41,41 @@ export default function getBestRoutesFor(client) {
   // Contara as iteracoes totais. Ja coloca o valor inicial
   let totalIterations = pathExpansionIterations
 
+  // Steppers para cada carro
+  const steppers = getSubsetOfCarsFor(client).map((car) => {
+    const stepper = new AStarStepper(client, car, hCache)
+
+    // Sempre que o stepper arrumar um novo best, aumenta o nmr de iteracoes
+    stepper.onNewBest(() => (totalIterations += newBestPathReward))
+
+    return stepper
+  })
+
   // Inicia as iteracoes de A*
-  for (let iteration = 0; iteration < totalIterations; iteration++) {}
+  for (let iteration = 0; iteration < totalIterations; iteration++) {
+    // Da um step em cada stepper
+    const iterationResult = await Promise.all(
+      steppers.map((stepper) => stepper.step())
+    )
+
+    // Se todos steppers terminaram, finalize as iteracoes
+    if (iterationResult.every((result) => result == true)) break
+  }
 }
 
 // Gera uma estrutura que, dado um carro e um cache de h, armazena os nos descobertos e fornece uma interface para realizar os passos do A* modificado
 class AStarStepper {
-  // Open node eh um heap, que da prioridade para nos com menor custo total
+  // Listeners the quando houver um novo best path
+  #newBestListeners = []
+
+  // OpenNodes e closedNodes sao heaps, que da prioridade para nos com menor custo total
   openNodes = new Heap((nodeA, nodeB) => nodeA.totalCost < nodeB.totalCost)
+
+  closedNodes = new Heap((nodeA, nodeB) => nodeA.totalCost < nodeB.totalCost)
+
+  // Aqui nos guardamos a relacao edge/node
+  // A chave vai ser o id da edge, o vlaor vai ser o node
+  edgeToNode = {}
 
   constructor(client, car, hCache) {
     // Armazena o carro & cliente
@@ -60,14 +84,78 @@ class AStarStepper {
     this.hCache = hCache
 
     // Inicializa o primeiro no
-    this.openNodes.insert(new Node(null, car.edge, this, car))
+    this.#registerNodeFor(car.edge, null, car)
+
+    // Levanta evento de new best sempre que o closed nodes tiver um novo highest priority
+    this.closedNodes.onNewHighestPriority(() => {
+      for (const listener of this.#newBestListeners) listener()
+    })
   }
 
-  step() {}
+  // Realiza a expansao do proximo openNode
+  // Retorna true se ja finalizou o A*
+  async step() {
+    // Se nao tem mais openNodes, nao ha o que fazer
+    if (this.openNodes.length == 0) return true
+
+    // Pega o proximo openNode
+    const node = this.openNodes.pop()
+
+    // Garante consistencia
+    if (node.closed)
+      throw new Error(
+        'Erro no A*: Por alguma razao, o no a ser expandido ja havia sido expandido antes'
+      )
+
+    this.closedNodes.insert(node)
+
+    // Para cada aresta descoberta a partir da expansao deste node
+    for (const edge of node.expand()) {
+      // Registra a aresta
+      this.#registerNodeFor(edge, node)
+    }
+  }
+
+  onNewBest(listener) {
+    this.#newBestListeners.push(listener)
+  }
+
+  // Dado a aresta e um potencial node pai, verifica se colcoar o node desta aresta como filho deste pai sera vantajoso
+  #registerNodeFor(edge, parentNode, car) {
+    // Se recebeu um car, eh o node inicial: cria um no com h excepcional
+    if (car != undefined) {
+      const node = new Node(null, edge, this, car)
+
+      this.openNodes.insert(node)
+      this.edgeToNode[edge.id] = node
+    }
+
+    // Verifica se ja ha um node para essa edge
+    const existingNode = this.edgeToNode[edge.id]
+
+    if (existingNode != undefined) {
+      // Se este no esta fechado, ignora
+      if (existingNode.closed) return
+
+      // Faz este no considerar se o novo pai seria mais rapido
+      existingNode.considerNewParent(parentNode)
+
+      return
+    }
+
+    // Se nao havia um node, criar
+    const node = new Node(parentNode, edge, this)
+
+    this.openNodes.insert(node)
+    this.edgeToNode[edge.id] = node
+  }
 }
 
 // Define cada no do A*
 class Node {
+  // Se este node ja foi expandido
+  closed = false
+
   constructor(parent, edge, stepper, car) {
     this.stepper = stepper
     this.edge = edge
@@ -167,6 +255,26 @@ class Node {
         car: 0,
       }
     }
+  }
+
+  // Verifica se o novo pai resultaria num custo menor
+  considerNewParent(newParent) {
+    const newG = newParent.g + newParent.time
+
+    // Se for menos custoso
+    if (newG < this.g) {
+      // Troca o pai
+      this.parent = newParent
+      this.g = newG
+    }
+  }
+
+  // Se fecha, e retorna todas as arestas vizinhas da aresta deste node
+  expand() {
+    this.closed = true
+
+    // Retorna uma copia do vetor
+    return [...this.edge.destination.sourceOf]
   }
 }
 

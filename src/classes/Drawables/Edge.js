@@ -37,6 +37,10 @@ export default class Edge extends Drawable {
     // Invoca construtor pai
     super(id, { source, destination, mapSpeed })
 
+    // Avisa os vertices de sua existencia
+    source.sourceOf.push(this)
+    destination.destinationOf.push(this)
+
     // Atualiza as ruas mais rapida e lenta
     this.updateRecordEdges()
 

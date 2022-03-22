@@ -29,6 +29,12 @@ export default class Vertex extends Drawable {
     }
   }
 
+  // Armazena referencia das arestas que saem deste veretice
+  sourceOf = []
+
+  // Armazena referencia das arestas que chegam deste veretice
+  destinationOf = []
+
   constructor(id, realX, realY, isAlreadyConverted = false) {
     // Se necessario, converte os valores reais de coordenada para valores de mapa
     const { x, y } = isAlreadyConverted

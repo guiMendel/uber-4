@@ -3,6 +3,9 @@ export default class Heap {
   // Vai armazenar os dados
   #data = []
 
+  // Armazena listeners de newHighestPriority
+  #newHighestPriorityListeners = []
+
   // compareMethod vai permitir definir a prioridade dos elementos do heap. Recebe 2 elementos, e deve retornar true se o primeiro tem mais prioridade do que o segundo
   constructor(compareMethod) {
     // Armazena o metodo de comparacao
@@ -15,11 +18,20 @@ export default class Heap {
 
   // Permite adicionar um novo elemento ao heap
   insert(element) {
+    // Memoriza o atual melhor element
+    const currentBest = this.#data[0]
+
     // Insere o elemento no ultimo espaco
     this.#data.push(element)
 
     // Realiza swim up do novo elemento
     this.#swimUp(this.length - 1)
+
+    // Verifica se mudou o melhor element
+    if (currentBest != this.#data[0]) {
+      for (const listener of this.#newHighestPriorityListeners)
+        listener(this.#data[0])
+    }
   }
 
   // Permite retirar o elemento de maior prioridade do heap
@@ -38,6 +50,11 @@ export default class Heap {
     this.#swimDown(0)
 
     return returnValue
+  }
+
+  // Permite s einscrever para o evento de um novo elemento tomando a primeira posicao
+  onNewHighestPriority(listener) {
+    this.#newHighestPriorityListeners.push(listener)
   }
 
   // Define como o elemento faz swim up no array que armazena os dados do heap
