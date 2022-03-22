@@ -5,7 +5,7 @@ import Map from '../Map'
 export default class Client extends Drawable {
   constructor(id, location, destination) {
     // Invoca construtor pai
-    super(id, { location, destination })
+    super(id, { ...location, destination })
 
     // Define uma rotacao aleatoria
     this.rotation = Math.random() * 360
@@ -18,7 +18,7 @@ export default class Client extends Drawable {
     // Salva o estado do contexto
     context.save()
 
-    context.setTransform(1, 0, 0, 1, this.location.x, this.location.y)
+    context.setTransform(1, 0, 0, 1, this.x, this.y)
 
     // Rotaciona o contexto (depois vamos desfazer isso, mas o carro continuara rotacionado)
     context.rotate((-(this.rotation - 90) * Math.PI) / 180)

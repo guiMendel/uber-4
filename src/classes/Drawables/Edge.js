@@ -125,8 +125,8 @@ export default class Edge extends Drawable {
     })
   }
 
-  // Dado um ponto de coordenadas x e y, encontra as coordenadas da projecao deste ponto na reta desta aresta
-  getProjectionCoordinates(x, y) {
+  // Dado um ponto de coordenadas x e y, encontra a distancia de sua projecao ate source, e o quadrado de sua distancia ate source e destination
+  getDistances(x, y) {
     // Encontramos as distancias do ponto para source e destination
     const [sourceDistance, destinationDistance] = [
       Vertex.getSquaredDistance(this.source, { x, y }),
@@ -134,9 +134,21 @@ export default class Edge extends Drawable {
     ]
 
     // Usamos uma equacao para encontrar o quao longe na aresta esta esta projecao, saido de source
-    const displacement =
+    const projectionDistance =
       (sourceDistance - destinationDistance) / (2 * this.mapDistance) +
       this.mapDistance / 2
+
+    return {
+      sourceSquared: sourceDistance,
+      destinationSquared: destinationDistance,
+      projection: projectionDistance,
+    }
+  }
+
+  // Dado um ponto de coordenadas x e y, encontra as coordenadas da projecao deste ponto na reta desta aresta
+  getProjectionCoordinates(x, y) {
+    // Pegamos a projectionDistance de getProjectionLengths
+    const displacement = getDistances(x, y).projection
 
     // Encontramos as coordenadas da projecao aplicando o deslocamento em source
     return [
