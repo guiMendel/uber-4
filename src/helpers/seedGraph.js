@@ -1,8 +1,8 @@
-import Client from '../classes/Client'
-import Car from '../classes/Car'
-import Drawable from '../classes/Drawable'
-import Edge from '../classes/Edge'
-import Vertex from '../classes/Vertex'
+import Client from '../classes/Drawables/Client'
+import Car from '../classes/Drawables/Car'
+import Drawable from '../classes/Drawables/Drawable'
+import Edge from '../classes/Drawables/Edge'
+import Vertex from '../classes/Drawables/Vertex'
 import appConfig from '../configuration/appConfig'
 import { sin, cos } from './trygonometry'
 

@@ -1,5 +1,5 @@
 import Drawable from './Drawable'
-import Map from './Map'
+import Map from '../Map'
 
 // Define os carros
 export default class Car extends Drawable {

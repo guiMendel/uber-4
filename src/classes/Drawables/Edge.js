@@ -1,4 +1,4 @@
-import theme from '../configuration/theme'
+import theme from '../../configuration/theme'
 import Drawable from './Drawable'
 import Vertex from './Vertex'
 

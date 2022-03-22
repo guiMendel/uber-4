@@ -1,5 +1,5 @@
-import appConfig from '../configuration/appConfig'
-import theme from '../configuration/theme'
+import appConfig from '../../configuration/appConfig'
+import theme from '../../configuration/theme'
 import Drawable from './Drawable'
 
 // Facil acesso

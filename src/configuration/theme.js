@@ -14,7 +14,7 @@ export default {
   streetArrowHeight: 10,
 
   // Intervalo em que as setas sao desenhadas
-  streetArrowInterval: 30,
+  streetArrowInterval: 60,
 
   //=== RUAS
 
