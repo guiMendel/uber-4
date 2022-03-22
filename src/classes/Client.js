@@ -1,3 +1,4 @@
+import Drawable from './Drawable'
 import Map from './Map'
 
 // Define um cliente
@@ -20,7 +21,7 @@ export default class Client extends Drawable {
     context.setTransform(1, 0, 0, 1, this.location.x, this.location.y)
 
     // Rotaciona o contexto (depois vamos desfazer isso, mas o carro continuara rotacionado)
-    context.rotate((-(rotation - 90) * Math.PI) / 180)
+    context.rotate((-(this.rotation - 90) * Math.PI) / 180)
     // context.rotate(Math.PI)
 
     context.drawImage(

@@ -1,3 +1,5 @@
+const streetWidth = 25
+
 // Define as cores do aplicativo
 export default {
   // A cor do plano de fundo do mapa
@@ -12,17 +14,25 @@ export default {
   streetArrowHeight: 10,
 
   // Intervalo em que as setas sao desenhadas
-  streetArrowInterval: 20,
+  streetArrowInterval: 30,
 
   //=== RUAS
 
   // A cor das ruas
   // Slowest sera quando a rua tiver a menor velocidade possivel
-  streetColorSlowest: '#fccbab',
+  streetColorSlowest: '#efefef',
 
   // Highest sera quando a rua tiver a maior velocidade possivel
-  streetColorHighest: '#8bf9f9',
+  streetColorHighest: '#b3c7fc',
 
   // A largura das ruas, em pixels
-  streetWidth: 20,
+  streetWidth,
+
+  //=== CLIENTES E CARROS
+
+  // A largura dos carros
+  carWidth: streetWidth * 1.1,
+
+  // A largura dos clientes
+  clientWidth: streetWidth,
 }

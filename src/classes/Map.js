@@ -11,7 +11,7 @@ import woman from '../assets/woman.png'
 import man2 from '../assets/man2.png'
 
 // Extrai valores uteis
-const { streetWidth } = theme
+const { streetWidth, carWidth, clientWidth } = theme
 
 // Classe singleton que governa o mapa, os desenhos do mapa e suas atualizacoes
 export default class Map {
@@ -57,22 +57,22 @@ export default class Map {
       // Carrega todas as imagens
       Promise.all([
         // Carrega o carro
-        this.loadImage(whiteCar, streetWidth + 2).then(
+        this.loadImage(whiteCar, carWidth).then(
           (carImage) => (this.carImage = carImage)
         ),
 
         // Carrega o man
-        this.loadImage(man, streetWidth * 0.6).then((image) =>
+        this.loadImage(man, clientWidth).then((image) =>
           this.clientImage.push(image)
         ),
 
         // Carrega o man2
-        this.loadImage(man2, streetWidth * 0.6).then((image) =>
+        this.loadImage(man2, clientWidth).then((image) =>
           this.clientImage.push(image)
         ),
 
         // Carrega a woman
-        this.loadImage(woman, streetWidth * 0.6).then((image) =>
+        this.loadImage(woman, clientWidth).then((image) =>
           this.clientImage.push(image)
         ),
       ]).then(resolve)

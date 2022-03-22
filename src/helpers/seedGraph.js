@@ -1,3 +1,4 @@
+import Client from '../classes/Client'
 import Car from '../classes/Car'
 import Drawable from '../classes/Drawable'
 import Edge from '../classes/Edge'
@@ -11,7 +12,8 @@ const { pixelsPerKilometer } = appConfig
 export default function seedGraph(
   numberOfVertices = 10,
   mapPadding = 20,
-  numberOfCars = 4
+  numberOfCars = 4,
+  numberOfClients = 8
 ) {
   // Destroi os anteriormente definidos
   Drawable.drawableInstances = {}
@@ -86,5 +88,16 @@ export default function seedGraph(
       edge.source.x + sin(edge.angle + 90) * displacement,
       edge.source.y + cos(edge.angle + 90) * displacement
     )
+  }
+
+  // Gera uma coordenada aleatoria
+  const getRandomCoordinates = () => ({
+    x: randomForLength(window.innerWidth),
+    y: randomForLength(window.innerHeight),
+  })
+
+  // Gerar clientes
+  for (let clientId = 0; clientId < numberOfClients; clientId++) {
+    new Client(clientId, getRandomCoordinates(), getRandomCoordinates())
   }
 }
