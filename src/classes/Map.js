@@ -1,10 +1,14 @@
 import delay from '../helpers/delay'
 import theme from '../configuration/theme'
 import appConfig from '../configuration/appConfig'
-import whiteCar from '../assets/white-car.png'
 import seedGraph from '../helpers/seedGraph'
 import Drawable from './Drawable'
 import ArrowIndicators from './ArrowIndicators'
+
+import whiteCar from '../assets/white-car.png'
+import man from '../assets/man.png'
+import woman from '../assets/woman.png'
+import man2 from '../assets/man2.png'
 
 // Extrai valores uteis
 const { streetWidth } = theme
@@ -47,11 +51,29 @@ export default class Map {
 
   async loadAssets() {
     return new Promise((resolve, reject) => {
+      // Prepara um array para armazenar as imagens de clientes
+      this.clientImage = []
+
       // Carrega todas as imagens
       Promise.all([
         // Carrega o carro
         this.loadImage(whiteCar, streetWidth + 2).then(
           (carImage) => (this.carImage = carImage)
+        ),
+
+        // Carrega o man
+        this.loadImage(man, streetWidth * 0.6).then((image) =>
+          this.clientImage.push(image)
+        ),
+
+        // Carrega o man2
+        this.loadImage(man2, streetWidth * 0.6).then((image) =>
+          this.clientImage.push(image)
+        ),
+
+        // Carrega a woman
+        this.loadImage(woman, streetWidth * 0.6).then((image) =>
+          this.clientImage.push(image)
         ),
       ]).then(resolve)
     })
