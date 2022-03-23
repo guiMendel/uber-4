@@ -90,4 +90,24 @@ export default class Drawable {
   draw(drawer) {
     throw new Error('Este método deve ser implementado por uma classe filho')
   }
+
+  // Permite observar eventos
+  static addEventListener(type, callback) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `A classe IO nao fornece um eventListener do tipo "${type}"`
+      )
+
+    this.listeners[type].push(callback)
+  }
+
+  // Permite levantar eventos
+  static raiseEvent(type, payload) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `Tentativa em IO de levantar evento de tipo inexistente "${type}"`
+      )
+
+    for (const listener of this.listeners[type]) listener(payload)
+  }
 }

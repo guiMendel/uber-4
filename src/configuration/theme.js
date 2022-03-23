@@ -8,7 +8,7 @@ export default {
   mapBackground: '#cccccc',
 
   // Velocidade geral de animacoes simples, em segundos
-  generalAnimationSpeed: 0.1,
+  generalAnimationSpeed: 0.05,
 
   //=== SETAS DE SENTIDO DA RUA
 
@@ -40,6 +40,12 @@ export default {
 
   // O quanto a imagem do cliente cresce quando sob o cursor
   clientHoverGrow: 1.3,
+
+  // A cor do highlight do cliente selecionado
+  selectedClientColor: '#168ece',
+
+  // O raio do highlight do cliente selecionado
+  selectedClientRadius: streetWidth * 0.8,
 
   // A largura dos carros
   carWidth: streetWidth * 1.1,

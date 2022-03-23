@@ -1,11 +1,35 @@
 import Drawable from './Drawable'
 import Map from '../Map'
 import theme from '../../configuration/theme'
+import IO from '../IO'
 
-const { clientHoverGrow } = theme
+const { clientHoverGrow, selectedClientColor, selectedClientRadius } = theme
 
 // Define um cliente
 export default class Client extends Drawable {
+  // Armazena referencia d equal cliente esta selecionado
+  static #selected = null
+
+  // Listeners
+  static listeners = { select: [] }
+
+  static get selected() {
+    return this.#selected
+  }
+
+  static set selected(value) {
+    this.#selected = value
+    this.raiseEvent('select', value)
+  }
+
+  get isHovered() {
+    return this.distanceFromMouse < this.image.width + 5
+  }
+
+  get isSelected() {
+    return this == Client.selected
+  }
+
   constructor(id, location, destination) {
     // Invoca construtor pai
     super(id, { ...location, destination })
@@ -24,12 +48,40 @@ export default class Client extends Drawable {
       property: 'scale',
       min: 1,
       max: clientHoverGrow,
-      condition: () => this.distanceFromMouse < this.image.width + 5,
+      condition: () => this.isHovered,
+    })
+
+    // A atual transparencia do highlight
+    this.highlightOpacity = 0
+    this.animate({
+      property: 'highlightOpacity',
+      min: 0,
+      max: 1,
+      condition: () => this.isSelected,
+    })
+
+    // Observa cliques
+    IO.addEventListener('leftclick', () => {
+      // Se estiver em hover, seleciona
+      if (this.isHovered) Client.selected = this
     })
   }
 
   draw(drawer) {
-    const { drawImage } = drawer.drawWith()
+    // Pega a transparencia do highlight em hex
+    let opacityHex = Math.floor(this.highlightOpacity * 255).toString(16)
+    if (opacityHex.length == 1) opacityHex = '0' + opacityHex
+
+    const { drawImage, fillStrokeArc } = drawer.drawWith(
+      {
+        fillStyle: selectedClientColor + opacityHex,
+        strokeStyle: '#ffffff' + opacityHex,
+      },
+      { lineWidth: 5 }
+    )
+
+    // Desenha um highlight, que sera transparente se n estiver selecionado
+    fillStrokeArc(this, selectedClientRadius)
 
     drawImage(this.image, this, this.rotation - 90, this.scale)
   }

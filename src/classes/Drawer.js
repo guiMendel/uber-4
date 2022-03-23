@@ -76,6 +76,21 @@ export default class Drawer {
       context.lineWidth = width.lineWidth
     }
 
+    // Aux de arco
+    function arc({ x, y }, radius, angles = { startAngle: 0, endAngle: 360 }) {
+      configDrawer()
+
+      context.beginPath()
+
+      context.arc(
+        x,
+        y,
+        radius,
+        (angles.startAngle * Math.PI) / 180,
+        (angles.endAngle * Math.PI) / 180
+      )
+    }
+
     return {
       fillRect({ x, y }, { width, height }) {
         configDrawer()
@@ -83,20 +98,17 @@ export default class Drawer {
         context.fillRect(x, y, width, height)
       },
 
-      fillArc({ x, y }, radius, angles = { startAngle: 0, endAngle: 360 }) {
-        configDrawer()
-
-        context.beginPath()
-
-        context.arc(
-          x,
-          y,
-          radius,
-          (angles.startAngle * Math.PI) / 180,
-          (angles.endAngle * Math.PI) / 180
-        )
+      fillArc(...args) {
+        arc(...args)
 
         context.fill()
+      },
+
+      fillStrokeArc(...args) {
+        arc(...args)
+
+        context.fill()
+        context.stroke()
       },
 
       strokePath(...coords) {

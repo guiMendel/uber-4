@@ -20,7 +20,7 @@ export default class IO {
   }
 
   // Listeners
-  static listeners = { mouserightdrag: [] }
+  static listeners = { mouserightdrag: [], leftclick: [], rightclick: [] }
 
   // Inicia as funcoes do IO
   static setup() {
@@ -39,10 +39,25 @@ export default class IO {
 
     window.addEventListener('contextmenu', (e) => e.preventDefault())
 
-    window.addEventListener('mousedown', ({ button }) => {
+    window.addEventListener('mousedown', ({ clientX, clientY, button }) => {
       // Atualiza o estado
-      if (button == 0) IO.mouse.isLeftPressed = true
-      else if (button == 2) IO.mouse.isRightPressed = true
+      if (button == 0) {
+        IO.mouse.isLeftPressed = true
+        this.#raiseEvent('leftclick', {
+          screen: { x: clientX, y: clientY },
+          get map() {
+            return Camera.ScreenToMap(clientX, clientY)
+          },
+        })
+      } else if (button == 2) {
+        IO.mouse.isRightPressed = true
+        this.#raiseEvent('rightclick', {
+          screen: { x: clientX, y: clientY },
+          get map() {
+            return Camera.ScreenToMap(clientX, clientY)
+          },
+        })
+      }
     })
 
     window.addEventListener('mouseup', ({ button }) => {
