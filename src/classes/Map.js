@@ -12,6 +12,7 @@ import man2 from '../assets/man2.png'
 import IO from './IO'
 import Camera from './Camera'
 import Drawer from './Drawer'
+import Client from './Drawables/Client'
 
 // Extrai valores uteis
 const { streetWidth, carWidth, clientWidth } = theme
@@ -38,6 +39,8 @@ export default class Map {
 
       // Gera um grafo de teste
       seedGraph()
+
+      Client.setup()
 
       // Cria o singleton ArrowIndicators
       new ArrowIndicators()

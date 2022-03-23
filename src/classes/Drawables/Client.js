@@ -3,7 +3,13 @@ import Map from '../Map'
 import theme from '../../configuration/theme'
 import IO from '../IO'
 
-const { clientHoverGrow, selectedClientColor, selectedClientRadius } = theme
+const {
+  clientHoverGrow,
+  selectedClientColor,
+  selectedClientRadius,
+  clientDestinationColor,
+  clientDestinationRadius,
+} = theme
 
 // Define um cliente
 export default class Client extends Drawable {
@@ -23,11 +29,16 @@ export default class Client extends Drawable {
   }
 
   get isHovered() {
-    return this.distanceFromMouse < this.image.width + 5
+    return this.distanceFromMouse < this.image.width + 3
   }
 
   get isSelected() {
     return this == Client.selected
+  }
+
+  static setup() {
+    // Deseleciona cliente no cancel
+    IO.addEventListener('cancel', () => (this.selected = null))
   }
 
   constructor(id, location, destination) {
@@ -84,5 +95,14 @@ export default class Client extends Drawable {
     fillStrokeArc(this, selectedClientRadius)
 
     drawImage(this.image, this, this.rotation - 90, this.scale)
+
+    if (this.isSelected) {
+      const { fillArc } = drawer.drawWith({
+        style: clientDestinationColor,
+      })
+
+      // Desenha seu destino se selecionado
+      fillArc(this.destination, clientDestinationRadius)
+    }
   }
 }

@@ -1,3 +1,17 @@
 .App {
   cursor: url(../assets/arrow.cur), auto;
 }
+
+.actions {
+  position: fixed;
+  display: flex;
+
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 2rem;
+}
+
+.client.actions {
+  bottom: 2rem;
+  left: 2rem;
+}

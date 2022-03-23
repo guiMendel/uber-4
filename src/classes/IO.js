@@ -20,7 +20,12 @@ export default class IO {
   }
 
   // Listeners
-  static listeners = { mouserightdrag: [], leftclick: [], rightclick: [] }
+  static listeners = {
+    mouserightdrag: [],
+    leftclick: [],
+    rightclick: [],
+    cancel: [],
+  }
 
   // Inicia as funcoes do IO
   static setup() {
@@ -64,6 +69,11 @@ export default class IO {
       // Atualiza o estado
       if (button == 0) IO.mouse.isLeftPressed = false
       else if (button == 2) IO.mouse.isRightPressed = false
+    })
+
+    // Evento de cancelamento
+    window.addEventListener('keyup', (event) => {
+      if (event.code == 'Escape') this.#raiseEvent('cancel')
     })
   }
 

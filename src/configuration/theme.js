@@ -47,6 +47,12 @@ export default {
   // O raio do highlight do cliente selecionado
   selectedClientRadius: streetWidth * 0.8,
 
+  // Cor do destino do cliente
+  clientDestinationColor: '#f24f43',
+
+  // O raio do destino
+  clientDestinationRadius: streetWidth * 0.5,
+
   // A largura dos carros
   carWidth: streetWidth * 1.1,
 

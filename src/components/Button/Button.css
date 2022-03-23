@@ -1,0 +1,38 @@
+.custom-button {
+  --button-size: 3rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: var(--button-size);
+  height: var(--button-size);
+
+  border-radius: 50%;
+
+  font-size: 100px;
+
+  border-bottom: 2px solid rgb(167, 167, 167);
+
+  box-shadow: inset 0 0 5px 1px rgba(128, 128, 128, 0.2);
+
+  transition: all 20ms;
+}
+
+.custom-button:hover {
+  filter: brightness(1.02);
+}
+
+.custom-button:active {
+  filter: brightness(0.95);
+
+  box-shadow: inset 0 0 10px 1px rgba(128, 128, 128, 0.7);
+  border: none;
+  border-top: 2px solid rgba(167, 167, 167, 0.575);
+
+}
+
+.custom-button svg {
+  min-width: calc(var(--button-size) - 1.3rem);
+  min-height: calc(var(--button-size) - 1.3rem);
+}
