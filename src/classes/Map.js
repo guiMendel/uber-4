@@ -9,6 +9,7 @@ import whiteCar from '../assets/white-car.png'
 import man from '../assets/man.png'
 import woman from '../assets/woman.png'
 import man2 from '../assets/man2.png'
+import IO from './IO'
 
 // Extrai valores uteis
 const { streetWidth, carWidth, clientWidth } = theme
@@ -35,6 +36,9 @@ export default class Map {
 
       // Cria o singleton ArrowIndicators
       new ArrowIndicators()
+
+      // Cria IO
+      new IO()
 
       while (true) {
         // Renderiza uma frame
