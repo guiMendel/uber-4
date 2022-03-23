@@ -152,7 +152,7 @@ export default class Edge extends Drawable {
   // Dado um ponto de coordenadas x e y, encontra as coordenadas da projecao deste ponto na reta desta aresta
   getProjectionCoordinates(x, y) {
     // Pegamos a projectionDistance de getProjectionLengths
-    const displacement = getDistances(x, y).projection
+    const displacement = this.getDistances(x, y).projection
 
     // Encontramos as coordenadas da projecao aplicando o deslocamento em source
     return [
