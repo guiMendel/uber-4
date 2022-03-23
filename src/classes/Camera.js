@@ -1,8 +1,7 @@
-import Drawable from './Drawables/Drawable'
 import IO from './IO'
 
 // Define uma classe que permite deslocar a visao do canvas
-export default class Camera extends Drawable {
+export default class Camera {
   // Armazena qual deslocamento esta sendo aplicado ao canvas atualmente
   static #translation = { x: null, y: null }
 
@@ -36,6 +35,11 @@ export default class Camera extends Drawable {
 
     // Sempre que usuario arrastar com botao direito, desloque a camera
     IO.addEventListener('mouserightdrag', this.translate)
+
+    // Sempre que a tela mudar de tamanho, corrige o translation
+    window.addEventListener('resize', () => {
+      Camera.translation = Camera.translation
+    })
   }
 
   // Move a camera
@@ -60,16 +64,5 @@ export default class Camera extends Drawable {
   // Translate coordenadas relativas a map para screen
   static MapToScreen(x, y) {
     return { x: x + Camera.translation.x, y: y + Camera.translation.y }
-  }
-
-  constructor() {
-    super(1, {})
-  }
-
-  draw(drawer) {
-    // Desenha um arco em sua posicao
-    const { fillArc } = drawer.drawWith({ style: 'red' })
-
-    fillArc({ x: 0, y: 0 }, 2)
   }
 }

@@ -30,21 +30,17 @@ export default class Map {
 
     // Inica as iteracoes
     const start = async () => {
+      // Configura IO
+      IO.setup()
+
       // Inicializa a camera
       Camera.setup(canvasContext)
 
       // Gera um grafo de teste
       seedGraph()
 
-      // Inicia a camera
-      new Camera()
-
       // Cria o singleton ArrowIndicators
       new ArrowIndicators()
-
-      // Cria IO
-      new IO()
-      IO.setup()
 
       // Armazena o wrapper de contexto para desenhar
       this.drawer = new Drawer(canvasContext)

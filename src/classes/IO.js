@@ -1,8 +1,7 @@
 import Camera from './Camera'
-import Drawable from './Drawables/Drawable'
 
 // Este modulo fornece facilidade para realizar IO com o mapa
-export default class IO extends Drawable {
+export default class IO {
   // Conhece a atual posicao do cursor em tela
   static mouse = {
     // Coordenadas
@@ -71,17 +70,5 @@ export default class IO extends Drawable {
       )
 
     for (const listener of this.listeners[type]) listener(payload)
-  }
-
-  constructor() {
-    // Chama super
-    super(1, {})
-  }
-
-  draw(drawer) {
-    // Desenha um arco em sua posicao
-    const { fillArc } = drawer.drawWith({ style: 'blue' })
-
-    fillArc(IO.mouse.mapCoords, 10)
   }
 }
