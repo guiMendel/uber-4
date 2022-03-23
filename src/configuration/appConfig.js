@@ -14,7 +14,7 @@ export default {
   drawOrder: ['Vertex', 'Edge', 'ArrowIndicators', 'Client', 'Car'],
 
   //=== PAREAMENTO CARRO & CLIENTE
-  
+
   // Quantos km/h um cliente anda
   clientWalkSpeed: 4.7,
 

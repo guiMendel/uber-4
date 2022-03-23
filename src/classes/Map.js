@@ -42,6 +42,8 @@ export default class Map {
 
       Client.setup()
 
+      IO.buttons['select-route'].onTrigger(() => console.log(42))
+
       // Cria o singleton ArrowIndicators
       new ArrowIndicators()
 

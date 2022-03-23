@@ -19,6 +19,9 @@ export default class IO {
     isLeftPressed: false,
   }
 
+  // Conhece todos os botoes da UI
+  static buttons = {}
+
   // Listeners
   static listeners = {
     mouserightdrag: [],
