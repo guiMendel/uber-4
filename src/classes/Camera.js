@@ -1,4 +1,5 @@
 import Drawable from './Drawables/Drawable'
+import IO from './IO'
 
 // Define uma classe que permite deslocar a visao do canvas
 export default class Camera extends Drawable {
@@ -9,29 +10,40 @@ export default class Camera extends Drawable {
   static #context
 
   static get translation() {
-    return Camera.#translation
+    return this.#translation
   }
 
   static set translation(value) {
-    Camera.#translation = value
+    this.#translation = value
 
     // Desloca a camera
-    Camera.#context.setTransform(
+    this.#context.setTransform(
       1,
       0,
       0,
       1,
-      Camera.#translation.x,
-      Camera.#translation.y
+      this.#translation.x,
+      this.#translation.y
     )
   }
 
   // Inicia as funcoes da Camera
   static setup(context) {
-    Camera.#context = context
+    this.#context = context
 
     // Desloca a visao para a origem
-    Camera.reset()
+    this.reset()
+
+    // Sempre que usuario arrastar com botao direito, desloque a camera
+    IO.addEventListener('mouserightdrag', this.translate)
+  }
+
+  // Move a camera
+  static translate({ x, y }) {
+    Camera.translation = {
+      x: Camera.translation.x + x,
+      y: Camera.translation.y + y,
+    }
   }
 
   // Centraliza a camera na origem
