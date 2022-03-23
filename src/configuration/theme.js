@@ -2,8 +2,13 @@ const streetWidth = 25
 
 // Define as cores do aplicativo
 export default {
+  //=== GERAL
+
   // A cor do plano de fundo do mapa
   mapBackground: '#cccccc',
+
+  // Velocidade geral de animacoes simples, em segundos
+  generalAnimationSpeed: 0.1,
 
   //=== SETAS DE SENTIDO DA RUA
 
@@ -32,6 +37,9 @@ export default {
   streetWidth,
 
   //=== CLIENTES E CARROS
+
+  // O quanto a imagem do cliente cresce quando sob o cursor
+  clientHoverGrow: 1.3,
 
   // A largura dos carros
   carWidth: streetWidth * 1.1,

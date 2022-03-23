@@ -51,6 +51,10 @@ export default class Drawer {
       for (const instance of Object.values(
         Drawable.drawableInstances[drawableClassName]
       )) {
+        // Trigger the drawable animations
+        for (const animation of instance.animations) animation()
+
+        // Draw it
         instance.draw(this)
       }
     }
@@ -129,8 +133,8 @@ export default class Drawer {
 
         context.drawImage(
           image,
-          -image.width / 2,
-          -image.height / 2,
+          (-image.width * scale) / 2,
+          (-image.height * scale) / 2,
           image.width * scale,
           image.height * scale
         )

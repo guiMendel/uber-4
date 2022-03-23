@@ -1,7 +1,7 @@
 import theme from '../../configuration/theme'
 import { sin, cos } from '../../helpers/trygonometry'
+import { getDistance, getSquaredDistance } from '../../helpers/vectorDistance'
 import Drawable from './Drawable'
-import Vertex from './Vertex'
 
 // Extrai valores uteis
 const { streetColorSlowest, streetWidth, streetColorHighest } = theme
@@ -70,7 +70,7 @@ export default class Edge extends Drawable {
 
   // Retorna a distancia em pixels entre source e destination
   get mapDistance() {
-    return Vertex.getDistance(this.source, this.destination)
+    return getDistance(this.source, this.destination)
   }
 
   // Calcula a cor desta rua
@@ -125,8 +125,8 @@ export default class Edge extends Drawable {
   getDistances(x, y) {
     // Encontramos as distancias do ponto para source e destination
     const [sourceDistance, destinationDistance] = [
-      Vertex.getSquaredDistance(this.source, { x, y }),
-      Vertex.getSquaredDistance(this.destination, { x, y }),
+      getSquaredDistance(this.source, { x, y }),
+      getSquaredDistance(this.destination, { x, y }),
     ]
 
     // Usamos uma equacao para encontrar o quao longe na aresta esta esta projecao, saido de source

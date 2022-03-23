@@ -1,9 +1,20 @@
+import { getDistance } from '../../helpers/vectorDistance'
+import IO from '../IO'
+import theme from '../../configuration/theme'
+import appConfig from '../../configuration/appConfig'
+
+const { generalAnimationSpeed } = theme
+const { maxFramesPerSecond } = appConfig
+
 // Classe que define uma entidade capaz de ser desenhada em tela
 export default class Drawable {
   // Um objeto que vai guardar referencia para todas as instancias de drawable
   // A chave eh uma string com o nome de uma subclasse de drawable (como Edge, etc), os valores sao outro objeto
   // Esse outro objeto tem como chave o id de cada instancia, e aponta para a instancia correspondente
   static drawableInstances = {}
+
+  // Quais animacoes estao sendo executadas neste drawable
+  animations = []
 
   constructor(id, properties) {
     // Verifica se ja exist euma instancia com o id fornecido
@@ -34,6 +45,33 @@ export default class Drawable {
       Drawable.drawableInstances[this.constructor.name] = {}
 
     return Drawable.drawableInstances[this.constructor.name]
+  }
+
+  // Permite saber a distancia do cursor ate este drawable
+  get distanceFromMouse() {
+    // Deve possuir coordenadas x e y
+    if (this.x == undefined || this.y == undefined)
+      throw new Error(
+        `Impossivel determinar distancia do cursor para Drawable de classe "${this.constructor.name}", que nao possui coordenadas x e y`
+      )
+
+    return getDistance(this, IO.mouse.mapCoords)
+  }
+
+  // Permite alterar o valor de uma propriedade do drawable ao longo de multiplos frames, dada uma condicao
+  animate({ property, min, max, condition, speed = generalAnimationSpeed }) {
+    // Descobre o quato alterar a cada frame
+    const frameAlteration = (max - min) / speed / maxFramesPerSecond
+
+    this.animations.push(() => {
+      if (condition()) {
+        // Soma o alteration
+        this[property] = Math.min(max, this[property] + frameAlteration)
+      } else {
+        // Subtrai o alteration
+        this[property] = Math.max(min, this[property] - frameAlteration)
+      }
+    })
   }
 
   // Compara this com o objeto fornecido, e retorna true se todas suas propriedades coincidirem

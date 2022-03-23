@@ -1,8 +1,8 @@
 import Heap from '../classes/DataStructures/Heap'
 import Car from '../classes/Drawables/Car'
-import Vertex from '../classes/Drawables/Vertex'
 import Drawable from '../classes/Drawables/Drawable'
 import appConfig from '../configuration/appConfig'
+import { getDistance } from '../helpers/vectorDistance'
 
 // Este modulo fornece um metodo que, dado um cliente, descobre para qual coordenada ele deve se deslocar, e quais o melhores carros que podem lhe buscar nesta coordenada e lhe deixar e seu destino final
 
@@ -223,7 +223,7 @@ class Node {
       this.stepper.client.y
     )
 
-    const carSourceDistance = Vertex.getDistance(this.edge.source, car)
+    const carSourceDistance = getDistance(this.edge.source, car)
 
     // Existem 2 casos:
     // ou o carro esta antes da projecao do cliente e pode passar nela
@@ -247,7 +247,7 @@ class Node {
       this.#h = {
         // Nesse caso o cliente anda ate o carro
         client:
-          Vertex.getDistance(this.stepper.client, car) /
+          getDistance(this.stepper.client, car) /
           pixelsPerKilometer /
           clientWalkSpeed,
 
