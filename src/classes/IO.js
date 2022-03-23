@@ -1,29 +1,34 @@
+import Camera from './Camera'
 import Drawable from './Drawables/Drawable'
 
 // Este modulo fornece facilidade para realizar IO com o mapa
 export default class IO extends Drawable {
   // Conhece a atual posicao do cursor em tela
-  static mouse = { screenX: null, screenY: null }
+  static mouse = {
+    screenCoords: { x: null, y: null },
+    get mapCoords() {
+      return Camera.ScreenToMap(this.screenCoords.x, this.screenCoords.y)
+    },
+  }
+
+  // Inicia as funcoes do IO
+  static setup() {
+    // Mantem a posicao do cursor atualizada
+    window.addEventListener('mousemove', ({ clientX, clientY }) => {
+      IO.mouse.screenCoords.x = clientX
+      IO.mouse.screenCoords.y = clientY
+    })
+  }
 
   constructor() {
     // Chama super
     super(1, {})
-
-    // Mantem a posicao do cursor atualizada
-    window.addEventListener('mousemove', ({ clientX, clientY }) => {
-      IO.mouse.screenX = clientX
-      IO.mouse.screenY = clientY
-    })
   }
 
-  draw(context) {
-    // Desenha um arco na posicao do mouse
-    context.fillStyle = 'blue'
+  draw(drawer) {
+    // Desenha um arco em sua posicao
+    const { fillArc } = drawer.drawWith({ style: 'blue' })
 
-    context.beginPath()
-
-    context.arc(IO.mouse.screenX, IO.mouse.screenY, 10, 0, Math.PI * 2)
-
-    context.fill()
+    fillArc(IO.mouse.mapCoords, 10)
   }
 }

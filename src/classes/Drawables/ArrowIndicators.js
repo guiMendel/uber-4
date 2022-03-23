@@ -3,10 +3,11 @@ import Drawable from './Drawable'
 import Edge from './Edge'
 
 const {
-  streetArrowsColor,
+  streetArrowColor,
   streetArrowHeight,
   streetArrowInterval,
   streetWidth,
+  streetArrowWidth,
 } = theme
 
 // Helpers
@@ -28,51 +29,50 @@ export default class ArrowIndicators extends Drawable {
   }
 
   // Desenha triangulos de direcao para cada rua
-  draw(context) {
+  draw(drawer) {
     // Para cada aresta
     for (const edge of Object.values(Drawable.drawableInstances[Edge.name])) {
-      // A comecar da origem da aresta, desenhar flechas ao longo dela, e ir deslocando o ponto de desenho
-      let displacement = 0
+      this.drawForEdge(edge, drawer)
+    }
+  }
 
-      // Enquanto ainda couberem flechas
-      while (displacement + streetArrowHeight <= edge.mapDistance) {
-        this.drawArrow(
-          edge.source.x + displacement * sin(edge.angle + 90),
-          edge.source.y + displacement * cos(edge.angle + 90),
-          edge.angle + 90,
-          context
-        )
+  // Desenha as setas da aresta fornecida
+  drawForEdge(edge, drawer) {
+    // A comecar da origem da aresta, desenhar flechas ao longo dela, e ir deslocando o ponto de desenho
+    let displacement = 0
 
-        // Aumenta o deslocamento
-        displacement += streetArrowInterval
-      }
+    // Enquanto ainda couberem flechas
+    while (displacement + streetArrowHeight <= edge.mapDistance) {
+      this.drawArrow(
+        edge.source.x + displacement * sin(edge.angle + 90),
+        edge.source.y + displacement * cos(edge.angle + 90),
+        edge.angle + 90,
+        drawer
+      )
+
+      // Aumenta o deslocamento
+      displacement += streetArrowInterval
     }
   }
 
   // x e y devem apontar para o centro da base do triangulo
-  drawArrow(x, y, pointAngle, context) {
+  drawArrow(x, y, pointAngle, drawer) {
     // Permite obter as coordenadas x, y desloacadas no angulo indicado, numa distancia indicada
     // Ja torna o angulo relativo ao angulo de rotacao do triangulo, e soma 90 para que 0 seja a direita
-    const displacement = (amount, angle) => [
-      x + amount * sin(angle + pointAngle),
-      y + amount * cos(angle + pointAngle),
-    ]
+    const displacement = (amount, angle) => ({
+      x: x + amount * sin(angle + pointAngle),
+      y: y + amount * cos(angle + pointAngle),
+    })
 
-    context.beginPath()
+    const { strokePath } = drawer.drawWith(
+      { style: streetArrowColor },
+      { lineWidth: streetArrowWidth }
+    )
 
-    context.strokeStyle = streetArrowsColor
-
-    context.lineWidth = streetWidth / 5
-
-    // Comecar na extremidade esquerda da base
-    context.moveTo(...displacement((streetWidth - 2) / 2, 90))
-
-    // Linha ate a ponta do triangulo
-    context.lineTo(...displacement(streetArrowHeight, 0))
-
-    // Linha ate a extremidade direita do triangulo
-    context.lineTo(...displacement((streetWidth - 2) / 2, 270))
-
-    context.stroke()
+    strokePath(
+      displacement((streetWidth - 2) / 2, 90),
+      displacement(streetArrowHeight, 0),
+      displacement((streetWidth - 2) / 2, 270)
+    )
   }
 }

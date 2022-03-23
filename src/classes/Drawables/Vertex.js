@@ -46,14 +46,10 @@ export default class Vertex extends Drawable {
   }
 
   // Se desenha
-  draw(context) {
+  draw(drawer) {
     // Desenha um arco em sua posicao
-    context.fillStyle = streetColorSlowest
+    const { fillArc } = drawer.drawWith({ style: streetColorSlowest })
 
-    context.beginPath()
-
-    context.arc(this.x, this.y, streetWidth / 2, 0, Math.PI * 2)
-
-    context.fill()
+    fillArc(this, streetWidth / 2)
   }
 }

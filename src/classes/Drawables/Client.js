@@ -14,24 +14,9 @@ export default class Client extends Drawable {
     this.image = Map.instance.clientImage[Math.floor(Math.random() * 3)]
   }
 
-  draw(context) {
-    // Salva o estado do contexto
-    context.save()
+  draw(drawer) {
+    const { drawImage } = drawer.drawWith()
 
-    context.setTransform(1, 0, 0, 1, this.x, this.y)
-
-    // Rotaciona o contexto (depois vamos desfazer isso, mas o carro continuara rotacionado)
-    context.rotate((-(this.rotation - 90) * Math.PI) / 180)
-    // context.rotate(Math.PI)
-
-    context.drawImage(
-      this.image,
-      -this.image.width / 2,
-      -this.image.height / 2,
-      this.image.width,
-      this.image.height
-    )
-
-    context.restore()
+    drawImage(this.image, this, this.rotation - 90)
   }
 }

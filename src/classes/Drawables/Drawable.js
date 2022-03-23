@@ -1,9 +1,3 @@
-import appConfig from '../../configuration/appConfig'
-import theme from '../../configuration/theme'
-
-const { drawOrder } = appConfig
-const { mapBackground } = theme
-
 // Classe que define uma entidade capaz de ser desenhada em tela
 export default class Drawable {
   // Um objeto que vai guardar referencia para todas as instancias de drawable
@@ -53,38 +47,9 @@ export default class Drawable {
     return true
   }
 
-  // Desenha o frame atual da tela
-  static drawScreen(context) {
-    // Limpa desenhos e carrega background
-    context.fillStyle = mapBackground
-    context.fillRect(0, 0, window.innerWidth, window.innerHeight)
-
-    // Garante que todas as subclasses de Drawable estejam definidos em drawOrder
-    const missingClass = Object.keys(Drawable.drawableInstances).find(
-      (element) => !drawOrder.includes(element)
-    )
-
-    if (missingClass != undefined)
-      throw new Error(
-        `Voce esqueceu de definir o drawOrder para a seguinte classe Drawable: ${missingClass}`
-      )
-
-    // Renderiza as instancias em ordem
-    for (const drawableClassName of drawOrder) {
-      if (Drawable.drawableInstances[drawableClassName] == undefined) continue
-
-      // Desenha cada instancia desta classe
-      for (const instance of Object.values(
-        Drawable.drawableInstances[drawableClassName]
-      )) {
-        instance.draw(context)
-      }
-    }
-  }
-
   // Abstract
   // Permite desenhar na tela
-  draw(context) {
+  draw(drawer) {
     throw new Error('Este método deve ser implementado por uma classe filho')
   }
 }

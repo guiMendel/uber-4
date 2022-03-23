@@ -10,31 +10,16 @@ export default class Car extends Drawable {
     // console.log(`Original: ${realX}, ${realY}\nNew: ${x}, ${y}\n\n`)
 
     // Invoca construtor pai
-    super(id, { x, y, edge })
-    // super(id, { x: realX, y: realY, edge })
+    // super(id, { x, y, edge })
+    super(id, { x: realX, y: realY, edge })
 
     // Pega a imagem do carro
     this.carImage = Map.instance.carImage
   }
 
-  draw(context) {
-    // Salva o estado do contexto
-    context.save()
+  draw(drawer) {
+    const { drawImage } = drawer.drawWith()
 
-    context.setTransform(1, 0, 0, 1, this.x, this.y)
-
-    // Rotaciona o contexto (depois vamos desfazer isso, mas o carro continuara rotacionado)
-    context.rotate((-(this.edge.angle - 90) * Math.PI) / 180)
-    // context.rotate(Math.PI)
-
-    context.drawImage(
-      this.carImage,
-      -this.carImage.width / 2,
-      -this.carImage.height / 2,
-      this.carImage.width,
-      this.carImage.height
-    )
-
-    context.restore()
+    drawImage(this.carImage, this, this.edge.angle - 90)
   }
 }

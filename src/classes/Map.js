@@ -10,6 +10,8 @@ import man from '../assets/man.png'
 import woman from '../assets/woman.png'
 import man2 from '../assets/man2.png'
 import IO from './IO'
+import Camera from './Camera'
+import Drawer from './Drawer'
 
 // Extrai valores uteis
 const { streetWidth, carWidth, clientWidth } = theme
@@ -26,23 +28,30 @@ export default class Map {
     // Define o singleton
     Map.instance = this
 
-    // Armazena o contexto para desenhar
-    this.context = canvasContext
-
     // Inica as iteracoes
     const start = async () => {
+      // Inicializa a camera
+      Camera.setup(canvasContext)
+
       // Gera um grafo de teste
       seedGraph()
+
+      // Inicia a camera
+      new Camera()
 
       // Cria o singleton ArrowIndicators
       new ArrowIndicators()
 
       // Cria IO
       new IO()
+      IO.setup()
+
+      // Armazena o wrapper de contexto para desenhar
+      this.drawer = new Drawer(canvasContext)
 
       while (true) {
         // Renderiza uma frame
-        Drawable.drawScreen(this.context)
+        this.drawer.drawFrame()
 
         // Espera o tempo de fps
         await delay(1 / appConfig.maxFramesPerSecond)

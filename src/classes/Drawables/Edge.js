@@ -48,18 +48,14 @@ export default class Edge extends Drawable {
   }
 
   // Se desenha
-  draw(context) {
+  draw(drawer) {
     // Desenha uma linha do vertice origem para o vertice destino
-    context.strokeStyle = this.streetColor
-    context.lineWidth = streetWidth
+    const { strokePath } = drawer.drawWith(
+      { style: this.streetColor },
+      { lineWidth: streetWidth }
+    )
 
-    context.beginPath()
-
-    context.moveTo(this.source.x, this.source.y)
-
-    context.lineTo(this.destination.x, this.destination.y)
-
-    context.stroke()
+    strokePath(this.source, this.destination)
   }
 
   // Retorna o angulo desta aresta

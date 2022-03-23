@@ -5,6 +5,7 @@ import Edge from '../classes/Drawables/Edge'
 import Vertex from '../classes/Drawables/Vertex'
 import appConfig from '../configuration/appConfig'
 import { sin, cos } from './trygonometry'
+import Camera from '../classes/Camera'
 
 const { pixelsPerKilometer } = appConfig
 
@@ -13,7 +14,9 @@ export default function seedGraph(
   numberOfVertices = 10,
   mapPadding = 20,
   numberOfCars = 4,
-  numberOfClients = 8
+  numberOfClients = 8,
+  mapWidth = 1000,
+  mapHeight = 600
 ) {
   // Destroi os anteriormente definidos
   Drawable.drawableInstances = {}
@@ -21,18 +24,16 @@ export default function seedGraph(
   if (numberOfVertices <= 1)
     throw new Error('Necessita de pelo menos 2 vertices')
 
-  // Helper para gerar coordenada aleatoria
-  const randomForLength = (length) =>
-    mapPadding + Math.random() * (length - mapPadding * 2)
+  // Helper para gerar coordenadas aleatorias centralizadas em 0,0
+  const randomCoords = () => ({
+    x: mapPadding + Math.random() * (mapWidth - mapPadding * 2) - mapWidth / 2,
+    y:
+      mapPadding + Math.random() * (mapHeight - mapPadding * 2) - mapHeight / 2,
+  })
 
   // Gerar vertices
   for (let vertexId = 0; vertexId < numberOfVertices; vertexId++) {
-    new Vertex(
-      vertexId,
-      randomForLength(window.innerWidth),
-      randomForLength(window.innerHeight),
-      true
-    )
+    new Vertex(vertexId, randomCoords().x, randomCoords().y, true)
   }
 
   // Helpers para pegar vertice aleatorio
@@ -90,14 +91,8 @@ export default function seedGraph(
     )
   }
 
-  // Gera uma coordenada aleatoria
-  const getRandomCoordinates = () => ({
-    x: randomForLength(window.innerWidth),
-    y: randomForLength(window.innerHeight),
-  })
-
   // Gerar clientes
   for (let clientId = 0; clientId < numberOfClients; clientId++) {
-    new Client(clientId, getRandomCoordinates(), getRandomCoordinates())
+    new Client(clientId, randomCoords(), randomCoords())
   }
 }

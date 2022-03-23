@@ -8,10 +8,13 @@ export default {
   //=== SETAS DE SENTIDO DA RUA
 
   // A cor das setas que indica o sentido das ruas
-  streetArrowsColor: '#ffffff',
+  streetArrowColor: '#ffffff',
 
   // Altura das flechas que apontam a direcao da rua
   streetArrowHeight: 10,
+
+  // Grossura das flechas
+  streetArrowWidth: streetWidth / 5,
 
   // Intervalo em que as setas sao desenhadas
   streetArrowInterval: 60,

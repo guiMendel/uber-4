@@ -11,7 +11,15 @@ export default {
   pixelsPerKilometer: 100,
 
   // Em qual ordem cada classe sera desenhada. As primeiras ficam embaixo
-  drawOrder: ['Vertex', 'Edge', 'ArrowIndicators', 'Client', 'Car', 'IO'],
+  drawOrder: [
+    'Vertex',
+    'Edge',
+    'ArrowIndicators',
+    'Client',
+    'Car',
+    'Camera',
+    'IO',
+  ],
 
   //=== PAREAMENTO CARRO & CLIENTE
 
