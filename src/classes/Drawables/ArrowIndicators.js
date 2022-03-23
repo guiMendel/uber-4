@@ -1,4 +1,5 @@
 import theme from '../../configuration/theme'
+import { sin, cos } from '../../helpers/trygonometry'
 import Drawable from './Drawable'
 import Edge from './Edge'
 
@@ -9,11 +10,6 @@ const {
   streetWidth,
   streetArrowWidth,
 } = theme
-
-// Helpers
-// Trigonometry
-const sin = (angle) => Math.sin(angle * (Math.PI / 180))
-const cos = (angle) => Math.cos(angle * (Math.PI / 180))
 
 // Define como desenhar as flechas que indicam o sentido de uma rua
 export default class ArrowIndicators extends Drawable {

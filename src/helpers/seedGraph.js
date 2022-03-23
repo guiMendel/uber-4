@@ -5,18 +5,16 @@ import Edge from '../classes/Drawables/Edge'
 import Vertex from '../classes/Drawables/Vertex'
 import appConfig from '../configuration/appConfig'
 import { sin, cos } from './trygonometry'
-import Camera from '../classes/Camera'
 
 const { pixelsPerKilometer } = appConfig
 
 // Gera grafos e arestas aleatorios para fins de teste
 export default function seedGraph(
-  numberOfVertices = 10,
-  mapPadding = 20,
-  numberOfCars = 4,
-  numberOfClients = 8,
-  mapWidth = 1000,
-  mapHeight = 600
+  numberOfVertices = 20,
+  numberOfCars = 10,
+  numberOfClients = 13,
+  mapWidth = 3000,
+  mapHeight = 3000
 ) {
   // Destroi os anteriormente definidos
   Drawable.drawableInstances = {}
@@ -26,9 +24,8 @@ export default function seedGraph(
 
   // Helper para gerar coordenadas aleatorias centralizadas em 0,0
   const randomCoords = () => ({
-    x: mapPadding + Math.random() * (mapWidth - mapPadding * 2) - mapWidth / 2,
-    y:
-      mapPadding + Math.random() * (mapHeight - mapPadding * 2) - mapHeight / 2,
+    x: Math.random() * mapWidth - mapWidth / 2,
+    y: Math.random() * mapHeight - mapHeight / 2,
   })
 
   // Gerar vertices

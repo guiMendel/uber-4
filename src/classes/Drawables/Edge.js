@@ -1,14 +1,10 @@
 import theme from '../../configuration/theme'
+import { sin, cos } from '../../helpers/trygonometry'
 import Drawable from './Drawable'
 import Vertex from './Vertex'
 
 // Extrai valores uteis
 const { streetColorSlowest, streetWidth, streetColorHighest } = theme
-
-// Helpers
-// Trigonometry
-const sin = (angle) => Math.sin(angle * (Math.PI / 180))
-const cos = (angle) => Math.cos(angle * (Math.PI / 180))
 
 // Define uma aresta
 export default class Edge extends Drawable {
