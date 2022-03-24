@@ -3,7 +3,6 @@ import theme from '../configuration/theme'
 import appConfig from '../configuration/appConfig'
 import seedGraph from '../helpers/seedGraph'
 import ArrowIndicators from './Drawables/ArrowIndicators'
-import Drawable from './Drawables/Drawable'
 
 import whiteCar from '../assets/white-car.png'
 import man from '../assets/man.png'
@@ -13,6 +12,8 @@ import IO from './IO'
 import Camera from './Camera'
 import Drawer from './Drawer'
 import Client from './Drawables/Client'
+import RouteCalculator from './RouteCalculator'
+import Debug from './Drawables/Debug'
 
 // Extrai valores uteis
 const { streetWidth, carWidth, clientWidth } = theme
@@ -41,11 +42,12 @@ export default class Map {
       seedGraph()
 
       Client.setup()
-
-      IO.buttons['select-route'].onTrigger(() => console.log(42))
+      RouteCalculator.setup()
 
       // Cria o singleton ArrowIndicators
       new ArrowIndicators()
+
+      new Debug()
 
       // Armazena o wrapper de contexto para desenhar
       this.drawer = new Drawer(canvasContext)

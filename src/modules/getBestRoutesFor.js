@@ -1,8 +1,9 @@
 import Heap from '../classes/DataStructures/Heap'
 import Car from '../classes/Drawables/Car'
+import Debug from '../classes/Drawables/Debug'
 import Drawable from '../classes/Drawables/Drawable'
 import appConfig from '../configuration/appConfig'
-import { getDistance } from '../helpers/vectorDistance'
+import { displacePoint, getDistance } from '../helpers/vectorDistance'
 
 // Este modulo fornece um metodo que, dado um cliente, descobre para qual coordenada ele deve se deslocar, e quais o melhores carros que podem lhe buscar nesta coordenada e lhe deixar e seu destino final
 
@@ -52,7 +53,7 @@ export default async function getBestRoutesFor(client) {
   })
 
   // Inicia as iteracoes de A*
-  for (let iteration = 0; iteration < totalIterations; iteration++) {
+  for (let iteration = 0; iteration < 1; iteration++) {
     // Da um step em cada stepper
     const iterationResult = await Promise.all(
       steppers.map((stepper) => stepper.step())
@@ -128,6 +129,8 @@ class AStarStepper {
 
       this.openNodes.insert(node)
       this.edgeToNode[edge.id] = node
+
+      return
     }
 
     // Verifica se ja ha um node para essa edge
@@ -156,6 +159,9 @@ class Node {
   // Se este node ja foi expandido
   closed = false
 
+  // Este campo aramazenara o valor de h se ele for excepcional para este node
+  #exceptionalH = undefined
+
   constructor(parent, edge, stepper, car) {
     this.stepper = stepper
     this.edge = edge
@@ -164,24 +170,31 @@ class Node {
     // A partir do pai, descobre o seu g
     this.g = parent == null ? 0 : parent.g + parent.time
 
+    // Se recebemos o carro, calculamos um valor de h e time excepcional
+    if (car != undefined) {
+      this.time = getDistance(car, edge.destination) / edge.mapSpeed
+      this.calculateExceptionalH(car)
+      return
+    }
+
     // A partir da edge, descobre seu time
     this.time = edge.mapDistance / edge.mapSpeed
-
-    // Se recebemos o carro, calculamos um valor de h excepcional
-    if (car != undefined) calculateExceptionalH(car)
   }
 
   // Retorna o valor de h sobre esse no. Consulta o hCache, mas se n tiver registro, realiza o calculo e registra
   get h() {
     // Se houver um valor excepcional de h para este no, usamos ele
-    if (this.#h != undefined) return this.#h
+    if (this.#exceptionalH != undefined) return this.#exceptionalH
 
     // Verifica se ja ha registro
+    const cachedH = this.stepper.hCache[this.edge.id]
+    console.log(cachedH)
+
     if (this.stepper.hCache[this.edge.id] != undefined)
-      return this.hCache[this.edge.id]
+      return this.stepper.hCache[this.edge.id]
 
     // Se nao, calcula
-    const distances = edge.getDistances(
+    const distances = this.edge.getDistances(
       this.stepper.client.x,
       this.stepper.client.y
     )
@@ -202,6 +215,16 @@ class Node {
 
     console.log('Calculado h:', h)
 
+    const projectionCoords = displacePoint(
+      this.edge.source,
+      distances.projection,
+      this.edge.angle
+    )
+
+    Debug.drawLine(this.stepper.client, projectionCoords)
+
+    Debug.drawLine(this.edge.source, projectionCoords)
+
     // Registra
     this.stepper.hCache[this.edge.id] = h
 
@@ -214,11 +237,11 @@ class Node {
     return Math.max(this.g + this.h.car, this.h.client)
   }
 
-  // Deve se rutilziado somente par ao no inicial, quando o carro se encontra em algum ponto da aresta
+  // Deve ser utilziado somente no node inicial, quando o carro se encontra em algum ponto da aresta
   // Nos demais casos, o carro vai ser considerado em source
   calculateExceptionalH(car) {
     // Pegamos as distancias do cliente ate essa aresta
-    const distances = edge.getDistances(
+    const distances = this.edge.getDistances(
       this.stepper.client.x,
       this.stepper.client.y
     )
@@ -233,7 +256,7 @@ class Node {
         distances.sourceSquared - Math.pow(distances.projection, 2)
       )
 
-      this.#h = {
+      this.#exceptionalH = {
         // Nesse caso o cliente anda ate sua projecao
         // A distancia em pixels eh calculada em km, e em seguida divididmos pela velocidade de andar do cliente para achar o tempo em horas
         client: clientDistance / pixelsPerKilometer / clientWalkSpeed,
@@ -241,10 +264,20 @@ class Node {
         // O carro vai andar somente sua distancia ate a projecao
         car: (distances.projection - carSourceDistance) / this.edge.mapSpeed,
       }
+
+      const projectionCoords = displacePoint(
+        this.edge.source,
+        distances.projection,
+        this.edge.angle
+      )
+
+      Debug.drawLine(this.stepper.client, projectionCoords)
+
+      Debug.drawLine(car, projectionCoords)
     }
     // ou ele esta depois, e como nao pode voltar, o cliente tera q andar ate ele
     else {
-      this.#h = {
+      this.#exceptionalH = {
         // Nesse caso o cliente anda ate o carro
         client:
           getDistance(this.stepper.client, car) /
@@ -254,7 +287,11 @@ class Node {
         // O carro fica parado
         car: 0,
       }
+
+      Debug.drawLine(this.stepper.client, car)
     }
+
+    console.log('Calculado h excepcional:', this.#exceptionalH)
   }
 
   // Verifica se o novo pai resultaria num custo menor

@@ -11,10 +11,10 @@ const { pixelsPerKilometer } = appConfig
 // Gera grafos e arestas aleatorios para fins de teste
 export default function seedGraph(
   numberOfVertices = 12,
-  numberOfCars = 6,
-  numberOfClients = 5,
-  mapWidth = 1000,
-  mapHeight = 1000
+  numberOfCars = 1,
+  numberOfClients = 1,
+  mapWidth = window.innerWidth - 20,
+  mapHeight = window.innerHeight - 20
 ) {
   // Destroi os anteriormente definidos
   Drawable.drawableInstances = {}
