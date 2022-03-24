@@ -10,7 +10,7 @@ const { pixelsPerKilometer } = appConfig
 
 // Gera grafos e arestas aleatorios para fins de teste
 export default function seedGraph(
-  numberOfVertices = 12,
+  numberOfVertices = 6,
   numberOfCars = 1,
   numberOfClients = 1,
   mapWidth = window.innerWidth - 20,
@@ -58,6 +58,18 @@ export default function seedGraph(
   for (let edgeId = 0; edgeId < numberOfVertices; edgeId++) {
     new Edge(
       edgeId,
+      Drawable.drawableInstances[Vertex.name][edgeId],
+      Drawable.drawableInstances[Vertex.name][randomVertexIdExcept(edgeId)],
+      {
+        mapSpeed: randomSpeed(),
+      }
+    )
+  }
+
+  // Gerar arestas para cada vertice
+  for (let edgeId = 0; edgeId < numberOfVertices; edgeId++) {
+    new Edge(
+      edgeId + numberOfVertices,
       Drawable.drawableInstances[Vertex.name][edgeId],
       Drawable.drawableInstances[Vertex.name][randomVertexIdExcept(edgeId)],
       {

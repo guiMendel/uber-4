@@ -131,10 +131,13 @@ export default class Edge extends Drawable {
 
     // Usamos uma equacao para encontrar o quao longe na aresta esta esta projecao, saido de source
     // Limita seu valor ao tamanho da aresta
-    const projectionDistance = Math.min(
-      (sourceDistance - destinationDistance) / (2 * this.mapDistance) +
-        this.mapDistance / 2,
-      this.mapDistance
+    const projectionDistance = Math.max(
+      0,
+      Math.min(
+        (sourceDistance - destinationDistance) / (2 * this.mapDistance) +
+          this.mapDistance / 2,
+        this.mapDistance
+      )
     )
 
     return {

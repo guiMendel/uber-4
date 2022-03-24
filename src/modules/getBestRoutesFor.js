@@ -31,7 +31,12 @@ const {
   newBestPathReward,
   pixelsPerKilometer,
   clientWalkSpeed,
+  countOfNodesToConsider,
 } = appConfig
+
+// Helper para criar um Heap de nodes
+const newNodeHeap = () =>
+  new Heap((nodeA, nodeB) => nodeA.totalCost < nodeB.totalCost)
 
 // Encontra as rotas mais rapidas par aque um cliente chegue em seu destino, e com quais carros
 export default async function getBestRoutesFor(client) {
@@ -42,9 +47,12 @@ export default async function getBestRoutesFor(client) {
   // Contara as iteracoes totais. Ja coloca o valor inicial
   let totalIterations = pathExpansionIterations
 
+  // Invoca as funcoes nesta lista ao comeco de cada iteracao
+  const iterationCallbacks = []
+
   // Steppers para cada carro
   const steppers = getSubsetOfCarsFor(client).map((car) => {
-    const stepper = new AStarStepper(client, car, hCache)
+    const stepper = new AStarStepper(client, car, hCache, iterationCallbacks)
 
     // Sempre que o stepper arrumar um novo best, aumenta o nmr de iteracoes
     stepper.onNewBest(() => (totalIterations += newBestPathReward))
@@ -53,15 +61,52 @@ export default async function getBestRoutesFor(client) {
   })
 
   // Inicia as iteracoes de A*
-  for (let iteration = 0; iteration < 1; iteration++) {
+  for (let iteration = 0; iteration < totalIterations; iteration++) {
+    // for (const c of iterationCallbacks) c()
+
     // Da um step em cada stepper
     const iterationResult = await Promise.all(
       steppers.map((stepper) => stepper.step())
     )
 
     // Se todos steppers terminaram, finalize as iteracoes
-    if (iterationResult.every((result) => result == true)) break
+    if (iterationResult.every((result) => result == true)) {
+      console.log(`Todos steppers finalizaram em ${iteration + 1} iteracoes`)
+      break
+    }
   }
+
+  // Coleta os melhores resultados finais
+  const bestStepeprNodes = newNodeHeap()
+
+  // Passa por cada stepper e coletas seus melhores nodes
+  for (const stepper of steppers) {
+    // Pega os N melhores nodes deste stepper
+    for (let i = 0; i < countOfNodesToConsider; i++) {
+      const node = stepper.closedNodes.pop()
+
+      if (node == undefined) break
+
+      bestStepeprNodes.insert(node)
+    }
+  }
+
+  // Monta um vetor com os N melhores nodes totais
+  const bestNodes = []
+
+  for (let i = 0; i < countOfNodesToConsider; i++) {
+    const node = bestStepeprNodes.pop()
+
+    console.log(node)
+
+    if (node == undefined) break
+
+    bestNodes.push(node)
+  }
+
+  for (const c of iterationCallbacks) c()
+
+  return bestNodes
 }
 
 // Gera uma estrutura que, dado um carro e um cache de h, armazena os nos descobertos e fornece uma interface para realizar os passos do A* modificado
@@ -70,19 +115,20 @@ class AStarStepper {
   #newBestListeners = []
 
   // OpenNodes e closedNodes sao heaps, que da prioridade para nos com menor custo total
-  openNodes = new Heap((nodeA, nodeB) => nodeA.totalCost < nodeB.totalCost)
+  openNodes = newNodeHeap()
 
-  closedNodes = new Heap((nodeA, nodeB) => nodeA.totalCost < nodeB.totalCost)
+  closedNodes = newNodeHeap()
 
   // Aqui nos guardamos a relacao edge/node
   // A chave vai ser o id da edge, o vlaor vai ser o node
   edgeToNode = {}
 
-  constructor(client, car, hCache) {
+  constructor(client, car, hCache, iterationCallbacks) {
     // Armazena o carro & cliente
     this.car = car
     this.client = client
     this.hCache = hCache
+    this.iterationCallbacks = iterationCallbacks
 
     // Inicializa o primeiro no
     this.#registerNodeFor(car.edge, null, car)
@@ -125,7 +171,7 @@ class AStarStepper {
   #registerNodeFor(edge, parentNode, car) {
     // Se recebeu um car, eh o node inicial: cria um no com h excepcional
     if (car != undefined) {
-      const node = new Node(null, edge, this, car)
+      const node = new Node(null, edge, this, car, this.iterationCallbacks)
 
       this.openNodes.insert(node)
       this.edgeToNode[edge.id] = node
@@ -147,7 +193,7 @@ class AStarStepper {
     }
 
     // Se nao havia um node, criar
-    const node = new Node(parentNode, edge, this)
+    const node = new Node(parentNode, edge, this, null, this.iterationCallbacks)
 
     this.openNodes.insert(node)
     this.edgeToNode[edge.id] = node
@@ -156,13 +202,16 @@ class AStarStepper {
 
 // Define cada no do A*
 class Node {
+  // Guarda as linhas de debug que esta desenhando
+  debugLines = []
+
   // Se este node ja foi expandido
   closed = false
 
   // Este campo aramazenara o valor de h se ele for excepcional para este node
   #exceptionalH = undefined
 
-  constructor(parent, edge, stepper, car) {
+  constructor(parent, edge, stepper, car, iterationCallbacks) {
     this.stepper = stepper
     this.edge = edge
     this.parent = parent
@@ -171,24 +220,24 @@ class Node {
     this.g = parent == null ? 0 : parent.g + parent.time
 
     // Se recebemos o carro, calculamos um valor de h e time excepcional
-    if (car != undefined) {
+    if (car != null) {
       this.time = getDistance(car, edge.destination) / edge.mapSpeed
       this.calculateExceptionalH(car)
-      return
+    } else {
+      // A partir da edge, descobre seu time
+      this.time = edge.mapDistance / edge.mapSpeed
     }
 
-    // A partir da edge, descobre seu time
-    this.time = edge.mapDistance / edge.mapSpeed
+    iterationCallbacks.push(() => {
+      this.debugLines.forEach((line) => line())
+      this.debugLines = []
+    })
   }
 
   // Retorna o valor de h sobre esse no. Consulta o hCache, mas se n tiver registro, realiza o calculo e registra
   get h() {
     // Se houver um valor excepcional de h para este no, usamos ele
     if (this.#exceptionalH != undefined) return this.#exceptionalH
-
-    // Verifica se ja ha registro
-    const cachedH = this.stepper.hCache[this.edge.id]
-    console.log(cachedH)
 
     if (this.stepper.hCache[this.edge.id] != undefined)
       return this.stepper.hCache[this.edge.id]
@@ -221,10 +270,9 @@ class Node {
       this.edge.angle
     )
 
-    Debug.drawLine(this.stepper.client, projectionCoords)
+    this.debugLines.push(Debug.drawLine(this.stepper.client, projectionCoords))
 
-    Debug.drawLine(this.edge.source, projectionCoords)
-
+    this.debugLines.push(Debug.drawLine(this.edge.source, projectionCoords))
     // Registra
     this.stepper.hCache[this.edge.id] = h
 
@@ -271,9 +319,11 @@ class Node {
         this.edge.angle
       )
 
-      Debug.drawLine(this.stepper.client, projectionCoords)
+      this.debugLines.push(
+        Debug.drawLine(this.stepper.client, projectionCoords)
+      )
 
-      Debug.drawLine(car, projectionCoords)
+      this.debugLines.push(Debug.drawLine(car, projectionCoords))
     }
     // ou ele esta depois, e como nao pode voltar, o cliente tera q andar ate ele
     else {
@@ -288,7 +338,7 @@ class Node {
         car: 0,
       }
 
-      Debug.drawLine(this.stepper.client, car)
+      this.debugLines.push(Debug.drawLine(this.stepper.client, car))
     }
 
     console.log('Calculado h excepcional:', this.#exceptionalH)
