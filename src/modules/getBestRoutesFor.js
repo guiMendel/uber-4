@@ -239,8 +239,10 @@ class Node {
     // Se houver um valor excepcional de h para este no, usamos ele
     if (this.#exceptionalH != undefined) return this.#exceptionalH
 
-    if (this.stepper.hCache[this.edge.id] != undefined)
-      return this.stepper.hCache[this.edge.id]
+    if (this.stepper.hCache[this.edge.id] != undefined) {
+      this.projectionCoords = this.stepper.hCache[this.edge.id].projectionCoords
+      return this.stepper.hCache[this.edge.id].h
+    }
 
     // Se nao, calcula
     const distances = this.edge.getDistances(
@@ -278,7 +280,10 @@ class Node {
       Debug.drawLine(this.edge.source, this.projectionCoords)
     )
     // Registra
-    this.stepper.hCache[this.edge.id] = h
+    this.stepper.hCache[this.edge.id] = {
+      h,
+      projectionCoords: this.projectionCoords,
+    }
 
     return h
   }
