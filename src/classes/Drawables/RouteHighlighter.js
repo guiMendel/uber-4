@@ -115,8 +115,6 @@ export default class RouteHighlighter extends Drawable {
       lineWidth: clientWalkPathWidth,
     })
 
-    console.log(client, rendezVous)
-
     frettedPath(
       {
         gap: clientWalkPathLineGap,
