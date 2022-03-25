@@ -42,12 +42,6 @@ export default class RouteHighlighter extends Drawable {
       lineWidth: 1.5 * streetWidth,
     })
 
-    this.drawClientWalkLine(
-      this.highlightedNode.stepper.client,
-      this.highlightedNode.projectionCoords,
-      drawer
-    )
-
     this.drawHighlight(
       this.highlightedNode,
       strokePath,
@@ -62,19 +56,19 @@ export default class RouteHighlighter extends Drawable {
     this.drawArrows(this.highlightedNode, drawer)
 
     // Draw the car
-    fillArc(
-      this.highlightedNode.stepper.car,
-      this.highlightedNode.stepper.car.carImage.height / 2
-    )
+    fillArc(this.highlightedNode.stepper.source, 30)
 
-    fillArc(
+    fillArc(this.highlightedNode.projectionCoords, 30)
+
+    this.drawClientWalkLine(
+      this.highlightedNode.stepper.destination,
       this.highlightedNode.projectionCoords,
-      this.highlightedNode.stepper.car.carImage.height / 2
+      drawer
     )
 
-    this.highlightedNode.stepper.car.draw(drawer)
+    this.highlightedNode.stepper.source.draw(drawer)
 
-    this.highlightedNode.stepper.client.draw(drawer)
+    this.highlightedNode.stepper.destination.draw(drawer)
   }
 
   // Desenha uma linha de destaque para o node fornecido e seus pais
@@ -83,7 +77,7 @@ export default class RouteHighlighter extends Drawable {
       strokePath(node.edge.source, destination ?? node.edge.destination)
       this.drawHighlight(node.parent, strokePath, fillArc)
     } else {
-      strokePath(node.stepper.car, destination ?? node.edge.destination)
+      strokePath(node.stepper.source, destination ?? node.edge.destination)
     }
 
     if (destination == null) fillArc(node.edge.destination, 0.75 * streetWidth)

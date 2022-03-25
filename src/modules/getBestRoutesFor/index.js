@@ -27,32 +27,21 @@ import AStarStepper, { newNodeHeap } from './AStarStepper'
 const { pathExpansionIterations, newBestPathReward, countOfNodesToConsider } =
   appConfig
 
-// Encontra as rotas mais rapidas par aque um cliente chegue em seu destino, e com quais carros
-export default async function getBestRoutesFor(client) {
+// Realiza todas as iteracoes dos steppers fornecidos
+// Retorna um heap com os melhores nodes encontrados
+async function expandSteppers(getTotalIterations, makeSteppers) {
   // Inicializa um cache para armazenar os valores calculados de h
   // A chave sera o id da aresta, o valor sera o objeto resultado de executar h com essa aresta
   const hCache = {}
 
-  // Contara as iteracoes totais. Ja coloca o valor inicial
-  let totalIterations = pathExpansionIterations
-
   // Invoca as funcoes nesta lista ao comeco de cada iteracao
   const iterationCallbacks = []
 
-  // Steppers para cada carro
-  const steppers = getSubsetOfCarsFor(client).map((car) => {
-    const stepper = new AStarStepper(client, car, hCache, iterationCallbacks)
-
-    // Sempre que o stepper arrumar um novo best, aumenta o nmr de iteracoes
-    stepper.onNewBest(() => (totalIterations += newBestPathReward))
-
-    return stepper
-  })
+  // Gera os steppers
+  const steppers = makeSteppers(hCache, iterationCallbacks)
 
   // Inicia as iteracoes de A*
-  for (let iteration = 0; iteration < totalIterations; iteration++) {
-    // for (const c of iterationCallbacks) c()
-
+  for (let iteration = 0; iteration < getTotalIterations(); iteration++) {
     // Da um step em cada stepper
     const iterationResult = await Promise.all(
       steppers.map((stepper) => stepper.step())
@@ -66,9 +55,9 @@ export default async function getBestRoutesFor(client) {
   }
 
   // Coleta os melhores resultados finais
-  const bestStepeprNodes = newNodeHeap()
+  const bestStepperNodes = newNodeHeap()
 
-  // Passa por cada stepper e coletas seus melhores nodes
+  // Passa por cada stepper coleta seus melhores nodes
   for (const stepper of steppers) {
     // Pega os N melhores nodes deste stepper
     for (let i = 0; i < countOfNodesToConsider; i++) {
@@ -76,24 +65,57 @@ export default async function getBestRoutesFor(client) {
 
       if (node == undefined) break
 
-      bestStepeprNodes.insert(node)
+      bestStepperNodes.insert(node)
     }
   }
+
+  // Apaga os desenhos de debug
+  for (const callback of iterationCallbacks) callback()
+
+  return bestStepperNodes
+}
+
+// Encontra as rotas mais rapidas par aque um cliente chegue em seu destino, e com quais carros
+export default async function getBestRoutesFor(client) {
+  // Contara as iteracoes totais. Ja coloca o valor inicial
+  let totalIterations = pathExpansionIterations
+
+  // Expande os steppers
+  const bestStepperNodes = await expandSteppers(
+    () => totalIterations,
+    // Steppers para cada carro
+    (hCache, iterationCallbacks) => {
+      return getSubsetOfCarsFor(client).map((car) => {
+        const stepper = new AStarStepper(
+          client,
+          car,
+          hCache,
+          iterationCallbacks
+        )
+
+        // Sempre que o stepper arrumar um novo best, aumenta o nmr de iteracoes
+        stepper.onNewBest(() => (totalIterations += newBestPathReward))
+
+        return stepper
+      })
+    }
+  )
 
   // Monta um vetor com os N melhores nodes totais
   const bestNodes = []
 
-  for (let i = 0; i < countOfNodesToConsider; i++) {
-    const node = bestStepeprNodes.pop()
+  // console.log(bestStepperNodes.getRawDataCopy().map((node) => node.totalCost))
 
-    console.log(node)
+  for (let i = 0; i < countOfNodesToConsider; i++) {
+    const node = bestStepperNodes.pop()
+
+    // console.log(node.totalCost)
+    // console.log(node)
 
     if (node == undefined) break
 
     bestNodes.push(node)
   }
-
-  for (const c of iterationCallbacks) c()
 
   return bestNodes
 }

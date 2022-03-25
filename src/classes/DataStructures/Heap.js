@@ -57,6 +57,15 @@ export default class Heap {
     this.#newHighestPriorityListeners.push(listener)
   }
 
+  // Permite abrir o capo e ver oq tem dentro
+  getRawDataCopy() {
+    return [...this.#data]
+  }
+
+  setRawData(data) {
+    this.#data = data
+  }
+
   // Define como o elemento faz swim up no array que armazena os dados do heap
   #swimUp(index) {
     if (index == 0) return

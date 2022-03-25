@@ -3,9 +3,18 @@ import Node from './Node'
 
 // Helper para criar um Heap de nodes
 export const newNodeHeap = () =>
-  new Heap((nodeA, nodeB) => nodeA.totalCost < nodeB.totalCost)
+  new Heap((nodeA, nodeB) => {
+    if (nodeA.totalCost < nodeB.totalCost) return true
+    if (nodeA.totalCost > nodeB.totalCost) return false
 
-// Gera uma estrutura que, dado um carro e um cache de h, armazena os nos descobertos e fornece uma interface para realizar os passos do A* modificado
+    // Se os custos sao iguais, o maior custo dos 2 eh igual. Entao, comparamos o menor custo
+    if (nodeA.g + nodeA.h.car < nodeB.g + nodeB.h.car) return true
+    if (nodeA.h.client < nodeB.h.client) return true
+
+    return false
+  })
+
+// Gera uma estrutura que, dado um ponto de inicio e um destino, e um cache de h, armazena os nos descobertos e fornece uma interface para realizar os passos do A* modificado
 export default class AStarStepper {
   // Listeners the quando houver um novo best path
   #newBestListeners = []
@@ -19,15 +28,15 @@ export default class AStarStepper {
   // A chave vai ser o id da edge, o vlaor vai ser o node
   edgeToNode = {}
 
-  constructor(client, car, hCache, iterationCallbacks) {
+  constructor(destination, source, hCache, iterationCallbacks) {
     // Armazena o carro & cliente
-    this.car = car
-    this.client = client
+    this.source = source
+    this.destination = destination
     this.hCache = hCache
     this.iterationCallbacks = iterationCallbacks
 
     // Inicializa o primeiro no
-    this.#registerNodeFor(car.edge, null, car)
+    this.#registerNodeFor(source.edge, null, source)
 
     // Levanta evento de new best sempre que o closed nodes tiver um novo highest priority
     this.closedNodes.onNewHighestPriority(() => {
@@ -64,10 +73,10 @@ export default class AStarStepper {
   }
 
   // Dado a aresta e um potencial node pai, verifica se colcoar o node desta aresta como filho deste pai sera vantajoso
-  #registerNodeFor(edge, parentNode, car) {
-    // Se recebeu um car, eh o node inicial: cria um no com h excepcional
-    if (car != undefined) {
-      const node = new Node(null, edge, this, car, this.iterationCallbacks)
+  #registerNodeFor(edge, parentNode, source) {
+    // Se recebeu um source, eh o node inicial: cria um no com h excepcional
+    if (source != undefined) {
+      const node = new Node(null, edge, this, source, this.iterationCallbacks)
 
       this.openNodes.insert(node)
       this.edgeToNode[edge.id] = node

@@ -15,7 +15,7 @@ export default class Node {
   // Este campo aramazenara o valor de h se ele for excepcional para este node
   #exceptionalH = undefined
 
-  constructor(parent, edge, stepper, car, iterationCallbacks) {
+  constructor(parent, edge, stepper, source, iterationCallbacks) {
     this.stepper = stepper
     this.edge = edge
     this.parent = parent
@@ -23,10 +23,10 @@ export default class Node {
     // A partir do pai, descobre o seu g
     this.g = parent == null ? 0 : parent.g + parent.time
 
-    // Se recebemos o carro, calculamos um valor de h e time excepcional
-    if (car != null) {
-      this.time = getDistance(car, edge.destination) / edge.mapSpeed
-      this.calculateExceptionalH(car)
+    // Se recebemos o source, calculamos um valor de h e time excepcional
+    if (source != null) {
+      this.time = getDistance(source, edge.destination) / edge.mapSpeed
+      this.calculateExceptionalH(source)
     } else {
       // A partir da edge, descobre seu time
       this.time = edge.mapDistance / edge.mapSpeed
@@ -50,8 +50,8 @@ export default class Node {
 
     // Se nao, calcula
     const distances = this.edge.getDistances(
-      this.stepper.client.x,
-      this.stepper.client.y
+      this.stepper.destination.x,
+      this.stepper.destination.y
     )
 
     // Calcula a distancia minima do cliente ate a aresta
@@ -68,7 +68,7 @@ export default class Node {
       car: distances.projection / this.edge.mapSpeed,
     }
 
-    console.log('Calculado h:', h)
+    // console.log('Calculado h:', h)
 
     this.projectionCoords = displacePoint(
       this.edge.source,
@@ -77,7 +77,7 @@ export default class Node {
     )
 
     this.debugLines.push(
-      Debug.drawLine(this.stepper.client, this.projectionCoords)
+      Debug.drawLine(this.stepper.destination, this.projectionCoords)
     )
 
     this.debugLines.push(
@@ -100,14 +100,14 @@ export default class Node {
 
   // Deve ser utilziado somente no node inicial, quando o carro se encontra em algum ponto da aresta
   // Nos demais casos, o carro vai ser considerado em source
-  calculateExceptionalH(car) {
+  calculateExceptionalH(source) {
     // Pegamos as distancias do cliente ate essa aresta
     const distances = this.edge.getDistances(
-      this.stepper.client.x,
-      this.stepper.client.y
+      this.stepper.destination.x,
+      this.stepper.destination.y
     )
 
-    const carSourceDistance = getDistance(this.edge.source, car)
+    const carSourceDistance = getDistance(this.edge.source, source)
 
     // Existem 2 casos:
     // ou o carro esta antes da projecao do cliente e pode passar nela
@@ -133,19 +133,19 @@ export default class Node {
       )
 
       this.debugLines.push(
-        Debug.drawLine(this.stepper.client, this.projectionCoords)
+        Debug.drawLine(this.stepper.destination, this.projectionCoords)
       )
 
-      this.debugLines.push(Debug.drawLine(car, this.projectionCoords))
+      this.debugLines.push(Debug.drawLine(source, this.projectionCoords))
     }
     // ou ele esta depois, e como nao pode voltar, o cliente tera q andar ate ele
     else {
-      this.projectionCoords = { x: car.x, y: car.y }
+      this.projectionCoords = { x: source.x, y: source.y }
 
       this.#exceptionalH = {
         // Nesse caso o cliente anda ate o carro
         client:
-          getDistance(this.stepper.client, car) /
+          getDistance(this.stepper.destination, source) /
           pixelsPerKilometer /
           clientWalkSpeed,
 
@@ -153,10 +153,10 @@ export default class Node {
         car: 0,
       }
 
-      this.debugLines.push(Debug.drawLine(this.stepper.client, car))
+      this.debugLines.push(Debug.drawLine(this.stepper.destination, source))
     }
 
-    console.log('Calculado h excepcional:', this.#exceptionalH)
+    // console.log('Calculado h excepcional:', this.#exceptionalH)
   }
 
   // Verifica se o novo pai resultaria num custo menor
