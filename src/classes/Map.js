@@ -14,6 +14,7 @@ import Drawer from './Drawer'
 import Client from './Drawables/Client'
 import RouteCalculator from './RouteCalculator'
 import Debug from './Drawables/Debug'
+import RouteHighlighter from './Drawables/RouteHighlighter'
 
 // Extrai valores uteis
 const { streetWidth, carWidth, clientWidth } = theme
@@ -48,6 +49,8 @@ export default class Map {
       new ArrowIndicators()
 
       new Debug()
+
+      new RouteHighlighter()
 
       // Armazena o wrapper de contexto para desenhar
       this.drawer = new Drawer(canvasContext)

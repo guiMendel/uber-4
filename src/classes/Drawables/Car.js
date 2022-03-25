@@ -18,7 +18,7 @@ export default class Car extends Drawable {
   }
 
   draw(drawer) {
-    const { drawImage } = drawer.drawWith()
+    const { drawImage } = drawer.drawWith({})
 
     drawImage(this.carImage, this, this.edge.angle - 90)
   }

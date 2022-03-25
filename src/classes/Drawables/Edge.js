@@ -1,6 +1,11 @@
 import theme from '../../configuration/theme'
 import { sin, cos } from '../../helpers/trygonometry'
-import { getDistance, getSquaredDistance } from '../../helpers/vectorDistance'
+import {
+  angleBetween,
+  getDistance,
+  getSquaredDistance,
+} from '../../helpers/vectorDistance'
+
 import Drawable from './Drawable'
 
 // Extrai valores uteis
@@ -46,26 +51,28 @@ export default class Edge extends Drawable {
   // Se desenha
   draw(drawer) {
     // Desenha uma linha do vertice origem para o vertice destino
-    const { strokePath } = drawer.drawWith(
-      { style: this.streetColor },
-      { lineWidth: streetWidth }
-    )
+    const { strokePath } = drawer.drawWith({
+      style: this.streetColor,
+      lineWidth: streetWidth,
+    })
 
     strokePath(this.source, this.destination)
   }
 
   // Retorna o angulo desta aresta
   get angle() {
-    return (
-      -(
-        Math.atan(
-          (this.destination.y - this.source.y) /
-            (this.destination.x - this.source.x)
-        ) * 180
-      ) /
-        Math.PI +
-      (this.destination.x < this.source.x ? 180 : 0)
-    )
+    return angleBetween(this.source, this.destination)
+
+    // return (
+    //   -(
+    //     Math.atan(
+    //       (this.destination.y - this.source.y) /
+    //         (this.destination.x - this.source.x)
+    //     ) * 180
+    //   ) /
+    //     Math.PI +
+    //   (this.destination.x < this.source.x ? 180 : 0)
+    // )
   }
 
   // Retorna a distancia em pixels entre source e destination

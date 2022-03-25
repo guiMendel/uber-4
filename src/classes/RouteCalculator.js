@@ -2,6 +2,7 @@ import IO from './IO'
 import getBestRoutesFor from '../modules/getBestRoutesFor'
 import Client from './Drawables/Client'
 import Debug from './Drawables/Debug'
+import RouteHighlighter from './Drawables/RouteHighlighter'
 
 // Fornece a classe responsavel por saber quando e como calcular as rotas dos clientes, e o que fazer depois
 export default class RouteCalculator {
@@ -15,7 +16,8 @@ export default class RouteCalculator {
     if (Client.selected == null) return
 
     getBestRoutesFor(Client.selected).then((bestNodes) => {
-      Debug.drawLine(bestNodes[0].edge.source, bestNodes[0].edge.destination)
+      // Debug.drawLine(bestNodes[0].edge.source, bestNodes[0].edge.destination)
+      RouteHighlighter.highlightRoute(bestNodes[0])
     })
   }
 }

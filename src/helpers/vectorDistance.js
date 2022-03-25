@@ -18,3 +18,11 @@ export function displacePoint(point, displacement, angle) {
     y: point.y + cos(angle + 90) * displacement,
   }
 }
+
+export function angleBetween(pointA, pointB) {
+  return (
+    -(Math.atan((pointB.y - pointA.y) / (pointB.x - pointA.x)) * 180) /
+      Math.PI +
+    (pointB.x < pointA.x ? 180 : 0)
+  )
+}

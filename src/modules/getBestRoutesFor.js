@@ -264,15 +264,19 @@ class Node {
 
     console.log('Calculado h:', h)
 
-    const projectionCoords = displacePoint(
+    this.projectionCoords = displacePoint(
       this.edge.source,
       distances.projection,
       this.edge.angle
     )
 
-    this.debugLines.push(Debug.drawLine(this.stepper.client, projectionCoords))
+    this.debugLines.push(
+      Debug.drawLine(this.stepper.client, this.projectionCoords)
+    )
 
-    this.debugLines.push(Debug.drawLine(this.edge.source, projectionCoords))
+    this.debugLines.push(
+      Debug.drawLine(this.edge.source, this.projectionCoords)
+    )
     // Registra
     this.stepper.hCache[this.edge.id] = h
 
@@ -313,20 +317,22 @@ class Node {
         car: (distances.projection - carSourceDistance) / this.edge.mapSpeed,
       }
 
-      const projectionCoords = displacePoint(
+      this.projectionCoords = displacePoint(
         this.edge.source,
         distances.projection,
         this.edge.angle
       )
 
       this.debugLines.push(
-        Debug.drawLine(this.stepper.client, projectionCoords)
+        Debug.drawLine(this.stepper.client, this.projectionCoords)
       )
 
-      this.debugLines.push(Debug.drawLine(car, projectionCoords))
+      this.debugLines.push(Debug.drawLine(car, this.projectionCoords))
     }
     // ou ele esta depois, e como nao pode voltar, o cliente tera q andar ate ele
     else {
+      this.projectionCoords = { x: car.x, y: car.y }
+
       this.#exceptionalH = {
         // Nesse caso o cliente anda ate o carro
         client:

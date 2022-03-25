@@ -58,4 +58,16 @@ export default {
 
   // A largura dos clientes
   clientWidth: streetWidth,
+
+  // A cor do destaque da rota selecionada
+  selectedRouteHighlight: '#b4fca9',
+
+  // A largura do trastejado da caminhada do cliente
+  clientWalkPathWidth: streetWidth / 3,
+
+  // O tamanho de cada linha do trastejado
+  clientWalkPathLineSize: 15,
+
+  // O espaco entre as linhas do trastejado
+  clientWalkPathLineGap: 15,
 }

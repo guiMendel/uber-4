@@ -1,5 +1,10 @@
 import appConfig from '../configuration/appConfig'
 import theme from '../configuration/theme'
+import {
+  angleBetween,
+  displacePoint,
+  getDistance,
+} from '../helpers/vectorDistance'
 import Camera from './Camera'
 import Drawable from './Drawables/Drawable'
 
@@ -62,18 +67,15 @@ export default class Drawer {
 
   // Permite iniciar o desenho na tela em um estilo
   // Retorna um objecto que fornece diversos metodos de desenho
-  drawWith(
-    style = { style: 'black', fillStyle: 'black', strokeStyle: 'black' },
-    width = { lineWidth: 2 }
-  ) {
+  drawWith({ style = 'black', fillStyle, strokeStyle, lineWidth = 2 }) {
     // Facilitar acesso
     const { context } = this
 
     // Define o estilo
     const configDrawer = () => {
-      context.strokeStyle = style.strokeStyle ?? style.style
-      context.fillStyle = style.fillStyle ?? style.style
-      context.lineWidth = width.lineWidth
+      context.strokeStyle = strokeStyle ?? style
+      context.fillStyle = fillStyle ?? style
+      context.lineWidth = lineWidth
     }
 
     // Aux de arco
@@ -91,7 +93,29 @@ export default class Drawer {
       )
     }
 
+    function strokePath(...coords) {
+      if (coords.length < 2)
+        throw new Error("Drawer's strokePath needs at least 2 coordinates")
+
+      configDrawer()
+
+      context.beginPath()
+
+      context.moveTo(coords[0].x, coords[0].y)
+
+      for (const { x, y } of coords.slice(1)) context.lineTo(x, y)
+
+      context.stroke()
+    }
+
     return {
+      setStyle(newStyle) {
+        if (newStyle.style) style = newStyle.style
+        if (newStyle.fillStyle) fillStyle = newStyle.fillStyle
+        if (newStyle.strokeStyle) strokeStyle = newStyle.strokeStyle
+        if (newStyle.lineWidth) lineWidth = newStyle.lineWidth
+      },
+
       fillRect({ x, y }, { width, height }) {
         configDrawer()
 
@@ -111,20 +135,7 @@ export default class Drawer {
         context.stroke()
       },
 
-      strokePath(...coords) {
-        if (context.length < 2)
-          throw new Error("Drawer's strokePath needs at least 2 coordinates")
-
-        configDrawer()
-
-        context.beginPath()
-
-        context.moveTo(coords[0].x, coords[0].y)
-
-        for (const { x, y } of coords.slice(1)) context.lineTo(x, y)
-
-        context.stroke()
-      },
+      strokePath,
 
       drawImage(image, { x, y }, rotation, scale = 1) {
         configDrawer()
@@ -152,6 +163,32 @@ export default class Drawer {
         )
 
         context.restore()
+      },
+
+      frettedPath({ gap = 10, length = 10 }, ...coords) {
+        if (coords.length < 2)
+          throw new Error("Drawer's strokePath needs at least 2 coordinates")
+
+        for (let i = 1; i < coords.length; i++) {
+          const source = coords[i - 1]
+          const destination = coords[i]
+          const distance = getDistance(source, destination)
+          const angle = angleBetween(source, destination)
+
+          // A comecar da origem, desenhar linhas ao longo dela, e ir deslocando o ponto de desenho
+          let displacement = 0
+
+          // Enquanto ainda couberem linhas
+          while (displacement + gap + length <= distance) {
+            strokePath(
+              displacePoint(source, displacement, angle),
+              displacePoint(source, displacement + length, angle)
+            )
+
+            // Aumenta o deslocamento
+            displacement += gap + length
+          }
+        }
       },
     }
   }

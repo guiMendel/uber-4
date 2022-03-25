@@ -18,10 +18,7 @@ export default class Debug extends Drawable {
   }
 
   draw(drawer) {
-    const { strokePath } = drawer.drawWith(
-      { style: 'violet' },
-      { lineWidth: 5 }
-    )
+    const { strokePath } = drawer.drawWith({ style: 'violet', lineWidth: 5 })
 
     // Draw every line
     for (const line of Object.values(this.drawLines))

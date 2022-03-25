@@ -60,10 +60,10 @@ export default class ArrowIndicators extends Drawable {
       y: y + amount * cos(angle + pointAngle),
     })
 
-    const { strokePath } = drawer.drawWith(
-      { style: streetArrowColor },
-      { lineWidth: streetArrowWidth }
-    )
+    const { strokePath } = drawer.drawWith({
+      style: streetArrowColor,
+      lineWidth: streetArrowWidth,
+    })
 
     strokePath(
       displacement((streetWidth - 2) / 2, 90),
