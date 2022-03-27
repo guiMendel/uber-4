@@ -44,7 +44,7 @@ export default class AStarStepper {
     this.parentNode = parentNode
 
     // Inicializa o primeiro no
-    this.#registerNodeFor(startingEdge, null, source)
+    this.#registerNodeFor(startingEdge, null, source, parentNode?.totalCost)
 
     // Levanta evento de new best sempre que o closed nodes tiver um novo highest priority
     this.closedNodes.onNewHighestPriority(() => {
@@ -81,7 +81,7 @@ export default class AStarStepper {
   }
 
   // Dado a aresta e um potencial node pai, verifica se colcoar o node desta aresta como filho deste pai sera vantajoso
-  #registerNodeFor(edge, parentNode, source) {
+  #registerNodeFor(edge, parentNode, source, additionalCost) {
     // Verifica se ja ha um node para essa edge
     const existingNode = this.edgeToNode[edge.id]
 
@@ -96,7 +96,7 @@ export default class AStarStepper {
     }
 
     // Se nao havia um node, criar
-    const node = new Node(parentNode, edge, this, source)
+    const node = new Node(parentNode, edge, this, source, additionalCost)
 
     this.openNodes.insert(node)
     this.edgeToNode[edge.id] = node

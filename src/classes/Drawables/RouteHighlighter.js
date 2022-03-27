@@ -5,6 +5,7 @@ import Drawable from './Drawable'
 
 const {
   selectedRouteHighlight,
+  selectedRouteHighlightBeforeRdv,
   streetWidth,
   clientWalkPathLineGap,
   clientWalkPathLineSize,
@@ -36,39 +37,57 @@ export default class RouteHighlighter extends Drawable {
   draw(drawer) {
     if (this.highlightedNode == null) return
 
-    // Desenha uma linha de destaque das arestas
-    const { strokePath, fillArc } = drawer.drawWith({
-      style: selectedRouteHighlight,
-      lineWidth: 1.5 * streetWidth,
-    })
+    // Pega o carro e o cliente
+    const car = this.highlightedNode.stepper.parentNode.stepper.source
+    const client = this.highlightedNode.stepper.parentNode.stepper.destination
 
-    this.drawHighlight(
-      this.highlightedNode,
-      strokePath,
-      fillArc,
-      this.highlightedNode.projectionCoords
-    )
-
-    this.drawVertices(this.highlightedNode, drawer)
-
-    this.drawStreet(this.highlightedNode, drawer)
-
-    this.drawArrows(this.highlightedNode, drawer)
-
-    // Draw the car
-    fillArc(this.highlightedNode.stepper.source, 30)
-
-    fillArc(this.highlightedNode.projectionCoords, 30)
-
-    this.drawClientWalkLine(
-      this.highlightedNode.stepper.destination,
-      this.highlightedNode.projectionCoords,
+    this.drawRoute(
+      this.highlightedNode.stepper.parentNode,
+      selectedRouteHighlightBeforeRdv,
       drawer
     )
 
-    this.highlightedNode.stepper.source.draw(drawer)
+    this.drawRoute(this.highlightedNode, selectedRouteHighlight, drawer)
 
-    this.highlightedNode.stepper.destination.draw(drawer)
+    // Desenha cliente
+    client.draw(drawer)
+
+    // Desenha carro
+    car.draw(drawer)
+  }
+
+  drawRoute(node, color, drawer) {
+    // Desenha uma linha de destaque das arestas
+    const { strokePath, fillArc } = drawer.drawWith({
+      style: color,
+      lineWidth: 1.5 * streetWidth,
+    })
+
+    // Desenha o destaque
+    this.drawHighlight(node, strokePath, fillArc, node.projectionCoords)
+
+    // Desenha os vertices dos destaques
+    this.drawVertices(node, drawer)
+
+    // Desenha as ruas
+    this.drawStreet(node, drawer)
+
+    // Desenha as flechas
+    this.drawArrows(node, drawer)
+
+    // Desenha destaque da origem
+    fillArc(node.stepper.source, 30)
+
+    // Desenha destaque do fim
+    fillArc(node.projectionCoords, 30)
+
+    // Desenha trastejado do fim ao destino
+    this.drawClientWalkLine(
+      node.projectionCoords,
+      node.stepper.destination,
+      drawer,
+      color
+    )
   }
 
   // Desenha uma linha de destaque para o node fornecido e seus pais
@@ -103,9 +122,9 @@ export default class RouteHighlighter extends Drawable {
     if (node.parent != null) this.drawArrows(node.parent, drawer)
   }
 
-  drawClientWalkLine(client, rendezVous, drawer) {
+  drawClientWalkLine(client, rendezVous, drawer, color) {
     const { frettedPath } = drawer.drawWith({
-      style: selectedRouteHighlight,
+      style: color,
       lineWidth: clientWalkPathWidth,
     })
 

@@ -62,6 +62,9 @@ export default {
   // A cor do destaque da rota selecionada
   selectedRouteHighlight: '#b4fca9',
 
+  // A cor do destaque da rota selecionada
+  selectedRouteHighlightBeforeRdv: '#f1f783',
+
   // A largura do trastejado da caminhada do cliente
   clientWalkPathWidth: streetWidth / 3,
 

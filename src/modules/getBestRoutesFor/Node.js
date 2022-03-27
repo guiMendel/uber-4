@@ -15,13 +15,16 @@ export default class Node {
   // Este campo aramazenara o valor de h se ele for excepcional para este node
   #exceptionalH = undefined
 
-  constructor(parent, edge, stepper, source) {
+  constructor(parent, edge, stepper, source, additionalCost) {
     this.stepper = stepper
     this.edge = edge
     this.parent = parent
 
     // A partir do pai, descobre o seu g
     this.g = parent == null ? 0 : parent.g + parent.time
+
+    // Se tiver um custo adicional
+    if (additionalCost) this.g += additionalCost
 
     // Se recebemos o source, calculamos um valor de h e time excepcional
     if (source != null) {

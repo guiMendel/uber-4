@@ -132,8 +132,8 @@ export default async function getBestRoutesFor(client) {
   // console.log(bestStepperNodes.getRawDataCopy().map((node) => node.totalCost))
 
   for (let i = 0; i < countOfNodesToConsider; i++) {
-    // const node = bestNodes.pop()
-    const node = bestCarNodes.pop()
+    const node = bestNodes.pop()
+    // const node = bestCarNodes.pop()
 
     // console.log(node.totalCost)
     // console.log(node)
