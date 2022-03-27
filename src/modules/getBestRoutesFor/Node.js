@@ -15,7 +15,7 @@ export default class Node {
   // Este campo aramazenara o valor de h se ele for excepcional para este node
   #exceptionalH = undefined
 
-  constructor(parent, edge, stepper, source, iterationCallbacks) {
+  constructor(parent, edge, stepper, source) {
     this.stepper = stepper
     this.edge = edge
     this.parent = parent
@@ -32,7 +32,7 @@ export default class Node {
       this.time = edge.mapDistance / edge.mapSpeed
     }
 
-    iterationCallbacks.push(() => {
+    stepper.iterationCallbacks.push(() => {
       this.debugLines.forEach((line) => line())
       this.debugLines = []
     })

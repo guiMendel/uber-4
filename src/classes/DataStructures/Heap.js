@@ -66,6 +66,18 @@ export default class Heap {
     this.#data = data
   }
 
+  toArray() {
+    // Guarda o antigo estado do heap
+    const dataBackup = [...this.#data]
+
+    const array = []
+    while (this.#data.length > 0) array.push(this.pop())
+
+    this.#data = dataBackup
+
+    return array
+  }
+
   // Define como o elemento faz swim up no array que armazena os dados do heap
   #swimUp(index) {
     if (index == 0) return

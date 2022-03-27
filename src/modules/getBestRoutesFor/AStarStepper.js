@@ -28,15 +28,23 @@ export default class AStarStepper {
   // A chave vai ser o id da edge, o vlaor vai ser o node
   edgeToNode = {}
 
-  constructor(destination, source, hCache, iterationCallbacks) {
+  constructor(
+    destination,
+    source,
+    startingEdge,
+    hCache,
+    iterationCallbacks,
+    parentNode
+  ) {
     // Armazena o carro & cliente
     this.source = source
     this.destination = destination
     this.hCache = hCache
     this.iterationCallbacks = iterationCallbacks
+    this.parentNode = parentNode
 
     // Inicializa o primeiro no
-    this.#registerNodeFor(source.edge, null, source)
+    this.#registerNodeFor(startingEdge, null, source)
 
     // Levanta evento de new best sempre que o closed nodes tiver um novo highest priority
     this.closedNodes.onNewHighestPriority(() => {
@@ -74,16 +82,6 @@ export default class AStarStepper {
 
   // Dado a aresta e um potencial node pai, verifica se colcoar o node desta aresta como filho deste pai sera vantajoso
   #registerNodeFor(edge, parentNode, source) {
-    // Se recebeu um source, eh o node inicial: cria um no com h excepcional
-    if (source != undefined) {
-      const node = new Node(null, edge, this, source, this.iterationCallbacks)
-
-      this.openNodes.insert(node)
-      this.edgeToNode[edge.id] = node
-
-      return
-    }
-
     // Verifica se ja ha um node para essa edge
     const existingNode = this.edgeToNode[edge.id]
 
@@ -98,7 +96,7 @@ export default class AStarStepper {
     }
 
     // Se nao havia um node, criar
-    const node = new Node(parentNode, edge, this, null, this.iterationCallbacks)
+    const node = new Node(parentNode, edge, this, source)
 
     this.openNodes.insert(node)
     this.edgeToNode[edge.id] = node

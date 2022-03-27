@@ -80,8 +80,8 @@ export default async function getBestRoutesFor(client) {
   // Contara as iteracoes totais. Ja coloca o valor inicial
   let totalIterations = pathExpansionIterations
 
-  // Expande os steppers
-  const bestStepperNodes = await expandSteppers(
+  // Expande os steppers do carro ate o rdv
+  const bestCarNodes = await expandSteppers(
     () => totalIterations,
     // Steppers para cada carro
     (hCache, iterationCallbacks) => {
@@ -89,6 +89,7 @@ export default async function getBestRoutesFor(client) {
         const stepper = new AStarStepper(
           client,
           car,
+          car.edge,
           hCache,
           iterationCallbacks
         )
@@ -101,23 +102,48 @@ export default async function getBestRoutesFor(client) {
     }
   )
 
+  // Expande os steppers do rdv ate o destino
+  const bestNodes = await expandSteppers(
+    () => totalIterations,
+
+    // Steppers para cada carro
+    (hCache, iterationCallbacks) => {
+      return bestCarNodes.toArray().map((node) => {
+        const stepper = new AStarStepper(
+          client.destination,
+          node.projectionCoords,
+          node.edge,
+          hCache,
+          iterationCallbacks,
+          node
+        )
+
+        // Sempre que o stepper arrumar um novo best, aumenta o nmr de iteracoes
+        stepper.onNewBest(() => (totalIterations += newBestPathReward))
+
+        return stepper
+      })
+    }
+  )
+
   // Monta um vetor com os N melhores nodes totais
-  const bestNodes = []
+  const finalNodes = []
 
   // console.log(bestStepperNodes.getRawDataCopy().map((node) => node.totalCost))
 
   for (let i = 0; i < countOfNodesToConsider; i++) {
-    const node = bestStepperNodes.pop()
+    // const node = bestNodes.pop()
+    const node = bestCarNodes.pop()
 
     // console.log(node.totalCost)
     // console.log(node)
 
     if (node == undefined) break
 
-    bestNodes.push(node)
+    finalNodes.push(node)
   }
 
-  return bestNodes
+  return finalNodes
 }
 
 // Seleciona o subconjunto de carros que serao analisados para encontrar um melhor caminho para o cliente fornecido
