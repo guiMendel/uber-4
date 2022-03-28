@@ -1,7 +1,3 @@
-.App {
-  cursor: url(../assets/arrow.cur), auto;
-}
-
 .actions {
   position: fixed;
   display: flex;
@@ -19,4 +15,21 @@
 .map.actions {
   bottom: 2rem;
   right: 2rem;
+}
+
+/* Define os cursores */
+body {
+  cursor: url(../assets/arrow.cur), auto;
+}
+
+body.move {
+  cursor: url(../assets/move.cur), auto;
+}
+
+body.pencil {
+  cursor: url(../assets/pen.cur), auto;
+}
+
+body.pointer {
+  cursor: url(../assets/link.cur), auto;
 }

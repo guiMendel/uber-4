@@ -1,4 +1,5 @@
 import IO from './IO'
+import Map from './Map'
 
 // Define uma classe que permite deslocar a visao do canvas
 export default class Camera {
@@ -35,6 +36,12 @@ export default class Camera {
 
     // Sempre que usuario arrastar com botao direito, desloque a camera
     IO.addEventListener('mouserightdrag', this.translate)
+
+    IO.addEventListener('rightclick', () => {
+      Map.setCursor('move')
+      // document.body.className = 'move'
+    })
+    IO.addEventListener('rightup', () => Map.removeCursor('move'))
 
     // Sempre que a tela mudar de tamanho, corrige o translation
     window.addEventListener('resize', () => {

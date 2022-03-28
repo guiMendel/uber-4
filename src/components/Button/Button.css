@@ -21,12 +21,12 @@
   transition: all 20ms;
 
   outline: none;
+
+  cursor: url(../../assets/link.cur), auto;
 }
 
 .custom-button:hover {
   filter: brightness(1.02);
-
-  cursor: url(../../assets/link.cur), auto;
 }
 
 .custom-button:active {

@@ -2,9 +2,6 @@ import IO from '../IO'
 import Map from '../Map'
 import Drawable from './Drawable'
 
-import pencilCursor from '../../assets/pen.cur'
-import defaultCursor from '../../assets/arrow.cur'
-
 // Classe que permite criar novos clientes
 export default class ClientCreator extends Drawable {
   static #instance
@@ -22,13 +19,19 @@ export default class ClientCreator extends Drawable {
     // Para de criar no cancel
     IO.addEventListener('cancel', () => {
       ClientCreator.isActive = false
-      this.#nextCreateClient = null
-      Map.setCursor(defaultCursor)
     })
 
     IO.buttons['new-client'].onTrigger(() => {
       ClientCreator.isActive = true
-      Map.setCursor(pencilCursor)
+    })
+
+    // Mantem o cursor atualizado
+    Map.addEventListener('activateinteractionclass', ({ value, oldValue }) => {
+      if (value == ClientCreator) Map.setCursor('pencil')
+      else if (oldValue == ClientCreator) {
+        Map.removeCursor('pencil')
+        this.#nextCreateClient = null
+      }
     })
   }
 

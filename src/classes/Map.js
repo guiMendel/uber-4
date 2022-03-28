@@ -26,10 +26,27 @@ export default class Map {
   static instance = null
 
   // Guarda qual classe de interacao com o usuario esta atualmente em atividade
-  static activeInteractionClass = null
+  static #activeInteractionClass = null
 
-  // Guarda um callback para alterar o cursor
-  static alterCursorCallback = null
+  static get activeInteractionClass() {
+    return this.#activeInteractionClass
+  }
+
+  static set activeInteractionClass(value) {
+    const oldValue = this.#activeInteractionClass
+
+    this.#activeInteractionClass = value
+
+    this.#raiseEvent('activateinteractionclass', { value, oldValue })
+  }
+
+  // Guarda todos os cursores que estao atualmente tentado ser mostrados (mostra o mais recente)
+  static activeCursors = new Set()
+
+  // Listeners
+  static listeners = {
+    activateinteractionclass: [],
+  }
 
   constructor(canvasContext) {
     // Se ja ha uma instancia, use ela
@@ -78,12 +95,16 @@ export default class Map {
   }
 
   static setCursor(newCursor) {
-    if (this.alterCursorCallback == null)
-      throw new Error(
-        'O callback para alterar o cursor nao estava definido em Map antes de ser invocado'
-      )
+    this.activeCursors.add(newCursor)
 
-    this.alterCursorCallback(newCursor)
+    // Atualiza a classe de body com base no cursor
+    document.body.className = newCursor
+  }
+
+  static removeCursor(cursor) {
+    this.activeCursors.delete(cursor)
+
+    document.body.className = this.activeCursors.values().next().value
   }
 
   async loadAssets() {
@@ -135,5 +156,25 @@ export default class Map {
         resolve(image)
       }
     })
+  }
+
+  // Permite observar eventos
+  static addEventListener(type, callback) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `A classe IO nao fornece um eventListener do tipo "${type}"`
+      )
+
+    this.listeners[type].push(callback)
+  }
+
+  // Permite levantar eventos
+  static #raiseEvent(type, payload) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `Tentativa em IO de levantar evento de tipo inexistente "${type}"`
+      )
+
+    for (const listener of this.listeners[type]) listener(payload)
   }
 }

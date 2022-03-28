@@ -39,7 +39,15 @@ export default class Client extends Drawable {
   static setup() {
     // Deseleciona cliente no cancel
     IO.addEventListener('cancel', () => (this.selected = null))
+
+    // Mantem o cursor atualizado
+    Map.addEventListener('activateinteractionclass', ({ value, oldValue }) => {
+      if (value != oldValue && oldValue == Client) this.selected = null
+    })
   }
+
+  // Caso o cliente estava no estado hovered na ultima iteracao
+  wasHovered = false
 
   constructor(id, location, destination, image, rotation) {
     // Invoca construtor pai
@@ -75,11 +83,23 @@ export default class Client extends Drawable {
     // Observa cliques
     IO.addEventListener('leftclick', () => {
       // Se estiver em hover, seleciona
-      if (this.isHovered) Client.selected = this
+      if (this.isHovered) {
+        Client.selected = this
+        Map.activeInteractionClass = Client
+      }
     })
   }
 
   draw(drawer) {
+    // Atualiza o cursor
+    if (this.wasHovered && !this.isHovered) {
+      this.wasHovered = false
+      Map.removeCursor('pointer')
+    } else if (!this.wasHovered && this.isHovered) {
+      this.wasHovered = true
+      Map.setCursor('pointer')
+    }
+
     // Pega a transparencia do highlight em hex
     let opacityHex = Math.floor(this.highlightOpacity * 255).toString(16)
     if (opacityHex.length == 1) opacityHex = '0' + opacityHex

@@ -8,9 +8,6 @@ export default function Canvas() {
   // Pega a referencia do canvas
   const canvasRef = useRef(null)
 
-  // Qual o atual cursor
-  const [cursor, setCursor] = useState(defaultCursor)
-
   useEffect(() => {
     // Garantir que o canvas tenha sido referenciado
     if (canvasRef == null) throw new Error('Falha em referenciar o canvas')
@@ -26,17 +23,11 @@ export default function Canvas() {
     if (context == null) throw new Error('Falha em obter o contexto')
 
     // Comecar a renderizar as figuras no canvas
-    const map = new Map(context)
-
-    // Permite alterar o cursor pelo canvas
-    Map.alterCursorCallback = setCursor
+    new Map(context)
   }, [])
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={cursor && { cursor: `url(${cursor}), auto` }}
-    >
+    <canvas ref={canvasRef}>
       Não foi possível carregar o conteúdo do aplicativo.
     </canvas>
   )
