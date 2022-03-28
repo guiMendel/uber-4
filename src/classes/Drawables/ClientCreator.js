@@ -1,6 +1,10 @@
+import theme from '../../configuration/theme'
 import IO from '../IO'
 import Map from '../Map'
+import Client from './Client'
 import Drawable from './Drawable'
+
+const { clientDestinationColor, clientDestinationRadius } = theme
 
 // Classe que permite criar novos clientes
 export default class ClientCreator extends Drawable {
@@ -28,23 +32,61 @@ export default class ClientCreator extends Drawable {
     // Mantem o cursor atualizado
     Map.addEventListener('activateinteractionclass', ({ value, oldValue }) => {
       if (value == ClientCreator) Map.setCursor('pencil')
-      else if (oldValue == ClientCreator) {
-        Map.removeCursor('pencil')
-        this.#nextCreateClient = null
-      }
+      else if (oldValue == ClientCreator) this.cancel()
     })
+
+    // Ouve cliques
+    IO.addEventListener('leftclick', (value) => this.handleClick(value))
   }
 
   draw(drawer) {
     if (!ClientCreator.isActive) return
 
-    const { drawImage } = drawer.drawWith({ opacity: 0.5 })
+    const { drawImage, fillArc } = drawer.drawWith({
+      opacity: 0.5,
+      style: clientDestinationColor,
+    })
 
+    // Desenha a imagem do cliente
     drawImage(
       this.nextClient.image,
-      IO.mouse.mapCoords,
+      this.nextClient.x ? this.nextClient : IO.mouse.mapCoords,
+      this.nextClient.rotation - 90
+    )
+
+    // Desenha o destino
+    if (this.nextClient.x) {
+      // Desenha seu destino se selecionado
+      fillArc(IO.mouse.mapCoords, clientDestinationRadius)
+    }
+  }
+
+  cancel() {
+    Map.removeCursor('pencil')
+    this.#nextCreateClient = null
+  }
+
+  handleClick(position) {
+    if (this.#nextCreateClient == null) return
+
+    // Se tem um cliente em preview, mas ele ainda nao tem coordenadas, confere as coordenadas a ele
+    if (this.nextClient.x == null) {
+      Object.assign(this.#nextCreateClient, position.map)
+
+      return
+    }
+
+    // Se ele ja tem coordenadas, cria o cliente especificado
+    new Client(
+      undefined,
+      this.nextClient,
+      position.map,
+      this.nextClient.image,
       this.nextClient.rotation
     )
+
+    // Reinicia criacao
+    this.#nextCreateClient = null
   }
 
   get nextClient() {

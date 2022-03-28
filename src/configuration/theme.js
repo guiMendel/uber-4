@@ -48,7 +48,7 @@ export default {
   selectedClientRadius: streetWidth * 0.8,
 
   // Cor do destino do cliente
-  clientDestinationColor: '#f24f43',
+  clientDestinationColor: '#fc3628',
 
   // O raio do destino
   clientDestinationRadius: streetWidth * 0.5,

@@ -46,10 +46,25 @@ export default class Client extends Drawable {
     })
   }
 
+  // Gera um id valido para um novo cliente
+  static generateId() {
+    let newId
+
+    do {
+      newId = Math.round(Math.random() * 99999)
+    } while (Drawable.drawableInstances[Client.name][newId] != undefined)
+
+    return newId
+  }
+
   // Caso o cliente estava no estado hovered na ultima iteracao
   wasHovered = false
 
   constructor(id, location, destination, image, rotation) {
+    id ??= Client.generateId()
+
+    console.log(rotation)
+
     // Invoca construtor pai
     super(id, { ...location, destination })
 
