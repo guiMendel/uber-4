@@ -1,10 +1,15 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import configurateCanvas from './configurateCanvas'
 import Map from '../../classes/Map'
+
+import defaultCursor from '../../assets/arrow.cur'
 
 export default function Canvas() {
   // Pega a referencia do canvas
   const canvasRef = useRef(null)
+
+  // Qual o atual cursor
+  const [cursor, setCursor] = useState(defaultCursor)
 
   useEffect(() => {
     // Garantir que o canvas tenha sido referenciado
@@ -21,11 +26,17 @@ export default function Canvas() {
     if (context == null) throw new Error('Falha em obter o contexto')
 
     // Comecar a renderizar as figuras no canvas
-    new Map(context)
+    const map = new Map(context)
+
+    // Permite alterar o cursor pelo canvas
+    Map.alterCursorCallback = setCursor
   }, [])
 
   return (
-    <canvas ref={canvasRef}>
+    <canvas
+      ref={canvasRef}
+      style={cursor && { cursor: `url(${cursor}), auto` }}
+    >
       Não foi possível carregar o conteúdo do aplicativo.
     </canvas>
   )

@@ -18,6 +18,7 @@ export default {
     'Client',
     'Car',
     'RouteHighlighter',
+    'ClientCreator',
     'Debug',
   ],
 

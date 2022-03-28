@@ -67,7 +67,13 @@ export default class Drawer {
 
   // Permite iniciar o desenho na tela em um estilo
   // Retorna um objecto que fornece diversos metodos de desenho
-  drawWith({ style = 'black', fillStyle, strokeStyle, lineWidth = 2 }) {
+  drawWith({
+    style = 'black',
+    fillStyle,
+    strokeStyle,
+    lineWidth = 2,
+    opacity = 1,
+  }) {
     // Facilitar acesso
     const { context } = this
 
@@ -76,6 +82,7 @@ export default class Drawer {
       context.strokeStyle = strokeStyle ?? style
       context.fillStyle = fillStyle ?? style
       context.lineWidth = lineWidth
+      context.globalAlpha = opacity
     }
 
     // Aux de arco

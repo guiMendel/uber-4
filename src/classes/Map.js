@@ -15,14 +15,21 @@ import Client from './Drawables/Client'
 import RouteCalculator from './RouteCalculator'
 import Debug from './Drawables/Debug'
 import RouteHighlighter from './Drawables/RouteHighlighter'
+import ClientCreator from './Drawables/ClientCreator'
 
 // Extrai valores uteis
-const { streetWidth, carWidth, clientWidth } = theme
+const { carWidth, clientWidth } = theme
 
 // Classe singleton que governa o mapa, os desenhos do mapa e suas atualizacoes
 export default class Map {
   // Guarda a unica instancia do mapa
   static instance = null
+
+  // Guarda qual classe de interacao com o usuario esta atualmente em atividade
+  static activeInteractionClass = null
+
+  // Guarda um callback para alterar o cursor
+  static alterCursorCallback = null
 
   constructor(canvasContext) {
     // Se ja ha uma instancia, use ela
@@ -52,6 +59,8 @@ export default class Map {
 
       new RouteHighlighter()
 
+      new ClientCreator()
+
       // Armazena o wrapper de contexto para desenhar
       this.drawer = new Drawer(canvasContext)
 
@@ -66,6 +75,15 @@ export default class Map {
 
     // Carrega as imagens, e entao inicia o app
     this.loadAssets().then(start)
+  }
+
+  static setCursor(newCursor) {
+    if (this.alterCursorCallback == null)
+      throw new Error(
+        'O callback para alterar o cursor nao estava definido em Map antes de ser invocado'
+      )
+
+    this.alterCursorCallback(newCursor)
   }
 
   async loadAssets() {
