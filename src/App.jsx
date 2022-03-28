@@ -4,7 +4,7 @@ import Button from './components/Button/Button.jsx'
 import Client from './classes/Drawables/Client'
 
 // Icones
-import { FaCar } from 'react-icons/fa'
+import { FaCar, FaUserPlus, FaPencilAlt } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
 
 function App() {
@@ -27,8 +27,25 @@ function App() {
         className="client actions"
         style={{ display: showClientActions ? 'flex' : 'none' }}
       >
-        <Button name={'select-route'}>
+        <Button
+          name={'select-route'}
+          help={'Encontrar uma rota'}
+          rigthTooltip
+        >
           <FaCar />
+        </Button>
+      </div>
+
+      {/* Contem os butoes de acoes do mapa */}
+      <div className="map actions">
+        {/* Adiciona um novo vertice */}
+        <Button name={'new-client'} help={'Adicionar um novo cliente'}>
+          <FaUserPlus />
+        </Button>
+
+        {/* Adiciona uma nova aresta */}
+        <Button name={'draw'} help={'Adicionar novas ruas'}>
+          <FaPencilAlt />
         </Button>
       </div>
     </div>

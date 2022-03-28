@@ -4,7 +4,7 @@ import IO from '../../classes/IO'
 import './Button.css'
 
 // Componente de botao que automaticamente se inscreve em buttons de IO
-export default function Button({ children, name }) {
+export default function Button({ children, name, help, rigthTooltip }) {
   // Cria uma referencia para este botao
   const [buttonReference, setButtonReference] = useState(new ButtonReference())
 
@@ -24,6 +24,8 @@ export default function Button({ children, name }) {
   return (
     <button onClick={() => buttonReference.trigger()} className="custom-button">
       {children}
+
+      <p className={'tooltip' + (rigthTooltip ? ' right' : '')}>{help}</p>
     </button>
   )
 }
