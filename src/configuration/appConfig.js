@@ -24,7 +24,7 @@ export default {
   //=== PAREAMENTO CARRO & CLIENTE
 
   // Quantos km/h um cliente anda
-  clientWalkSpeed: 4.7,
+  clientWalkSpeed: 1.5,
 
   // Quantas iteracoes, no minimo, realizar a expansao do A* de cada carro analizado
   pathExpansionIterations: 10,

@@ -102,6 +102,9 @@ export default async function getBestRoutesFor(client) {
     }
   )
 
+  // Reseta
+  totalIterations = pathExpansionIterations
+
   // Expande os steppers do rdv ate o destino
   const bestNodes = await expandSteppers(
     () => totalIterations,
@@ -125,6 +128,8 @@ export default async function getBestRoutesFor(client) {
       })
     }
   )
+
+  // console.log(bestNodes.toArray().map((node) => node.totalCost))
 
   // Monta um vetor com os N melhores nodes totais
   const finalNodes = []
