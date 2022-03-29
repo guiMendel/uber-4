@@ -63,8 +63,6 @@ export default class Client extends Drawable {
   constructor(id, location, destination, image, rotation) {
     id ??= Client.generateId()
 
-    console.log(rotation)
-
     // Invoca construtor pai
     super(id, { ...location, destination })
 

@@ -51,7 +51,7 @@ function App() {
           <FaUserPlus />
         </Button>
 
-        <Button name={'draw'} help={'Adicionar novas ruas'}>
+        <Button name={'new-street'} help={'Adicionar novas ruas'}>
           <FaPencilAlt />
         </Button>
       </div>

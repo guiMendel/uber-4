@@ -1,43 +1,15 @@
-import theme from '../../configuration/theme'
-import IO from '../IO'
-import Map from '../Map'
-import Client from './Client'
-import Drawable from './Drawable'
+import theme from '../../../configuration/theme'
+import IO from '../../IO'
+import Map from '../../Map'
+import Client from '../Client'
+import Creator from './Creator'
 
 const { clientDestinationColor, clientDestinationRadius } = theme
 
 // Classe que permite criar novos clientes
-export default class ClientCreator extends Drawable {
-  static #instance
-
+export default class ClientCreator extends Creator {
   // The next client to be created
   #nextCreateClient = null
-
-  constructor() {
-    if (ClientCreator.#instance != undefined) return ClientCreator.#instance
-
-    super(1, {})
-
-    ClientCreator.#instance = this
-
-    // Para de criar no cancel
-    IO.addEventListener('cancel', () => {
-      ClientCreator.isActive = false
-    })
-
-    IO.buttons['new-client'].onTrigger(() => {
-      ClientCreator.isActive = true
-    })
-
-    // Mantem o cursor atualizado
-    Map.addEventListener('activateinteractionclass', ({ value, oldValue }) => {
-      if (value == ClientCreator) Map.setCursor('pencil')
-      else if (oldValue == ClientCreator) this.cancel()
-    })
-
-    // Ouve cliques
-    IO.addEventListener('leftclick', (value) => this.handleClick(value))
-  }
 
   draw(drawer) {
     if (!ClientCreator.isActive) return
@@ -61,8 +33,7 @@ export default class ClientCreator extends Drawable {
     }
   }
 
-  cancel() {
-    Map.removeCursor('pencil')
+  onCancel() {
     this.#nextCreateClient = null
   }
 
@@ -101,14 +72,5 @@ export default class ClientCreator extends Drawable {
     }
 
     return this.#nextCreateClient
-  }
-
-  static get isActive() {
-    return Map.activeInteractionClass == this
-  }
-
-  static set isActive(value) {
-    if (value) Map.activeInteractionClass = this
-    else if (this.isActive) Map.activeInteractionClass = null
   }
 }

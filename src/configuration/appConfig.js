@@ -19,6 +19,7 @@ export default {
     'Car',
     'RouteHighlighter',
     'ClientCreator',
+    'StreetCreator',
     'Debug',
   ],
 

@@ -15,7 +15,8 @@ import Client from './Drawables/Client'
 import RouteCalculator from './RouteCalculator'
 import Debug from './Drawables/Debug'
 import RouteHighlighter from './Drawables/RouteHighlighter'
-import ClientCreator from './Drawables/ClientCreator'
+import ClientCreator from './Drawables/Creators/ClientCreator'
+import StreetCreator from './Drawables/Creators/StreetCreator'
 
 // Extrai valores uteis
 const { carWidth, clientWidth } = theme
@@ -41,7 +42,7 @@ export default class Map {
   }
 
   // Guarda todos os cursores que estao atualmente tentado ser mostrados (mostra o mais recente)
-  static activeCursors = new Set()
+  static activeCursors = []
 
   // Listeners
   static listeners = {
@@ -69,7 +70,7 @@ export default class Map {
       Client.setup()
       RouteCalculator.setup()
 
-      // Cria o singleton ArrowIndicators
+      // Cria os Singletons
       new ArrowIndicators()
 
       new Debug()
@@ -77,6 +78,8 @@ export default class Map {
       new RouteHighlighter()
 
       new ClientCreator()
+
+      new StreetCreator()
 
       // Armazena o wrapper de contexto para desenhar
       this.drawer = new Drawer(canvasContext)
@@ -95,16 +98,19 @@ export default class Map {
   }
 
   static setCursor(newCursor) {
-    this.activeCursors.add(newCursor)
+    this.activeCursors.push(newCursor)
 
     // Atualiza a classe de body com base no cursor
     document.body.className = newCursor
   }
 
   static removeCursor(cursor) {
-    this.activeCursors.delete(cursor)
+    this.activeCursors.splice(
+      this.activeCursors.findIndex((activeCursor) => activeCursor == cursor),
+      1
+    )
 
-    document.body.className = this.activeCursors.values().next().value
+    document.body.className = this.activeCursors[0]
   }
 
   async loadAssets() {
