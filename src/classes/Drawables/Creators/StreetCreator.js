@@ -96,14 +96,16 @@ export default class StreetCreator extends Creator {
     this.arrowDrawable.drawForEdge(simulatedEdge, drawer, { opacity: 0.5 })
   }
 
+  cancelOverrideCallback() {
+    // Somente remove o source
+    this.sourceVertex = null
+  }
+
   handleClick(position) {
     // Se nao tinha um source
     if (this.sourceVertex == null) {
       // Aplica um cancel overide
-      IO.overrideCancelCallback = () => {
-        // Somente remove o source
-        this.sourceVertex = null
-      }
+      IO.overrideCancelCallback = this.cancelOverrideCallback
 
       // Se clicar num vertice, troca para este vertice ser o novo source
       if (this.hoveredVertex != null) {
@@ -184,6 +186,9 @@ export default class StreetCreator extends Creator {
   onCancel() {
     this.sourceVertex = null
     this.streetSpeed = null
+
+    if (IO.overrideCancelCallback == this.cancelOverrideCallback)
+      IO.overrideCancelCallback = null
   }
 
   // Permite que o componente de configuracoes configure essa velocidade
