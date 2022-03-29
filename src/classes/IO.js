@@ -31,6 +31,9 @@ export default class IO {
     cancel: [],
   }
 
+  // Guarda um callback que deve ser executado em vez de emitir um cancel no proximo comando de cancel
+  static overrideCancelCallback
+
   // Inicia as funcoes do IO
   static setup() {
     // Encontra o elemento canvas
@@ -88,7 +91,16 @@ export default class IO {
 
     // Evento de cancelamento
     window.addEventListener('keyup', (event) => {
-      if (event.code == 'Escape') this.#raiseEvent('cancel')
+      if (event.code == 'Escape') {
+        // Se houver um override
+        if (this.overrideCancelCallback != null) {
+          this.overrideCancelCallback()
+          this.overrideCancelCallback = null
+        }
+
+        // Somente se nao houver um override, raise
+        else this.#raiseEvent('cancel')
+      }
     })
   }
 

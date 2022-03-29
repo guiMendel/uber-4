@@ -99,6 +99,12 @@ export default class StreetCreator extends Creator {
   handleClick(position) {
     // Se nao tinha um source
     if (this.sourceVertex == null) {
+      // Aplica um cancel overide
+      IO.overrideCancelCallback = () => {
+        // Somente remove o source
+        this.sourceVertex = null
+      }
+
       // Se clicar num vertice, troca para este vertice ser o novo source
       if (this.hoveredVertex != null) {
         this.sourceVertex = this.hoveredVertex
