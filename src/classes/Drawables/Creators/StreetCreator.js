@@ -24,6 +24,11 @@ export default class StreetCreator extends Creator {
   // Qual vertice esta sob o mouse
   hoveredVertex = null
 
+  // Listeners
+  static listeners = {
+    createstreet: [],
+  }
+
   constructor() {
     super()
 
@@ -130,9 +135,12 @@ export default class StreetCreator extends Creator {
       )
 
     // Cria a rua entre os vertices
-    new Edge(undefined, this.sourceVertex, destination, {
+    const street = new Edge(undefined, this.sourceVertex, destination, {
       mapSpeed: this.streetSpeed,
     })
+
+    // Raise
+    StreetCreator.#raiseEvent('createstreet', street)
 
     // Avanca o source para o destination
     this.sourceVertex = destination
@@ -175,5 +183,39 @@ export default class StreetCreator extends Creator {
   // Permite que o componente de configuracoes configure essa velocidade
   static setStreetSpeed(value) {
     this.getInstance().streetSpeed = value
+  }
+
+  // Permite observar eventos
+  static addEventListener(type, callback) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `A classe IO nao fornece um eventListener do tipo "${type}"`
+      )
+
+    this.listeners[type].push(callback)
+  }
+
+  // Permite observar eventos
+  static removeEventListener(type, callback) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `A classe IO nao fornece um eventListener do tipo "${type}"`
+      )
+
+    const index = this.listeners[type].indexOf(callback)
+
+    if (index == -1) return
+
+    this.listeners[type].splice(index, 1)
+  }
+
+  // Permite levantar eventos
+  static #raiseEvent(type, payload) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `Tentativa em IO de levantar evento de tipo inexistente "${type}"`
+      )
+
+    for (const listener of this.listeners[type]) listener(payload)
   }
 }

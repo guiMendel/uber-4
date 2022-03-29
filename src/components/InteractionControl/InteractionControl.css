@@ -19,7 +19,7 @@
   gap: 0.5rem;
 }
 
-.street-interaction-control .speed-input {
+.street-interaction-control .speed-input-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,7 +27,7 @@
   gap: 0.5rem;
 }
 
-.street-interaction-control .speed-input input {
+.street-interaction-control .speed-input-container .speed-input {
   border-radius: 20px;
 
   background-color: rgb(209, 209, 209);
@@ -36,6 +36,56 @@
   padding: 0.3rem 0.5rem;
 
   text-align: end;
+}
+
+.street-interaction-control .speed-input-container .speed-input[disabled] {
+  color: rgb(148, 148, 148);
+
+  user-select: none;
+}
+
+.toggle-random {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.5rem;
+
+  user-select: none;
+
+  margin-right: 0.5rem;
+
+  cursor: url(../../assets/link.cur), auto;
+
+  --color: rgb(126, 126, 126);
+  color: var(--color);
+}
+
+.toggle-random:hover {
+  filter: brightness(0.96);
+}
+
+.toggle-random .toggler {
+  width: 1rem;
+  height: 1rem;
+
+  border-radius: 50%;
+
+  background-color: var(--color);
+
+  border: 5px solid white;
+  box-shadow: 0 0 5px 1px rgba(149, 149, 149, 0.2);
+
+  transition: all 100ms;
+}
+
+.off {
+  color: rgb(179, 179, 179);
+  --color: rgb(179, 179, 179);
+}
+
+.off .toggler {
+  background-color: white;
 }
 
 input::-webkit-outer-spin-button,
