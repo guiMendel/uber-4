@@ -142,6 +142,12 @@ export default class Drawer {
         context.stroke()
       },
 
+      strokeArc(...args) {
+        arc(...args)
+
+        context.stroke()
+      },
+
       strokePath,
 
       drawImage(image, { x, y }, rotation, scale = 1) {

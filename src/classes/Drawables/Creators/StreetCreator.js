@@ -1,4 +1,6 @@
+import appConfig from '../../../configuration/appConfig'
 import theme from '../../../configuration/theme'
+import { findSmallestValues } from '../../../helpers/search'
 import { angleBetween, getDistance } from '../../../helpers/vectorDistance'
 import IO from '../../IO'
 import ArrowIndicators from '../ArrowIndicators'
@@ -7,7 +9,9 @@ import Edge from '../Edge'
 import Vertex from '../Vertex'
 import Creator from './Creator'
 
-const { streetColorSlowest, streetWidth } = theme
+const { streetColorSlowest, streetWidth, highlightColor } = theme
+
+const { newStreetVertexSnapRange } = appConfig
 
 // Permite criar novos vertices e arestas
 export default class StreetCreator extends Creator {
@@ -17,6 +21,9 @@ export default class StreetCreator extends Creator {
   // De qual vertice a proxima rua a ser desenhada deve sair
   sourceVertex = null
 
+  // Qual vertice esta sob o mouse
+  hoveredVertex = null
+
   constructor() {
     super()
 
@@ -25,14 +32,33 @@ export default class StreetCreator extends Creator {
   }
 
   onDraw(drawer) {
+    // Detecta se o mouse esta sobre um vertice
+    this.detectVertexHover()
+
     const { fillArc, strokePath } = drawer.drawWith({
       style: streetColorSlowest,
       opacity: 0.5,
       lineWidth: streetWidth,
     })
 
-    // Desenha um pontinho no cursor
-    fillArc(IO.mouse.mapCoords, streetWidth / 2)
+    const { strokeArc } = drawer.drawWith({
+      style: highlightColor,
+      lineWidth: streetWidth / 4,
+    })
+
+    let destination = IO.mouse.mapCoords
+
+    // Se tiver um vertice em hover
+    if (this.hoveredVertex != null) {
+      // Destaca o vertice
+      strokeArc(this.hoveredVertex, (5 * streetWidth) / 8)
+
+      // Usa o vertice como destination
+      destination = this.hoveredVertex
+    }
+
+    // Se nao, desenha um pontinho no cursor
+    else fillArc(IO.mouse.mapCoords, streetWidth / 2)
 
     // Se tiver um source
     if (this.sourceVertex == null) return
@@ -41,10 +67,10 @@ export default class StreetCreator extends Creator {
     fillArc(this.sourceVertex, streetWidth / 2)
 
     // Desenha um caminho do source ate o mouse
-    strokePath(this.sourceVertex, IO.mouse.mapCoords)
+    strokePath(this.sourceVertex, destination)
 
     // Desenha as setas
-    this.drawArrows(this.sourceVertex, IO.mouse.mapCoords, drawer)
+    this.drawArrows(this.sourceVertex, destination, drawer)
   }
 
   // Utiliza o arro indicator para desenhar flechas de source ate destination
@@ -66,20 +92,33 @@ export default class StreetCreator extends Creator {
   }
 
   handleClick(position) {
-    // Se nao tinha um source, criar um source virtual
+    // Se nao tinha um source
     if (this.sourceVertex == null) {
+      // Se clicar num vertice, troca para este vertice ser o novo source
+      if (this.hoveredVertex != null) {
+        this.sourceVertex = this.hoveredVertex
+        return
+      }
+
+      // Se nao, criar um source virtual
       this.sourceVertex = { ...position.map, isVirtual: true }
 
       return
     }
 
-    // Se ja tinha um source, cria o vertice do fim da rua
-    const destination = new Vertex(
-      undefined,
-      position.map.x,
-      position.map.y,
-      true
-    )
+    // Se ja tinha um source
+    let destination
+
+    // Verifica se esta em hover de um outro vertice
+    if (this.hoveredVertex != null) {
+      // Usa este vertice como destination
+      destination = this.hoveredVertex
+    }
+
+    // Se nao, cria um novo vertice
+    else {
+      destination = new Vertex(undefined, position.map.x, position.map.y, true)
+    }
 
     // Se o source eh virutal, cria ele tb
     if (this.sourceVertex.isVirtual)
@@ -97,6 +136,35 @@ export default class StreetCreator extends Creator {
 
     // Avanca o source para o destination
     this.sourceVertex = destination
+  }
+
+  detectVertexHover() {
+    // Pega as coordenadas do mouse
+    const { mapCoords: mouse } = IO.mouse
+
+    // Distancia maxima ate o cursor
+    const maxDistance = streetWidth / 2 + newStreetVertexSnapRange
+
+    // Entre os vertices, encontra os mais proximos
+    const closestByX = findSmallestValues(Vertex.verticesSortedBy.x, (vertex) =>
+      Math.abs(vertex.x - mouse.x)
+    )
+
+    // Se a distancia x for muito, ja ignora
+    if (Math.abs(closestByX[0].x - mouse.x) > maxDistance) {
+      this.hoveredVertex = null
+      return
+    }
+
+    // Encontra um vertice proximo o suficiente
+    for (const vertex of closestByX) {
+      if (getDistance(vertex, mouse) <= maxDistance) {
+        this.hoveredVertex = vertex
+        return
+      }
+    }
+
+    this.hoveredVertex = null
   }
 
   onCancel() {

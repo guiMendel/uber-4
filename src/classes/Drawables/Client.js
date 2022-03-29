@@ -5,7 +5,7 @@ import IO from '../IO'
 
 const {
   clientHoverGrow,
-  selectedClientColor,
+  highlightColor: selectedClientColor,
   selectedClientRadius,
   clientDestinationColor,
   clientDestinationRadius,

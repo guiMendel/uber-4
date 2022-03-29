@@ -10,6 +10,9 @@ export default {
   // Velocidade geral de animacoes simples, em segundos
   generalAnimationSpeed: 0.05,
 
+  // A cor do highlight
+  highlightColor: '#168ece',
+
   //=== SETAS DE SENTIDO DA RUA
 
   // A cor das setas que indica o sentido das ruas
@@ -40,9 +43,6 @@ export default {
 
   // O quanto a imagem do cliente cresce quando sob o cursor
   clientHoverGrow: 1.3,
-
-  // A cor do highlight do cliente selecionado
-  selectedClientColor: '#168ece',
 
   // O raio do highlight do cliente selecionado
   selectedClientRadius: streetWidth * 0.8,
