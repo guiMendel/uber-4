@@ -38,7 +38,9 @@ export default class Creator extends Drawable {
     })
 
     // Ouve cliques
-    IO.addEventListener('leftclick', (value) => this.handleClick(value))
+    IO.addEventListener('leftclick', (value) => {
+      if (this.constructor.isActive) this.handleClick(value)
+    })
   }
 
   cancel() {
@@ -47,10 +49,22 @@ export default class Creator extends Drawable {
     if (this.onCancel != null) this.onCancel()
   }
 
+  draw(drawer) {
+    if (!this.constructor.isActive) return
+
+    this.onDraw(drawer)
+  }
+
   // Abstract
   handleClick(position) {
     throw new Error(
       'O metodo "handleClick" deve ser implementado por uma classe filho'
+    )
+  }
+
+  onDraw(position) {
+    throw new Error(
+      'O metodo "onDraw" deve ser implementado por uma classe filho'
     )
   }
 

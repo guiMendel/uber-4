@@ -11,9 +11,7 @@ export default class ClientCreator extends Creator {
   // The next client to be created
   #nextCreateClient = null
 
-  draw(drawer) {
-    if (!ClientCreator.isActive) return
-
+  onDraw(drawer) {
     const { drawImage, fillArc } = drawer.drawWith({
       opacity: 0.5,
       style: clientDestinationColor,

@@ -62,17 +62,6 @@ export default class Edge extends Drawable {
   // Retorna o angulo desta aresta
   get angle() {
     return angleBetween(this.source, this.destination)
-
-    // return (
-    //   -(
-    //     Math.atan(
-    //       (this.destination.y - this.source.y) /
-    //         (this.destination.x - this.source.x)
-    //     ) * 180
-    //   ) /
-    //     Math.PI +
-    //   (this.destination.x < this.source.x ? 180 : 0)
-    // )
   }
 
   // Retorna a distancia em pixels entre source e destination
