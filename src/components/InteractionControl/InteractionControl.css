@@ -1,0 +1,49 @@
+.map-interaction-control {
+  position: absolute;
+
+  bottom: 0;
+}
+
+.street-interaction-control {
+  padding: 0.8rem 2rem;
+
+  border-radius: 20px 20px 0 0;
+
+  background-color: whitesmoke;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.street-interaction-control .speed-input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.5rem;
+}
+
+.street-interaction-control .speed-input input {
+  border-radius: 20px;
+
+  background-color: rgb(209, 209, 209);
+  width: 3rem;
+
+  padding: 0.3rem 0.5rem;
+
+  text-align: end;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}

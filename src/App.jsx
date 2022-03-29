@@ -2,6 +2,7 @@ import './styles/App.css'
 import Canvas from './components/Canvas/Canvas.jsx'
 import Button from './components/Button/Button.jsx'
 import Client from './classes/Drawables/Client'
+import InteractionControl from './components/InteractionControl/InteractionControl'
 
 // Icones
 import {
@@ -28,7 +29,10 @@ function App() {
     <div className="App">
       <Canvas />
 
-      {/* Contem os butoes de acoes do cliente */}
+      {/* Espaco em que aparecem os controles da interacao atual com o mapa */}
+      <InteractionControl />
+
+      {/* Contem os botoes de acoes do cliente */}
       <div
         className="client actions"
         style={{ display: showClientActions ? 'flex' : 'none' }}
@@ -38,7 +42,7 @@ function App() {
         </Button>
       </div>
 
-      {/* Contem os butoes de acoes do mapa */}
+      {/* Contem os botoes de acoes do mapa */}
       <div className="map actions">
         <Button name={'new-car'} help={'Adicionar novos carros'}>
           <div className="new-car-icons">

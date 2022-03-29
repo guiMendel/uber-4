@@ -1,3 +1,4 @@
+import appConfig from '../../configuration/appConfig'
 import theme from '../../configuration/theme'
 import { sin, cos } from '../../helpers/trygonometry'
 import {
@@ -10,6 +11,7 @@ import Drawable from './Drawable'
 
 // Extrai valores uteis
 const { streetColorSlowest, streetWidth, streetColorHighest } = theme
+const { pixelsPerKilometer } = appConfig
 
 // Define uma aresta
 export default class Edge extends Drawable {
@@ -34,6 +36,8 @@ export default class Edge extends Drawable {
 
     // Encontra a velocidade de mapa, se ja nao estiver definida
     mapSpeed ??= Edge.getMapSpeed(realDistance, this.mapDistance, realSpeed)
+
+    // console.log(`New edge with speed ${mapSpeed / pixelsPerKilometer}`)
 
     // Invoca construtor pai
     super(id, { source, destination, mapSpeed })

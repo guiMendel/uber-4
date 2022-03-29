@@ -33,6 +33,9 @@ export default class IO {
 
   // Inicia as funcoes do IO
   static setup() {
+    // Encontra o elemento canvas
+    const canvas = document.getElementById('canvas')
+
     // Mantem a posicao do cursor atualizada
     window.addEventListener(
       'mousemove',
@@ -46,9 +49,9 @@ export default class IO {
       }
     )
 
-    window.addEventListener('contextmenu', (e) => e.preventDefault())
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault())
 
-    window.addEventListener('mousedown', ({ clientX, clientY, button }) => {
+    canvas.addEventListener('mousedown', ({ clientX, clientY, button }) => {
       // Atualiza o estado
       if (button == 0) {
         IO.mouse.isLeftPressed = true

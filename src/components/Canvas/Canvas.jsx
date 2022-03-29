@@ -27,7 +27,7 @@ export default function Canvas() {
   }, [])
 
   return (
-    <canvas ref={canvasRef}>
+    <canvas id='canvas' ref={canvasRef}>
       Não foi possível carregar o conteúdo do aplicativo.
     </canvas>
   )

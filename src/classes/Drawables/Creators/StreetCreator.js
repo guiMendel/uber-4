@@ -3,12 +3,17 @@ import { angleBetween, getDistance } from '../../../helpers/vectorDistance'
 import IO from '../../IO'
 import ArrowIndicators from '../ArrowIndicators'
 import Drawable from '../Drawable'
+import Edge from '../Edge'
+import Vertex from '../Vertex'
 import Creator from './Creator'
 
 const { streetColorSlowest, streetWidth } = theme
 
 // Permite criar novos vertices e arestas
 export default class StreetCreator extends Creator {
+  // A velocidade das ruas a serem criadas
+  streetSpeed = null
+
   // De qual vertice a proxima rua a ser desenhada deve sair
   sourceVertex = null
 
@@ -64,11 +69,43 @@ export default class StreetCreator extends Creator {
     // Se nao tinha um source, criar um source virtual
     if (this.sourceVertex == null) {
       this.sourceVertex = { ...position.map, isVirtual: true }
-      console.log(42)
+
+      return
     }
+
+    // Se ja tinha um source, cria o vertice do fim da rua
+    const destination = new Vertex(
+      undefined,
+      position.map.x,
+      position.map.y,
+      true
+    )
+
+    // Se o source eh virutal, cria ele tb
+    if (this.sourceVertex.isVirtual)
+      this.sourceVertex = new Vertex(
+        undefined,
+        this.sourceVertex.x,
+        this.sourceVertex.y,
+        true
+      )
+
+    // Cria a rua entre os vertices
+    new Edge(undefined, this.sourceVertex, destination, {
+      mapSpeed: this.streetSpeed,
+    })
+
+    // Avanca o source para o destination
+    this.sourceVertex = destination
   }
 
   onCancel() {
     this.sourceVertex = null
+    this.streetSpeed = null
+  }
+
+  // Permite que o componente de configuracoes configure essa velocidade
+  static setStreetSpeed(value) {
+    this.getInstance().streetSpeed = value
   }
 }

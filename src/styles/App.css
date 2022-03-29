@@ -1,3 +1,11 @@
+.App {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .actions {
   position: fixed;
   display: flex;

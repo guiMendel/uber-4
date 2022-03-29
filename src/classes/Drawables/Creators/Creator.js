@@ -72,7 +72,7 @@ export default class Creator extends Drawable {
   static getInstance() {
     const instancesArray = Drawable.drawableInstances[this.name]
 
-    return instancesArray && instancesArray[0]
+    return instancesArray && Object.values(instancesArray)[0]
   }
 
   static get isActive() {

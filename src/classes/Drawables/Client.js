@@ -38,7 +38,11 @@ export default class Client extends Drawable {
 
   static setup() {
     // Deseleciona cliente no cancel
-    IO.addEventListener('cancel', () => (this.selected = null))
+    IO.addEventListener('cancel', () => {
+      if (Map.activeInteractionClass == Client)
+        Map.activeInteractionClass = null
+      this.selected = null
+    })
 
     // Mantem o cursor atualizado
     Map.addEventListener('activateinteractionclass', ({ value, oldValue }) => {
@@ -46,23 +50,10 @@ export default class Client extends Drawable {
     })
   }
 
-  // Gera um id valido para um novo cliente
-  static generateId() {
-    let newId
-
-    do {
-      newId = Math.round(Math.random() * 99999)
-    } while (Drawable.drawableInstances[Client.name][newId] != undefined)
-
-    return newId
-  }
-
   // Caso o cliente estava no estado hovered na ultima iteracao
   wasHovered = false
 
   constructor(id, location, destination, image, rotation) {
-    id ??= Client.generateId()
-
     // Invoca construtor pai
     super(id, { ...location, destination })
 

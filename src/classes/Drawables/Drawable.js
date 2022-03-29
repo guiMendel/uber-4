@@ -18,7 +18,7 @@ export default class Drawable {
 
   constructor(id, properties) {
     // Verifica se ja exist euma instancia com o id fornecido
-    if (this.instances[id] != undefined) {
+    if (id && this.instances[id] != undefined) {
       const existingDrawable = this.instances[id]
 
       // Compara a instancia existente com as propriedades fornecidas
@@ -32,11 +32,11 @@ export default class Drawable {
     }
 
     // Keep the properties
-    this.id = id
+    this.id = id ?? Drawable.generateId(this)
     Object.assign(this, properties)
 
     // Registrar drawable
-    this.instances[id] = this
+    this.instances[this.id] = this
   }
 
   // Retorna o objeto que armazena todas as instancias da classe de this
@@ -109,5 +109,20 @@ export default class Drawable {
       )
 
     for (const listener of this.listeners[type]) listener(payload)
+  }
+
+  // Gera um id valido para uma nova instancia desta clase
+  static generateId(callingInstance) {
+    const callingClass = callingInstance?.constructor ?? this
+
+    let newId
+
+    const instanceArray = Drawable.drawableInstances[callingClass.name]
+
+    do {
+      newId = Math.round(Math.random() * 99999)
+    } while (instanceArray && instanceArray[newId] != undefined)
+
+    return newId
   }
 }
