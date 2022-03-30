@@ -4,8 +4,8 @@
   bottom: 0;
 }
 
-.street-interaction-control {
-  padding: 0.8rem 2rem;
+.interaction-control {
+  padding: 0.9rem 1.3rem;
 
   border-radius: 20px 20px 0 0;
 
@@ -16,10 +16,94 @@
   justify-content: center;
 
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
+
+  user-select: none;
 }
 
-.street-interaction-control .speed-input-container {
+.interaction-control > p {
+  font-size: 1.2rem;
+}
+
+/* CLIENT ROUTE */
+
+.route-info-container {
+  display: flex;
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 2rem;
+}
+
+.route-info-container .arrow {
+  font-size: 1.5rem;
+  cursor: url(../../assets/link.cur), auto;
+
+  transition: all 200ms;
+}
+
+.route-info-container .arrow:hover {
+  transform: translateY(-2px);
+  filter: brightness(1) drop-shadow(0 2px 1px gray);
+}
+
+.route-info-container .arrow:active {
+  transform: translateY(1px);
+  filter: brightness(0.8) drop-shadow(0 0 0 gray);
+}
+
+.route-info-container .arrow.disabled {
+  transform: none;
+  filter: none;
+  cursor: unset;
+  color: rgb(190, 190, 190);
+}
+
+.route-distances {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.route-distances .sections {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+
+  color: rgb(160, 160, 160);
+
+  font-size: 0.95rem;
+}
+
+.route-distances .sections span {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.route-distances .sections span b {
+  margin-left: 0.2rem;
+
+  font-size: 1.1em;
+  filter: brightness(0.8);
+}
+
+.route-distances .sections .car-icon {
+  font-size: 1.2em;
+}
+
+.route-distances .total {
+  font-size: 1.3em;
+  font-weight: 600;
+}
+
+/* STREET CREATOR */
+
+.interaction-control .speed-input-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,7 +111,7 @@
   gap: 0.5rem;
 }
 
-.street-interaction-control .speed-input-container .speed-input {
+.interaction-control .speed-input-container .speed-input {
   border-radius: 20px;
 
   background-color: rgb(209, 209, 209);
@@ -38,7 +122,7 @@
   text-align: end;
 }
 
-.street-interaction-control .speed-input-container .speed-input[disabled] {
+.interaction-control .speed-input-container .speed-input[disabled] {
   color: rgb(148, 148, 148);
 
   user-select: none;

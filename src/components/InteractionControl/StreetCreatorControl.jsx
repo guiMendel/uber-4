@@ -53,7 +53,7 @@ export default function StreetCreatorControl() {
   }, [])
 
   return (
-    <div className="street-interaction-control">
+    <div className="interaction-control">
       {/* Titulo */}
       <p>Velocidade</p>
 
