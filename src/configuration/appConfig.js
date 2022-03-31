@@ -17,7 +17,6 @@ export default {
     'ArrowIndicators',
     'Client',
     'Car',
-    'RouteHighlighter',
     'ClientCreator',
     'StreetCreator',
     'Debug',
@@ -29,10 +28,10 @@ export default {
   clientWalkSpeed: 1.5,
 
   // Quantas iteracoes, no minimo, realizar a expansao do A* de cada carro analizado
-  pathExpansionIterations: 10,
+  pathExpansionIterations: 20,
 
   // Quantas iteracoes somar ao numero de iteracoes sempre que um carro descobrir um novo melhor caminho
-  newBestPathReward: 2,
+  newBestPathReward: 4,
 
   // Quantos dos melhores nos considerar quando for calcular o tempo de entrega no-destino de cada carro
   countOfNodesToConsider: 5,

@@ -95,7 +95,7 @@ export default class Drawable {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe IO nao fornece um eventListener do tipo "${type}"`
+        `A classe ${this.name} nao fornece um eventListener do tipo "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -105,10 +105,24 @@ export default class Drawable {
   static raiseEvent(type, payload) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `Tentativa em IO de levantar evento de tipo inexistente "${type}"`
+        `Tentativa em ${this.name} de levantar evento de tipo inexistente "${type}"`
       )
 
     for (const listener of this.listeners[type]) listener(payload)
+  }
+
+  // Permite observar eventos
+  static removeEventListener(type, callback) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `A classe ${this.name} nao fornece um eventListener do tipo "${type}"`
+      )
+
+    const index = this.listeners[type].indexOf(callback)
+
+    if (index == -1) return
+
+    this.listeners[type].splice(index, 1)
   }
 
   // Gera um id valido para uma nova instancia desta clase

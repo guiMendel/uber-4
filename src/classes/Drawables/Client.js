@@ -2,6 +2,7 @@ import Drawable from './Drawable'
 import Map from '../Map'
 import theme from '../../configuration/theme'
 import IO from '../IO'
+import RouteHighlighter from './RouteHighlighter'
 
 const {
   clientHoverGrow,
@@ -17,7 +18,7 @@ export default class Client extends Drawable {
   static #selected = null
 
   // Listeners
-  static listeners = { select: [] }
+  static listeners = { select: [], routeselect: [] }
 
   static get selected() {
     return this.#selected
@@ -34,6 +35,18 @@ export default class Client extends Drawable {
 
   get isSelected() {
     return this == Client.selected
+  }
+
+  // A rota selecionada para este cliente
+  #selectedRoute = null
+
+  get selectedRoute() {
+    return this.#selectedRoute
+  }
+
+  set selectedRoute(value) {
+    this.#selectedRoute = value
+    Client.raiseEvent('routeselect', { client: this, route: value })
   }
 
   static setup() {
@@ -95,6 +108,11 @@ export default class Client extends Drawable {
   }
 
   draw(drawer) {
+    // Antes de mais nada, desataca sua rota
+    if (this.isSelected && this.selectedRoute != null) {
+      RouteHighlighter.highlightRoute(this.selectedRoute, drawer)
+    }
+
     // Atualiza o cursor
     if (this.wasHovered && !this.isHovered) {
       this.wasHovered = false
