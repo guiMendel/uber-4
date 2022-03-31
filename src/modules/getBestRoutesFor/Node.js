@@ -19,15 +19,16 @@ export default class Node {
     this.stepper = stepper
     this.edge = edge
     this.parent = parent
-
+    
     // A partir do pai, descobre o seu g
     this.g = parent == null ? 0 : parent.g + parent.time
-
+    
     // Se tiver um custo adicional
     if (additionalCost) this.g += additionalCost
-
+    
     // Se recebemos o source, calculamos um valor de h e time excepcional
     if (source != null) {
+      this.source = source
       this.time = getDistance(source, edge.destination) / edge.mapSpeed
       this.calculateExceptionalH(source)
     } else {

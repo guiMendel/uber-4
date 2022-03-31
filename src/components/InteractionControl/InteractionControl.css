@@ -33,6 +33,9 @@
 
   justify-content: space-between;
 
+  width: 30rem;
+  height: 3rem;
+
   gap: 2rem;
 }
 
