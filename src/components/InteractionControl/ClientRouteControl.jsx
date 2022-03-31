@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import {
   FaCaretLeft,
@@ -10,6 +10,12 @@ import {
 } from 'react-icons/fa'
 import Client from '../../classes/Drawables/Client'
 import RouteCalculator from '../../classes/RouteCalculator'
+import appConfig from '../../configuration/appConfig'
+import theme from '../../configuration/theme'
+import { getDistance } from '../../helpers/vectorDistance'
+
+const { selectedRouteHighlight, selectedRouteHighlightBeforeRdv } = theme
+const { pixelsPerKilometer } = appConfig
 
 // Um componente com a interface para configurar a criacao de nvoas ruas
 export default function ClientRouteControl() {
@@ -19,12 +25,15 @@ export default function ClientRouteControl() {
   // Qual a rota do cliente selecionado
   const [routes, setRoutes] = useState(null)
 
-  function handleRouteCalculation({ client, routes: newRoutes }) {
+  const handleRouteCalculation = ({ client, routes: newRoutes }) => {
     setRoutes(newRoutes)
-    setSelectedClient(client)
 
     // Ja seleciona a melhor rota para este cliente
     client.selectedRoute = newRoutes[0]
+
+    // Como React eh uma bosta, precisa dar set no null antes pra ele dar rerender
+    setSelectedClient(null)
+    setSelectedClient(client)
   }
 
   useEffect(() => {
@@ -47,13 +56,41 @@ export default function ClientRouteControl() {
     }
   }, [])
 
-  if (selectedClient != null)
-    return (
-      <div className="interaction-control">
-        {/* Titulo */}
-        <p>Rota Selecionada</p>
+  // Pega as distancias
+  const getClientToDestinationKm = useCallback((route) => {
+    // Ja soma os km do fim da rota
+    let totalKm = getDistance(route.edge.source, route.projectionCoords)
+    route = route.parent
 
-        {/* Area de controle */}
+    while (route != null) {
+      if (route.source != null)
+        totalKm += getDistance(route.source, route.edge.destination)
+      else totalKm += route.edge.mapDistance
+      route = route.parent
+    }
+
+    return totalKm / pixelsPerKilometer
+  })
+
+  const getCarToClientKm = useCallback((route) => {
+    // Pega a rota antecessora
+    route = route.stepper.parentNode
+
+    return getClientToDestinationKm(route)
+  })
+
+  return (
+    <div
+      className="interaction-control"
+      style={{
+        '--section1': selectedRouteHighlightBeforeRdv,
+        '--section2': selectedRouteHighlight,
+      }}
+    >
+      {/* Titulo */}
+      <h1>Rota Selecionada</h1>
+
+      {selectedClient?.selectedRoute != null ? (
         <div className="route-info-container">
           {/* Seta para esquerda */}
           <FaCaretLeft className="arrow" />
@@ -63,27 +100,42 @@ export default function ClientRouteControl() {
             {/* Distancias das secoes */}
             <div className="sections">
               {/* Carro ao cliente */}
-              <span>
+              <span className="car-to-client">
                 <FaCarSide className="car-icon" /> <FaLongArrowAltRight />{' '}
-                <FaUserTie /> <b>27 km</b>
+                <FaUserTie />{' '}
+                <b>
+                  {getCarToClientKm(selectedClient.selectedRoute).toFixed(2)} km
+                </b>
               </span>
 
               {/* Cliente ao destino */}
-              <span>
+              <span className="client-to-destination">
                 <FaUserTie /> <FaLongArrowAltRight /> <FaMapMarkerAlt />{' '}
-                <b>134 km</b>
+                <b>
+                  {getClientToDestinationKm(
+                    selectedClient.selectedRoute
+                  ).toFixed(2)}{' '}
+                  km
+                </b>
               </span>
             </div>
 
             {/* Distancia total */}
-            <span className="total">161 km</span>
+            <span className="total">
+              {(
+                getCarToClientKm(selectedClient.selectedRoute) +
+                getClientToDestinationKm(selectedClient.selectedRoute)
+              ).toFixed(2)}{' '}
+              km
+            </span>
           </div>
 
           {/* Seta para direita */}
           <FaCaretRight className="arrow" />
         </div>
-      </div>
-    )
-
-  return null
+      ) : (
+        <p>Usando Rota Automática</p>
+      )}
+    </div>
+  )
 }

@@ -21,7 +21,7 @@
   user-select: none;
 }
 
-.interaction-control > p {
+.interaction-control > h1 {
   font-size: 1.2rem;
 }
 
@@ -40,7 +40,7 @@
   font-size: 1.5rem;
   cursor: url(../../assets/link.cur), auto;
 
-  transition: all 200ms;
+  transition: all 100ms;
 }
 
 .route-info-container .arrow:hover {
@@ -51,6 +51,7 @@
 .route-info-container .arrow:active {
   transform: translateY(1px);
   filter: brightness(0.8) drop-shadow(0 0 0 gray);
+  color: rgb(9, 139, 226);
 }
 
 .route-info-container .arrow.disabled {
@@ -79,6 +80,18 @@
   font-size: 0.95rem;
 }
 
+.route-distances .sections .car-to-client {
+  color: var(--section1);
+
+  filter: brightness(0.8);
+}
+
+.route-distances .sections .client-to-destination {
+  color: var(--section2);
+
+  filter: brightness(0.8);
+}
+
 .route-distances .sections span {
   display: flex;
   align-items: center;
@@ -89,7 +102,7 @@
   margin-left: 0.2rem;
 
   font-size: 1.1em;
-  filter: brightness(0.8);
+  /* filter: brightness(0.8); */
 }
 
 .route-distances .sections .car-icon {

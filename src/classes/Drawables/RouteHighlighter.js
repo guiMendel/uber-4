@@ -37,6 +37,12 @@ export default class RouteHighlighter {
 
     this.drawRoute(highlightedNode, selectedRouteHighlight, drawer)
 
+    // Desenha as flechas
+    this.drawArrows(highlightedNode.stepper.parentNode, drawer)
+
+    // Desenha as flechas
+    this.drawArrows(highlightedNode, drawer)
+
     // Desenha carro
     car.draw(drawer)
   }
@@ -56,9 +62,6 @@ export default class RouteHighlighter {
 
     // Desenha as ruas
     this.drawStreet(node, drawer)
-
-    // Desenha as flechas
-    this.drawArrows(node, drawer)
 
     // Desenha destaque da origem
     fillArc(node.stepper.source, 30)

@@ -55,7 +55,7 @@ export default function StreetCreatorControl() {
   return (
     <div className="interaction-control">
       {/* Titulo */}
-      <p>Velocidade</p>
+      <h1>Velocidade</h1>
 
       {/* Area de controle */}
       <div className="speed-input-container">
