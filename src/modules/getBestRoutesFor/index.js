@@ -164,6 +164,9 @@ export default async function getBestRoutesFor(client) {
 
 // Seleciona o subconjunto de carros que serao analisados para encontrar um melhor caminho para o cliente fornecido
 function getSubsetOfCarsFor(client) {
+  // Se tiver um carro selecionado, usa somente ele
+  if (Car.selected != null) return [Car.selected]
+
   // Por enquanto, vamos analisar todos os carros
   return Object.values(Drawable.drawableInstances[Car.name])
 }

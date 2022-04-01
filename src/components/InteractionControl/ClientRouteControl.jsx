@@ -130,7 +130,10 @@ export default function ClientRouteControl() {
 
     return `${hours}h${Math.floor(
       (selectedClient.selectedRoute.totalCost - hours) * 60
-    )}`
+    ).toLocaleString('pt-BR', {
+      minimumIntegerDigits: 2,
+      useGrouping: false,
+    })}`
   }
 
   // Permite alterar entre as rotas

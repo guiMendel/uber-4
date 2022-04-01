@@ -32,7 +32,7 @@ export default class IO {
   }
 
   // Guarda um callback que deve ser executado em vez de emitir um cancel no proximo comando de cancel
-  static overrideCancelCallback
+  static overrideCancelCallbacks = {}
 
   // Inicia as funcoes do IO
   static setup() {
@@ -91,17 +91,34 @@ export default class IO {
 
     // Evento de cancelamento
     window.addEventListener('keyup', (event) => {
-      if (event.code == 'Escape') {
-        // Se houver um override
-        if (this.overrideCancelCallback != null) {
-          this.overrideCancelCallback()
-          this.overrideCancelCallback = null
-        }
-
-        // Somente se nao houver um override, raise
-        else this.#raiseEvent('cancel')
-      }
+      if (event.code == 'Escape') this.triggerCancel()
     })
+  }
+
+  static addCancelCallback(id, callback) {
+    this.overrideCancelCallbacks[id] = callback
+  }
+
+  static removeCancelCallback(id) {
+    delete this.overrideCancelCallbacks[id]
+  }
+
+  static triggerCancel() {
+    // Se houver override
+    const cancelCallbacks = Object.entries(this.overrideCancelCallbacks)
+
+    if (cancelCallbacks.length > 0) {
+      const id = cancelCallbacks[0][0]
+      const callback = cancelCallbacks[0][1]
+
+      callback()
+      delete this.overrideCancelCallbacks[id]
+
+      return
+    }
+
+    // Somente se nao houver um override, raise
+    this.#raiseEvent('cancel')
   }
 
   // Permite observar eventos

@@ -6,7 +6,7 @@ import RouteHighlighter from './RouteHighlighter'
 
 const {
   clientHoverGrow,
-  highlightColor: selectedClientColor,
+  highlightColor,
   selectedClientRadius,
   clientDestinationColor,
   clientDestinationRadius,
@@ -127,7 +127,7 @@ export default class Client extends Drawable {
     if (opacityHex.length == 1) opacityHex = '0' + opacityHex
 
     const { drawImage, strokeArc } = drawer.drawWith({
-      style: selectedClientColor + opacityHex,
+      style: highlightColor + opacityHex,
       lineWidth: 5,
     })
 

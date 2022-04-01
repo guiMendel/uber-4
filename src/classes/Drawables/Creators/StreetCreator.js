@@ -13,6 +13,8 @@ const { streetColorSlowest, streetWidth, highlightColor } = theme
 
 const { newStreetVertexSnapRange } = appConfig
 
+const streetSourceCancelToken = 'create-street-source-cancel'
+
 // Permite criar novos vertices e arestas
 export default class StreetCreator extends Creator {
   // A velocidade das ruas a serem criadas
@@ -100,10 +102,10 @@ export default class StreetCreator extends Creator {
     // Se nao tinha um source
     if (this.sourceVertex == null) {
       // Aplica um cancel overide
-      IO.overrideCancelCallback = () => {
+      IO.addCancelCallback(streetSourceCancelToken, () => {
         // Somente remove o source
         this.sourceVertex = null
-      }
+      })
 
       // Se clicar num vertice, troca para este vertice ser o novo source
       if (this.hoveredVertex != null) {
@@ -185,7 +187,7 @@ export default class StreetCreator extends Creator {
     this.sourceVertex = null
     this.streetSpeed = null
 
-    IO.overrideCancelCallback = null
+    IO.removeCancelCallback(streetSourceCancelToken)
   }
 
   // Permite que o componente de configuracoes configure essa velocidade

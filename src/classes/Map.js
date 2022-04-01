@@ -17,6 +17,7 @@ import Debug from './Drawables/Debug'
 import RouteHighlighter from './Drawables/RouteHighlighter'
 import ClientCreator from './Drawables/Creators/ClientCreator'
 import StreetCreator from './Drawables/Creators/StreetCreator'
+import Car from './Drawables/Car'
 
 // Extrai valores uteis
 const { carWidth, clientWidth } = theme
@@ -67,6 +68,7 @@ export default class Map {
       // Gera um grafo de teste
       seedGraph()
 
+      Car.setup()
       Client.setup()
       RouteCalculator.setup()
 

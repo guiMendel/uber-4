@@ -11,7 +11,6 @@ import Drawable from './Drawable'
 
 // Extrai valores uteis
 const { streetColorSlowest, streetWidth, streetColorHighest } = theme
-const { pixelsPerKilometer } = appConfig
 
 // Define uma aresta
 export default class Edge extends Drawable {
