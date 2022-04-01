@@ -162,8 +162,10 @@ export default class StreetCreator extends Creator {
     const maxDistance = streetWidth / 2 + newStreetVertexSnapRange
 
     // Entre os vertices, encontra os mais proximos
-    const closestByX = findSmallestValues(Vertex.verticesSortedBy.x, (vertex) =>
-      Math.abs(vertex.x - mouse.x)
+    // TODO: garantir q isso seja feito com binary search
+    const closestByX = findSmallestValues(
+      Vertex.sortedCoords.get('x'),
+      (vertex) => Math.abs(vertex.x - mouse.x)
     )
 
     // Se a distancia x for muito, ja ignora
@@ -172,6 +174,7 @@ export default class StreetCreator extends Creator {
       return
     }
 
+    // TODO: usar o find smallest values aqui tb, e depois pegar o vertice mais proximo dos resultados
     // Encontra um vertice proximo o suficiente
     for (const vertex of closestByX) {
       if (getDistance(vertex, mouse) <= maxDistance) {

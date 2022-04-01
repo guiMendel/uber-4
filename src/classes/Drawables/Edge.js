@@ -49,6 +49,23 @@ export default class Edge extends Drawable {
     this.updateRecordEdges()
 
     // console.log(`from ${source.id} to ${destination.id}`)
+
+    if (source.x <= destination.x) {
+      this.leftVertex = source
+      this.rightVertex = destination
+    } else {
+      this.leftVertex = destination
+      this.rightVertex = source
+    }
+
+    // Lembrando que y cresce pra baixo
+    if (source.y <= destination.y) {
+      this.upperVertex = source
+      this.lowerVertex = destination
+    } else {
+      this.upperVertex = destination
+      this.lowerVertex = source
+    }
   }
 
   // Se desenha

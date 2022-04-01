@@ -7,9 +7,13 @@ export default class Heap {
   #newHighestPriorityListeners = []
 
   // compareMethod vai permitir definir a prioridade dos elementos do heap. Recebe 2 elementos, e deve retornar true se o primeiro tem mais prioridade do que o segundo
-  constructor(compareMethod) {
+  constructor(compareMethod, alwaysKeepCorrespondentArray = false) {
     // Armazena o metodo de comparacao
     this.compare = compareMethod
+
+    // Caso sera necessario gerar o array correspondente para cada modificacao do heap
+    this.alwaysKeepCorrespondentArray = alwaysKeepCorrespondentArray
+    if (alwaysKeepCorrespondentArray) this.array = []
   }
 
   get length() {
@@ -32,6 +36,8 @@ export default class Heap {
       for (const listener of this.#newHighestPriorityListeners)
         listener(this.#data[0])
     }
+
+    if (this.alwaysKeepCorrespondentArray) this.array = this.toArray()
   }
 
   // Permite retirar o elemento de maior prioridade do heap
@@ -49,6 +55,8 @@ export default class Heap {
     // Faz o swim down
     this.#swimDown(0)
 
+    if (this.alwaysKeepCorrespondentArray) this.array = this.toArray()
+
     return returnValue
   }
 
@@ -64,6 +72,8 @@ export default class Heap {
 
   setRawData(data) {
     this.#data = data
+
+    if (this.alwaysKeepCorrespondentArray) this.array = this.toArray()
   }
 
   toArray() {
