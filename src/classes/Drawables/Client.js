@@ -126,14 +126,13 @@ export default class Client extends Drawable {
     let opacityHex = Math.floor(this.highlightOpacity * 255).toString(16)
     if (opacityHex.length == 1) opacityHex = '0' + opacityHex
 
-    const { drawImage, fillStrokeArc } = drawer.drawWith({
-      fillStyle: selectedClientColor + opacityHex,
-      strokeStyle: '#ffffff' + opacityHex,
+    const { drawImage, strokeArc } = drawer.drawWith({
+      style: selectedClientColor + opacityHex,
       lineWidth: 5,
     })
 
     // Desenha um highlight, que sera transparente se n estiver selecionado
-    fillStrokeArc(this, selectedClientRadius)
+    strokeArc(this, selectedClientRadius)
 
     drawImage(this.image, this, this.rotation - 90, this.scale)
 

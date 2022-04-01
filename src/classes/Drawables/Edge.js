@@ -40,7 +40,7 @@ export default class Edge extends Drawable {
     // console.log(`New edge with speed ${mapSpeed / pixelsPerKilometer}`)
 
     // Invoca construtor pai
-    super(id, { source, destination, mapSpeed })
+    super(id, { source, destination, mapSpeed, realDistance })
 
     // Avisa os vertices de sua existencia
     source.sourceOf.push(this)

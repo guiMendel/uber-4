@@ -19,13 +19,13 @@ export default class Node {
     this.stepper = stepper
     this.edge = edge
     this.parent = parent
-    
+
     // A partir do pai, descobre o seu g
     this.g = parent == null ? 0 : parent.g + parent.time
-    
+
     // Se tiver um custo adicional
     if (additionalCost) this.g += additionalCost
-    
+
     // Se recebemos o source, calculamos um valor de h e time excepcional
     if (source != null) {
       this.source = source
@@ -181,5 +181,12 @@ export default class Node {
 
     // Retorna uma copia do vetor
     return [...this.edge.destination.sourceOf]
+  }
+
+  // Retorna verdadeiro se os 2 nodes sao iguais
+  isEqualTo(node) {
+    return (
+      this.edge.id == node.edge.id && this.stepper.car.id == node.stepper.car.id
+    )
   }
 }

@@ -137,13 +137,24 @@ export default async function getBestRoutesFor(client) {
   // console.log(bestStepperNodes.getRawDataCopy().map((node) => node.totalCost))
 
   for (let i = 0; i < countOfNodesToConsider; i++) {
-    const node = bestNodes.pop()
-    // const node = bestCarNodes.pop()
-
-    // console.log(node.totalCost)
-    // console.log(node)
+    let node = bestNodes.pop()
 
     if (node == undefined) break
+
+    // Se a projection coords do node for 0, ficamos com o pai deste node
+    if (
+      node.projectionCoords.x == node.edge.source.x &&
+      node.projectionCoords.y == node.edge.source.y &&
+      node.parent != null
+    )
+      node = node.parent
+
+    // Verificamos se este node ja esta na array
+    if (finalNodes.findIndex((finalNode) => finalNode.isEqualTo(node)) != -1) {
+      // Se ja tem um node equivalente, pulamos este e aumentamos as iteracoes
+      i--
+      continue
+    }
 
     finalNodes.push(node)
   }
