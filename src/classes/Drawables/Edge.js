@@ -6,6 +6,7 @@ import {
   getDistance,
   getSquaredDistance,
 } from '../../helpers/vectorDistance'
+import SortProperties from '../SortProperties'
 
 import Drawable from './Drawable'
 
@@ -14,6 +15,14 @@ const { streetColorSlowest, streetWidth, streetColorHighest } = theme
 
 // Define uma aresta
 export default class Edge extends Drawable {
+  // Guarda as arestas ordenadas pelas coordenadas
+  static sortedCoords = new SortProperties({
+    leftVertexX: (e1, e2) => e1.leftVertex.x < e2.leftVertex.x,
+    rightVertexX: (e1, e2) => e1.rightVertex.x < e2.rightVertex.x,
+    upperVertexY: (e1, e2) => e1.upperVertex.y < e2.upperVertex.y,
+    lowerVertexY: (e1, e2) => e1.lowerVertex.y < e2.lowerVertex.y,
+  })
+
   // Descobre a real velocidade da aresta, com base no seu comprimento e velocidade bruta
   static getMapSpeed(realDistance, mapDistance, realSpeed) {
     return (mapDistance * realSpeed) / realDistance
@@ -66,6 +75,9 @@ export default class Edge extends Drawable {
       this.upperVertex = destination
       this.lowerVertex = source
     }
+
+    // Registra nas listas ordenadas
+    Edge.sortedCoords.register(this)
   }
 
   // Se desenha

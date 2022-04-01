@@ -41,7 +41,7 @@ export default class Heap {
   }
 
   // Permite retirar o elemento de maior prioridade do heap
-  pop() {
+  pop(preventArrayGeneration) {
     if (this.length == 0) return undefined
 
     // Pega o elemento com maior prioridade
@@ -55,7 +55,8 @@ export default class Heap {
     // Faz o swim down
     this.#swimDown(0)
 
-    if (this.alwaysKeepCorrespondentArray) this.array = this.toArray()
+    if (this.alwaysKeepCorrespondentArray && !preventArrayGeneration)
+      this.array = this.toArray()
 
     return returnValue
   }
@@ -78,13 +79,17 @@ export default class Heap {
 
   toArray() {
     // Guarda o antigo estado do heap
+    console.log('Comecando copia')
     const dataBackup = [...this.#data]
 
+    console.log('Comecando a tirar elementos')
     const array = []
-    while (this.#data.length > 0) array.push(this.pop())
+    while (this.#data.length > 0) array.push(this.pop(true))
 
+    console.log('Restaurando backup')
     this.#data = dataBackup
 
+    console.log('Pronto')
     return array
   }
 
