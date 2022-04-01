@@ -19,8 +19,8 @@ export default class IO {
     isLeftPressed: false,
   }
 
-  // Conhece todos os botoes da UI
-  static buttons = {}
+  // Conhece todos os listeners dos botoes
+  static buttonListeners = {}
 
   // Listeners
   static listeners = {
@@ -93,6 +93,18 @@ export default class IO {
     window.addEventListener('keyup', (event) => {
       if (event.code == 'Escape') this.triggerCancel()
     })
+  }
+
+  static addButtonListener(buttonName, listener) {
+    if (this.buttonListeners[buttonName] == undefined) {
+      this.buttonListeners[buttonName] = [listener]
+    } else this.buttonListeners[buttonName].push(listener)
+  }
+
+  static triggerButton(buttonName) {
+    if (this.buttonListeners[buttonName] == undefined) return
+
+    for (const listener of this.buttonListeners[buttonName]) listener()
   }
 
   static addCancelCallback(id, callback) {

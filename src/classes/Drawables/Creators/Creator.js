@@ -27,7 +27,7 @@ export default class Creator extends Drawable {
       .slice(0, nameEnd)
       .toLowerCase()}`
 
-    IO.buttons[buttonName].onTrigger(() => {
+    IO.addButtonListener(buttonName, () => {
       this.constructor.isActive = true
     })
 

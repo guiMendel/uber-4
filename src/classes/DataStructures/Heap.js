@@ -79,17 +79,13 @@ export default class Heap {
 
   toArray() {
     // Guarda o antigo estado do heap
-    console.log('Comecando copia')
     const dataBackup = [...this.#data]
 
-    console.log('Comecando a tirar elementos')
     const array = []
     while (this.#data.length > 0) array.push(this.pop(true))
 
-    console.log('Restaurando backup')
     this.#data = dataBackup
 
-    console.log('Pronto')
     return array
   }
 

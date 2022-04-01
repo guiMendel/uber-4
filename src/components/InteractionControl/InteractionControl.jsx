@@ -7,11 +7,16 @@ import Map from '../../classes/Map'
 import './InteractionControl.css'
 import Client from '../../classes/Drawables/Client'
 import ClientRouteControl from './ClientRouteControl'
+import ClientButtons from './ClientButtons'
 
 // Mapeia as interaction keys com componentes
 const interactionKeyMap = {
   [StreetCreator.name]: StreetCreatorControl,
   [Client.name]: ClientRouteControl,
+}
+
+const buttonPanelsKeyMap = {
+  [Client.name]: ClientButtons,
 }
 
 // Este componente decide qual dos outros controls mostrar, baseado em qual classe de interacao esta ativa
@@ -27,12 +32,23 @@ export default function InteractionControl() {
   }, [])
 
   const InteractionComponent = interactionKeyMap[interactionKey]
+  const ButtonPanelComponent = buttonPanelsKeyMap[interactionKey]
 
-  if (interactionKey != null && InteractionComponent != null)
+  if (interactionKey != null)
     return (
-      <div className="map-interaction-control">
-        <InteractionComponent />
-      </div>
+      <>
+        {InteractionComponent != null && (
+          <div className="map-interaction-control">
+            <InteractionComponent />
+          </div>
+        )}
+
+        {ButtonPanelComponent != null && (
+          <div className="button-panel-control">
+            <ButtonPanelComponent />
+          </div>
+        )}
+      </>
     )
   else return null
 }

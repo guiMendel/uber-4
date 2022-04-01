@@ -3,6 +3,12 @@
 
   bottom: 0;
 }
+.button-panel-control {
+  position: absolute;
+
+  bottom: 2rem;
+  left: 0;
+}
 
 .interaction-control {
   padding: 0.9rem 1.3rem;

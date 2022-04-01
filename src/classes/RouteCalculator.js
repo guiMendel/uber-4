@@ -10,7 +10,7 @@ export default class RouteCalculator {
 
   static setup() {
     // Observa a selecao do botao de calcular rota
-    IO.buttons['select-route'].onTrigger(this.calculate)
+    IO.addButtonListener('select-route', this.calculate)
   }
 
   // Faz o caluclo das melhores rotas para o cliente selecionado, e destaca elas em tela
