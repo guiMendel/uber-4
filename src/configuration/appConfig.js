@@ -36,8 +36,13 @@ export default {
   // Quantos dos melhores nos considerar quando for calcular o tempo de entrega no-destino de cada carro
   countOfNodesToConsider: 5,
 
-  // CRIACAO
+  //=== CRIACAO
 
   // Alcance em que ocorre o snap para vertices ja existentes, quando criando novas ruas
   newStreetVertexSnapRange: 20,
+
+  //=== CAMERA
+
+  // Velocidade do movimento automatico da camera, em pixel/s
+  cameraPanSpeed: 100,
 }

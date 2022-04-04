@@ -48,6 +48,7 @@ export default class Map {
   // Listeners
   static listeners = {
     activateinteractionclass: [],
+    newframe: [],
   }
 
   constructor(canvasContext) {
@@ -87,6 +88,8 @@ export default class Map {
       this.drawer = new Drawer(canvasContext)
 
       while (true) {
+        Map.#raiseEvent('newframe')
+
         // Renderiza uma frame
         this.drawer.drawFrame()
 

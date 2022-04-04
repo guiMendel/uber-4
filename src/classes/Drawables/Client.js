@@ -3,6 +3,7 @@ import Map from '../Map'
 import theme from '../../configuration/theme'
 import IO from '../IO'
 import RouteHighlighter from './RouteHighlighter'
+import Camera from '../Camera'
 
 const {
   clientHoverGrow,
@@ -61,6 +62,12 @@ export default class Client extends Drawable {
     Map.addEventListener('activateinteractionclass', ({ value, oldValue }) => {
       if (value != oldValue && oldValue == Client) this.selected = null
     })
+
+    // Ouve os botoes de centralizar camera
+    IO.addButtonListener('center-client', () => Camera.center(this.selected))
+    IO.addButtonListener('center-destination', () =>
+      Camera.center(this.selected.destination)
+    )
   }
 
   // Caso o cliente estava no estado hovered na ultima iteracao
