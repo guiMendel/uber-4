@@ -9,7 +9,6 @@ const {
   clientHoverGrow,
   highlightColor,
   selectedClientRadius,
-  clientDestinationColor,
   clientDestinationRadius,
 } = theme
 
@@ -179,14 +178,14 @@ export default class Client extends Drawable {
       if (Client.changeDestination.isActive) {
         const { fillArc } = drawer.drawWith({
           opacity: 0.5,
-          style: clientDestinationColor,
+          style: highlightColor,
         })
 
         // Desenha o destino
         fillArc(IO.mouse.mapCoords, clientDestinationRadius)
       } else {
         const { fillArc } = drawer.drawWith({
-          style: clientDestinationColor,
+          style: highlightColor,
         })
 
         // Desenha seu destino se selecionado

@@ -11,7 +11,7 @@ export default {
   generalAnimationSpeed: 0.05,
 
   // A cor do highlight
-  highlightColor: '#168ece',
+  highlightColor: '#0287f4',
 
   //=== SETAS DE SENTIDO DA RUA
 
@@ -46,9 +46,6 @@ export default {
 
   // O raio do highlight do cliente selecionado
   selectedClientRadius: streetWidth * 0.8,
-
-  // Cor do destino do cliente
-  clientDestinationColor: '#fc3628',
 
   // O raio do destino
   clientDestinationRadius: streetWidth * 0.5,

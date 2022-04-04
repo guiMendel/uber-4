@@ -4,7 +4,7 @@ import Map from '../../Map'
 import Client from '../Client'
 import Creator from './Creator'
 
-const { clientDestinationColor, clientDestinationRadius } = theme
+const { highlightColor, clientDestinationRadius } = theme
 
 // Classe que permite criar novos clientes
 export default class ClientCreator extends Creator {
@@ -14,7 +14,7 @@ export default class ClientCreator extends Creator {
   onDraw(drawer) {
     const { drawImage, fillArc } = drawer.drawWith({
       opacity: 0.5,
-      style: clientDestinationColor,
+      style: highlightColor,
     })
 
     // Desenha a imagem do cliente
