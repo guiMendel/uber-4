@@ -203,3 +203,21 @@ input::-webkit-inner-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+
+.actions .search-client {
+  position: relative;
+
+  font-size: 1.8rem;
+}
+
+.actions .search-client .client{
+  position: absolute;
+  min-width: unset;
+
+  font-size: 0.7rem;
+  /* max-width: 0.2rem;
+  max-height: 0.2rem; */
+  
+  /* top: 0.005rem; */
+  left: 0.4rem;
+}
