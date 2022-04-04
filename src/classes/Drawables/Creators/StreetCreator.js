@@ -130,6 +130,10 @@ export default class StreetCreator extends Creator {
         // Espera o fim da frame
         await Map.endOfFrame()
       }
+
+      // Recalcula os vetores ordenados do vertice
+      Vertex.sortedCoords.remove(vertex)
+      Vertex.sortedCoords.register(vertex)
     }, 200)
   }
 

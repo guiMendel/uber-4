@@ -22,6 +22,14 @@ export default class SortProperties {
     }
   }
 
+  remove(instance) {
+    // Pra cada propriedade
+    for (const propertyHeap of Object.values(this.properties)) {
+      // Adiciona essa propriedade
+      propertyHeap.remove(instance)
+    }
+  }
+
   // Registra as propriedades desta instancia nas lsitas ordenadas
   register(instance) {
     // Pra cada propriedade

@@ -89,6 +89,28 @@ export default class Heap {
     return array
   }
 
+  // Remove o elemento fornecido
+  // Retorna verdadeiro se removeu um elemento, falso do contrario
+  remove(element) {
+    // Encontra ele no array
+    const elementIndex = this.#data.indexOf(element)
+
+    if (elementIndex == -1) return false
+
+    // Coloca o ultimo elemento no lugar deste
+    this.#data[elementIndex] = this.#data[this.#data.length - 1]
+
+    // Remove o ultimo element
+    this.#data.pop()
+
+    // Faz swim down para consertar o heap
+    this.#swimDown(elementIndex)
+
+    if (this.alwaysKeepCorrespondentArray) this.array = this.toArray()
+
+    return true
+  }
+
   // Define como o elemento faz swim up no array que armazena os dados do heap
   #swimUp(index) {
     if (index == 0) return
