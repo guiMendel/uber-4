@@ -3,6 +3,8 @@ import Map from '../Map'
 import theme from '../../configuration/theme'
 import Client from './Client'
 import IO from '../IO'
+import { getDistance } from '../../helpers/vectorDistance'
+import { cos, sin } from '../../helpers/trygonometry'
 
 const { highlightColor, clientHoverGrow } = theme
 
@@ -63,11 +65,17 @@ export default class Car extends Drawable {
     super(id, { x, y, edge })
     // super(id, { x: realX, y: realY, edge })
 
+    // Registra na aresta
+    edge.cars[id] = this
+
     // Pega a imagem do carro
     this.carImage = Map.instance.carImage
 
     // O atual scale da imagem
     this.scale = 1
+
+    // Em que parte dda aresta esta
+    this.edgeProgress = getDistance(this, edge.source) / edge.mapDistance
 
     // Se o mouse estiver proximo E um cliente estiver selecionado, aumenta o tamanho
     this.animate({
@@ -105,5 +113,13 @@ export default class Car extends Drawable {
     if (this.isSelected) strokeArc(this, this.carImage.height / 2 + 5)
 
     drawImage(this.carImage, this, this.edge.angle - 90, this.scale)
+  }
+
+  // Se reposiciona na aresta
+  fixPosition() {
+    const distanceToSource = this.edgeProgress * this.edge.mapDistance
+
+    this.x = this.edge.source.x + distanceToSource * cos(this.edge.angle)
+    this.y = this.edge.source.y - distanceToSource * sin(this.edge.angle)
   }
 }

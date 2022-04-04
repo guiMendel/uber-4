@@ -118,6 +118,18 @@ export default class Map {
     document.body.className = this.activeCursors[0]
   }
 
+  // Resolve assim que um novo frame comecar
+  static async endOfFrame() {
+    return new Promise((resolve) => {
+      function resolveAndUnsubcribe() {
+        resolve()
+        Map.removeEventListener('newframe', resolveAndUnsubcribe)
+      }
+
+      this.addEventListener('newframe', resolveAndUnsubcribe)
+    })
+  }
+
   async loadAssets() {
     return new Promise((resolve, reject) => {
       // Prepara um array para armazenar as imagens de clientes
@@ -177,6 +189,20 @@ export default class Map {
       )
 
     this.listeners[type].push(callback)
+  }
+
+  // Permite observar eventos
+  static removeEventListener(type, callback) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `A classe IO nao fornece um eventListener do tipo "${type}"`
+      )
+
+    const index = this.listeners[type].indexOf(callback)
+
+    if (index == -1) return
+
+    this.listeners[type].splice(index, 1)
   }
 
   // Permite levantar eventos

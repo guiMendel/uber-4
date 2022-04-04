@@ -34,6 +34,9 @@ export default class Edge extends Drawable {
   // Sempre guarda o valor da rua mais rapida
   static fastestEdge
 
+  // Quais carros estao neste edge, pelo id
+  cars = {}
+
   // Se for fornecido um mapSpeed, ele eh utilizado. Se nao, usa-se os valores reais para calcular o mapSpeed
   constructor(id, source, destination, { mapSpeed, realDistance, realSpeed }) {
     // Erro se source e destination forem iguais

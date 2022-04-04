@@ -16,7 +16,7 @@ export default function App() {
 
       {/* Contem os botoes de acoes do mapa */}
       <div className="map actions">
-        <Button name={'new-street'} help={'Adicionar novas ruas'}>
+        <Button name={'new-street'} help={'Alterar ruas'}>
           <FaPencilAlt />
         </Button>
 

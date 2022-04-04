@@ -3,6 +3,7 @@ import theme from '../../../configuration/theme'
 import { findSmallestValues } from '../../../helpers/search'
 import { angleBetween, getDistance } from '../../../helpers/vectorDistance'
 import IO from '../../IO'
+import Map from '../../Map'
 import ArrowIndicators from '../ArrowIndicators'
 import Drawable from '../Drawable'
 import Edge from '../Edge'
@@ -36,6 +37,11 @@ export default class StreetCreator extends Creator {
 
     // Guarda uma referencia ao arrow drawable
     this.arrowDrawable = Drawable.drawableInstances[ArrowIndicators.name][0]
+
+    // Cancela qualquer vertex move quando soltar o botao
+    IO.addEventListener('leftup', () => {
+      StreetCreator.moveVertexCancelToken.cancelled = true
+    })
   }
 
   onDraw(drawer) {
@@ -98,6 +104,37 @@ export default class StreetCreator extends Creator {
     this.arrowDrawable.drawForEdge(simulatedEdge, drawer, { opacity: 0.5 })
   }
 
+  moveVertex(vertex, cancelToken) {
+    // Espera 1s antes de comecar
+    setTimeout(async () => {
+      // Execute ate ser cancelado
+      while (!cancelToken.cancelled) {
+        // Retira o source
+        this.sourceVertex = null
+
+        // Ajusta a posicao do vertice
+        const { x, y } = IO.mouse.mapCoords
+
+        vertex.x = x
+        vertex.y = y
+
+        // Reposiciona os carros que dependem deste vertices
+        for (const edge of vertex.sourceOf) {
+          for (const car of Object.values(edge.cars)) car.fixPosition()
+        }
+
+        for (const edge of vertex.destinationOf) {
+          for (const car of Object.values(edge.cars)) car.fixPosition()
+        }
+
+        // Espera o fim da frame
+        await Map.endOfFrame()
+      }
+    }, 200)
+  }
+
+  static moveVertexCancelToken = { cancelled: false }
+
   handleClick(position) {
     // Se nao tinha um source
     if (this.sourceVertex == null) {
@@ -110,6 +147,11 @@ export default class StreetCreator extends Creator {
       // Se clicar num vertice, troca para este vertice ser o novo source
       if (this.hoveredVertex != null) {
         this.sourceVertex = this.hoveredVertex
+
+        // Inicia a rotina para mover o vertice
+        StreetCreator.moveVertexCancelToken.cancelled = false
+        this.moveVertex(this.hoveredVertex, StreetCreator.moveVertexCancelToken)
+
         return
       }
 

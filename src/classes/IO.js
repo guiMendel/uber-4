@@ -26,6 +26,7 @@ export default class IO {
   static listeners = {
     mouserightdrag: [],
     leftclick: [],
+    leftup: [],
     rightclick: [],
     rightup: [],
     cancel: [],
@@ -77,8 +78,15 @@ export default class IO {
 
     window.addEventListener('mouseup', ({ clientX, clientY, button }) => {
       // Atualiza o estado
-      if (button == 0) IO.mouse.isLeftPressed = false
-      else if (button == 2) {
+      if (button == 0) {
+        IO.mouse.isLeftPressed = false
+        this.#raiseEvent('leftup', {
+          screen: { x: clientX, y: clientY },
+          get map() {
+            return Camera.ScreenToMap(clientX, clientY)
+          },
+        })
+      } else if (button == 2) {
         IO.mouse.isRightPressed = false
         this.#raiseEvent('rightup', {
           screen: { x: clientX, y: clientY },
