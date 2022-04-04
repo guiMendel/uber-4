@@ -1,85 +1,74 @@
 import BSTree from "../classes/DataStructures/BSTree"
 
+// TODO: consertar árvore nos comentários do teste, incluir asserts
 
-// create an object for the BinarySearchTree
-var DST = new BinarySearchTree();
+var assert = require('assert');
+var DST = new BSTree();
 
-// Inserting nodes to the BinarySearchTree
-DST.insert(15);
-DST.insert(25);
-DST.insert(10);
-DST.insert(7);
-DST.insert(22);
-DST.insert(17);
+DST.insert(21);
+DST.insert(70);
+DST.insert(8);
+DST.insert(90);
+DST.insert(33);
+DST.insert(88);
 DST.insert(13);
-DST.insert(5);
+DST.insert(1);
 DST.insert(9);
-DST.insert(27);
+DST.insert(6);
 
-//		 15
+//		  21
 //		 / \
-//	 10 25
-//	 / \ / \
-//	 7 13 22 27
-//	 / \ /
-// 5 9 17
+//	    8 70
+//	   / \ / \
+//	  90 13 33 6
+//	  / \ /
+//   1 9 88
 
 var root = DST.getRootLeaf();
 
-// prints 5 7 9 10 13 15 17 22 25 27
-DST.inorder(root);
-
-// Removing leaf with no children
-DST.remove(5);
+DST.inorder(root); // 1 6 8 9 13 21 33 70 88 90
+DST.remove(1); // Removendo folha sem filhos
 
 
-//		 15
+//		  21
 //		 / \
-//	 10 25
-//	 / \ / \
-//	 7 13 22 27
-//	 \ /
-//	 9 17
+//	    8   70
+//	   / \  / \
+//	  90 13 33 6
+//	   \    /
+//	   9   88
 
 
 var root = DST.getRootLeaf();
 
-// prints 7 9 10 13 15 17 22 25 27
-DST.inorder(root);
+DST.inorder(root); // 6 8 9 13 21 33 70 88 90
+DST.remove(90); // Removendo folha com um filho
 
-// Removing leaf with one child
-DST.remove(7);
-
-//		 15
-//		 / \
-//	 10 25
-//	 / \ / \
-//	 9 13 22 27
-//		 /
-//		 17
+//		   21
+//		  / \
+//	     8   70
+//	    / \  / \
+//	   9 13 33 6
+//		    /
+//		   88
 
 
 var root = DST.getRootLeaf();
 
-// prints 9 10 13 15 17 22 25 27
-DST.inorder(root);
 
-// Removing leaf with two children
-DST.remove(15);
+DST.inorder(root); // 9 8 13 21 88 33 70 6
+DST.remove(21); // Removendo folha com dois filhos
 
-//		 17
-//		 / \
-//	 10 25
-//	 / \ / \
-//	 9 13 22 27
+//		    88
+//		  /   \
+//	     8   70
+//	    / \  / \
+//	   9 13 33 6
 
 var root = DST.getRootLeaf();
-console.log("inorder traversal");
-
-// prints 9 10 13 17 22 25 27
+console.log("inorder"); // 9 8 13 88 33 70 6
 DST.inorder(root);
-
-console.log("postorder traversal");
+console.log("postorder");
 DST.postorder(root);
-console.log("preorder traversal");
+console.log("preorder");
 DST.preorder(root);
