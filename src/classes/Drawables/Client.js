@@ -13,6 +13,8 @@ const {
   clientDestinationRadius,
 } = theme
 
+const alterDestinationKey = 'client-alter-destination'
+
 // Define um cliente
 export default class Client extends Drawable {
   // Armazena referencia d equal cliente esta selecionado
@@ -29,6 +31,9 @@ export default class Client extends Drawable {
     this.#selected = value
     this.raiseEvent('select', value)
   }
+
+  // Reflete o estado do botao de alterar destino do cliente
+  static changeDestination = { isActive: false, set: null }
 
   get isHovered() {
     return this.distanceFromMouse < this.image.width + 3
@@ -50,17 +55,23 @@ export default class Client extends Drawable {
     Client.raiseEvent('routeselect', { client: this, route: value })
   }
 
+  static deselect() {
+    this.selected = null
+
+    this.changeDestination = { isActive: false, set: null }
+  }
+
   static setup() {
     // Deseleciona cliente no cancel
     IO.addEventListener('cancel', () => {
       if (Map.activeInteractionClass == Client)
         Map.activeInteractionClass = null
-      this.selected = null
+      this.deselect()
     })
 
     // Mantem o cursor atualizado
     Map.addEventListener('activateinteractionclass', ({ value, oldValue }) => {
-      if (value != oldValue && oldValue == Client) this.selected = null
+      if (value != oldValue && oldValue == Client) this.deselect()
     })
 
     // Ouve os botoes de centralizar camera
@@ -68,6 +79,26 @@ export default class Client extends Drawable {
     IO.addButtonListener('center-destination', () =>
       Camera.center(this.selected.destination)
     )
+
+    // Ouve botao de alterar destino
+    IO.addButtonListener('change-destination', ({ value, setValue }) => {
+      // Inicia o modo alterar destino
+      IO.addCancelCallback(alterDestinationKey, () =>
+        this.changeDestination.set(false)
+      )
+
+      this.changeDestination.isActive = value
+      this.changeDestination.set = (newValue) => {
+        this.changeDestination.isActive = newValue
+        setValue(newValue)
+      }
+    })
+
+    IO.addEventListener('leftclick', () => {
+      if (!this.changeDestination.isActive) return
+
+      Client.selected.alterDestination(IO.mouse.mapCoords)
+    })
   }
 
   // Caso o cliente estava no estado hovered na ultima iteracao
@@ -144,12 +175,32 @@ export default class Client extends Drawable {
     drawImage(this.image, this, this.rotation - 90, this.scale)
 
     if (this.isSelected) {
-      const { fillArc } = drawer.drawWith({
-        style: clientDestinationColor,
-      })
+      // Desenha o preview do novo destino, se ativo
+      if (Client.changeDestination.isActive) {
+        const { fillArc } = drawer.drawWith({
+          opacity: 0.5,
+          style: clientDestinationColor,
+        })
 
-      // Desenha seu destino se selecionado
-      fillArc(this.destination, clientDestinationRadius)
+        // Desenha o destino
+        fillArc(IO.mouse.mapCoords, clientDestinationRadius)
+      } else {
+        const { fillArc } = drawer.drawWith({
+          style: clientDestinationColor,
+        })
+
+        // Desenha seu destino se selecionado
+        fillArc(this.destination, clientDestinationRadius)
+      }
     }
+  }
+
+  alterDestination(target) {
+    IO.removeCancelCallback(alterDestinationKey)
+
+    Client.changeDestination.set(false)
+
+    this.destination = target
+    this.selectedRoute = null
   }
 }

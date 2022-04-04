@@ -5,7 +5,12 @@ import Button from '../Button/Button'
 export default function ClientButtons() {
   return (
     <div className="client actions">
-      <Button name={'change-destination'} help={'Alterar destino'} rigthTooltip>
+      <Button
+        name={'change-destination'}
+        help={'Alterar destino'}
+        isSwitch
+        rigthTooltip
+      >
         <MdEditLocationAlt />
       </Button>
 

@@ -101,10 +101,10 @@ export default class IO {
     } else this.buttonListeners[buttonName].push(listener)
   }
 
-  static triggerButton(buttonName) {
+  static triggerButton(buttonName, payload) {
     if (this.buttonListeners[buttonName] == undefined) return
 
-    for (const listener of this.buttonListeners[buttonName]) listener()
+    for (const listener of this.buttonListeners[buttonName]) listener(payload)
   }
 
   static addCancelCallback(id, callback) {
