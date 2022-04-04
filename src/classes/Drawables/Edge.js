@@ -84,10 +84,10 @@ export default class Edge extends Drawable {
   }
 
   // Se desenha
-  draw(drawer) {
+  draw(drawer, color) {
     // Desenha uma linha do vertice origem para o vertice destino
     const { strokePath } = drawer.drawWith({
-      style: this.streetColor,
+      style: color ?? this.streetColor,
       lineWidth: streetWidth,
     })
 

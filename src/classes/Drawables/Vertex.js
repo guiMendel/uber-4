@@ -31,6 +31,10 @@ export default class Vertex extends Drawable {
   // Armazena referencia das arestas que chegam deste veretice
   destinationOf = []
 
+  get edges() {
+    return [...this.sourceOf, ...this.destinationOf]
+  }
+
   constructor(id, realX, realY, isAlreadyConverted = false) {
     // Se necessario, converte os valores reais de coordenada para valores de mapa
     const { x, y } = isAlreadyConverted
@@ -45,9 +49,9 @@ export default class Vertex extends Drawable {
   }
 
   // Se desenha
-  draw(drawer) {
+  draw(drawer, color) {
     // Desenha um arco em sua posicao
-    const { fillArc } = drawer.drawWith({ style: streetColorSlowest })
+    const { fillArc } = drawer.drawWith({ style: color ?? streetColorSlowest })
 
     fillArc(this, streetWidth / 2)
   }

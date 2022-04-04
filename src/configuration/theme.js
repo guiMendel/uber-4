@@ -70,4 +70,9 @@ export default {
 
   // O espaco entre as linhas do trastejado
   clientWalkPathLineGap: 15,
+
+  //=== EDICAO
+
+  // Cor de apagar
+  eraseColor: '#f74a33',
 }

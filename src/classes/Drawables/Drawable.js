@@ -91,6 +91,10 @@ export default class Drawable {
     throw new Error('Este método deve ser implementado por uma classe filho')
   }
 
+  destroy() {
+    delete Drawable.drawableInstances[this.constructor.name][this.id]
+  }
+
   // Permite observar eventos
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)

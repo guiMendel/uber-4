@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import StreetCreator from '../../classes/Drawables/Creators/StreetCreator'
 import StreetCreatorControl from './StreetCreatorControl'
+import StreetCreatorButtons from './StreetCreatorButtons'
 
 import Map from '../../classes/Map'
 
@@ -16,6 +17,7 @@ const interactionKeyMap = {
 }
 
 const buttonPanelsKeyMap = {
+  [StreetCreator.name]: StreetCreatorButtons,
   [Client.name]: ClientButtons,
 }
 

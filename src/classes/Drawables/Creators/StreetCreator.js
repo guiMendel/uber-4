@@ -10,11 +10,13 @@ import Edge from '../Edge'
 import Vertex from '../Vertex'
 import Creator from './Creator'
 
-const { streetColorSlowest, streetWidth, highlightColor } = theme
+const { streetColorSlowest, streetWidth, highlightColor, eraseColor } = theme
 
 const { newStreetVertexSnapRange } = appConfig
 
 const streetSourceCancelToken = 'create-street-source-cancel'
+
+const eraseStreetsToken = 'erase-streets'
 
 // Permite criar novos vertices e arestas
 export default class StreetCreator extends Creator {
@@ -32,6 +34,15 @@ export default class StreetCreator extends Creator {
     createstreet: [],
   }
 
+  // Reflete o estado do botao de apagar ruas
+  eraseStreets = { isActive: false, set: null }
+
+  onCancel() {
+    IO.removeCancelCallback(eraseStreetsToken)
+
+    this.eraseStreets.set(false)
+  }
+
   constructor() {
     super()
 
@@ -42,11 +53,45 @@ export default class StreetCreator extends Creator {
     IO.addEventListener('leftup', () => {
       StreetCreator.moveVertexCancelToken.cancelled = true
     })
+
+    // Ouve botao de apagar ruas
+    IO.addButtonListener('delete-streets', ({ value, setValue }) => {
+      // Inicia o modo apagar ruas
+      IO.addCancelCallback(eraseStreetsToken, () =>
+        this.eraseStreets.set(false)
+      )
+
+      this.eraseStreets.isActive = value
+      this.eraseStreets.set = (newValue) => {
+        this.eraseStreets.isActive = newValue
+        setValue(newValue)
+      }
+    })
   }
 
   onDraw(drawer) {
     // Detecta se o mouse esta sobre um vertice
     this.detectVertexHover()
+
+    // No modo apagar, nao desenha nada
+    if (this.eraseStreets.isActive) {
+      // Desenha o vertice hovered em vermelho
+      if (this.hoveredVertex != null) {
+        this.hoveredVertex.draw(drawer, eraseColor)
+
+        // Desenha suas arestas
+        for (const edge of this.hoveredVertex.edges) {
+          edge.draw(drawer, eraseColor)
+        }
+
+        // Desenha as setas
+        for (const edge of this.hoveredVertex.edges) {
+          this.arrowDrawable.drawForEdge(edge, drawer)
+        }
+      }
+
+      return
+    }
 
     const { fillArc, strokePath } = drawer.drawWith({
       style: streetColorSlowest,
@@ -140,6 +185,26 @@ export default class StreetCreator extends Creator {
   static moveVertexCancelToken = { cancelled: false }
 
   handleClick(position) {
+    // No modo apagar
+    if (this.eraseStreets.isActive) {
+      if (this.hoveredVertex != null) {
+        for (const edge of new Set([
+          ...this.hoveredVertex.sourceOf,
+          ...this.hoveredVertex.destinationOf,
+        ])) {
+          for (const car of Object.values(edge.cars)) car.destroy()
+
+          edge.destroy()
+        }
+      }
+
+      this.hoveredVertex.destroy()
+
+      this.hoveredVertex = null
+
+      return
+    }
+
     // Se nao tinha um source
     if (this.sourceVertex == null) {
       // Aplica um cancel overide
