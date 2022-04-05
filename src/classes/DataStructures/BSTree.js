@@ -13,9 +13,9 @@ export default class BSTree {
     }
 
     // Insere um novo Nó/Folha na árvore com o valor do dado
-    insert(data) {
+    insert(value) {
         // Cria uma instância de nó com o valor do dado
-        var newLeaf = new Leaf(data);
+        var newLeaf = new Leaf(value);
 
         // Se o nó raiz estiver vazio, então o nó raiz é o nó criado
         if (this.root === null)
@@ -30,7 +30,7 @@ export default class BSTree {
     insertLeaf(leaf, newLeaf) {
 
         // Se o novo valor é menor que o valor da folha, então o novo valor é inserido na subárvore esquerda
-        if (newLeaf.data < leaf.data) {
+        if (newLeaf.value < leaf.value) {
             // Se a folha esquerda estiver vazia, então o novo valor é inserido
             if (leaf.left === null)
                 leaf.left = newLeaf;
@@ -53,9 +53,9 @@ export default class BSTree {
     }
 
     // Remove uma folha com o valor desejado
-    remove(data) {
+    remove(value) {
         // Raíz da árvore é modificada para remover a folha
-        this.root = this.removeLeaf(this.root, data);
+        this.root = this.removeLeaf(this.root, value);
     }
 
     // Percorre a árvore, buscando o valor desejado para remover a folha
@@ -66,13 +66,13 @@ export default class BSTree {
             return null;
 
         // Se o valor da folha é menor que o valor desejado, então percorre a subárvore esquerda buscando o valor desejado
-        else if (key < leaf.data) {
+        else if (key < leaf.value) {
             leaf.left = this.removeLeaf(leaf.left, key);
             return leaf;
         }
 
         // Se o valor da folha é maior que o valor desejado, então percorre a subárvore direita buscando o valor desejado
-        else if (key > leaf.data) {
+        else if (key > leaf.value) {
             leaf.right = this.removeLeaf(leaf.right, key);
             return leaf;
         }
@@ -96,9 +96,9 @@ export default class BSTree {
 
             // Deletando uma folha com dois filhos
             var aux = this.findMinLeaf(leaf.right);
-            leaf.data = aux.data;
+            leaf.value = aux.value;
 
-            leaf.right = this.removeLeaf(leaf.right, aux.data);
+            leaf.right = this.removeLeaf(leaf.right, aux.value);
             return leaf;
         }
 
@@ -107,14 +107,14 @@ export default class BSTree {
     inorder(leaf) {
         if (leaf !== null) {
             this.inorder(leaf.left);
-            console.log(leaf.data);
+            console.log(leaf.value);
             this.inorder(leaf.right);
         }
     }
 
     preorder(leaf) {
         if (leaf !== null) {
-            console.log(leaf.data);
+            console.log(leaf.value);
             this.preorder(leaf.left);
             this.preorder(leaf.right);
         }
@@ -124,7 +124,7 @@ export default class BSTree {
         if (leaf !== null) {
             this.postorder(leaf.left);
             this.postorder(leaf.right);
-            console.log(leaf.data);
+            console.log(leaf.value);
         }
     }
 
@@ -143,18 +143,18 @@ export default class BSTree {
     }
 
     // Busca por um determinado valor na árvore
-    search(leaf, data) {
+    search(leaf, value) {
         // Se a folha for vazia, então não há nada para buscar
         if (leaf === null)
             return null;
 
         // Se o valor da folha é menor que o valor desejado, então percorre a subárvore esquerda buscando o valor desejado
-        else if (data < leaf.data)
-            return this.search(leaf.left, data);
+        else if (value < leaf.value)
+            return this.search(leaf.left, value);
 
         // Se o valor da folha é maior que o valor desejado, então percorre a subárvore direita buscando o valor desejado
-        else if (data > leaf.data)
-            return this.search(leaf.right, data);
+        else if (value > leaf.value)
+            return this.search(leaf.right, value);
 
         // Senão, o valor da folha é igual ao valor desejado
         else
