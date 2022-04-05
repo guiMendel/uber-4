@@ -29,6 +29,9 @@ export default class StreetCreator extends Creator {
   // Qual vertice esta sob o mouse
   hoveredVertex = null
 
+  // Qual aresta esta sob o mouse
+  hoveredEdge = null
+
   // Listeners
   static listeners = {
     createstreet: [],
@@ -72,6 +75,10 @@ export default class StreetCreator extends Creator {
   onDraw(drawer) {
     // Detecta se o mouse esta sobre um vertice
     this.detectVertexHover()
+
+    // Detecta se o mouse esta sobre uma aresta
+    this.detectEdgeHover()
+
 
     // No modo apagar, nao desenha nada
     if (this.eraseStreets.isActive) {
@@ -298,6 +305,10 @@ export default class StreetCreator extends Creator {
     }
 
     this.hoveredVertex = null
+  }
+
+  detectEdgeHover() {
+    
   }
 
   onCancel() {
