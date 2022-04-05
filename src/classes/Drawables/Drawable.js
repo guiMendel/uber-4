@@ -16,6 +16,9 @@ export default class Drawable {
   // Quais animacoes estao sendo executadas neste drawable
   animations = []
 
+  // Callbacks para executar no momento da destruicao deste objeto
+  onDestroy = []
+
   constructor(id, properties) {
     // Verifica se ja exist euma instancia com o id fornecido
     if (id && this.instances[id] != undefined) {
@@ -66,10 +69,12 @@ export default class Drawable {
     this.animations.push(() => {
       if (condition()) {
         // Soma o alteration
-        this[property] = Math.min(max, this[property] + frameAlteration)
+        if (this[property] != max)
+          this[property] = Math.min(max, this[property] + frameAlteration)
       } else {
         // Subtrai o alteration
-        this[property] = Math.max(min, this[property] - frameAlteration)
+        if (this[property] != min)
+          this[property] = Math.max(min, this[property] - frameAlteration)
       }
     })
   }
@@ -91,8 +96,19 @@ export default class Drawable {
     throw new Error('Este método deve ser implementado por uma classe filho')
   }
 
+  // TODO falta fazer um evento levantado quando for destruido, que sempre que for criada uma referencia para este drawable, deve ter tambem uma rotina que remove essa refertencia quando este evento eh levantado
+
+  // rambem precisa colcoar uns remove event lsitener nos caras destruidos
+
   destroy() {
+    // Limpa as referencias deste objeto
+    this.onDestroy.forEach((callback) => callback())
+
+    // Remove a referencia principal
     delete Drawable.drawableInstances[this.constructor.name][this.id]
+
+    // Destroi as propriedades
+    Object.keys(this).forEach((property) => delete this[property])
   }
 
   // Permite observar eventos

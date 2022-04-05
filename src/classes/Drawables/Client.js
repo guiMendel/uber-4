@@ -134,14 +134,20 @@ export default class Client extends Drawable {
       condition: () => this.isSelected,
     })
 
-    // Observa cliques
-    IO.addEventListener('leftclick', () => {
+    const handleLeftClick = () => {
       // Se estiver em hover, seleciona
       if (this.isHovered) {
         Client.selected = this
         Map.activeInteractionClass = Client
       }
-    })
+    }
+
+    // Observa cliques
+    IO.addEventListener('leftclick', handleLeftClick)
+
+    this.onDestroy.push(() =>
+      IO.removeEventListener('leftclick', handleLeftClick)
+    )
   }
 
   draw(drawer) {

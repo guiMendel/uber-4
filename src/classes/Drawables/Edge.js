@@ -1,4 +1,3 @@
-import appConfig from '../../configuration/appConfig'
 import theme from '../../configuration/theme'
 import { sin, cos } from '../../helpers/trygonometry'
 import {
@@ -54,11 +53,21 @@ export default class Edge extends Drawable {
     super(id, { source, destination, mapSpeed, realDistance })
 
     // Avisa os vertices de sua existencia
-    source.sourceOf.push(this)
-    destination.destinationOf.push(this)
+    source.sourceOf[this.id] = this
+    destination.destinationOf[this.id] = this
+
+    this.onDestroy.push(() => {
+      delete source.sourceOf[this.id]
+      delete destination.destinationOf[this.id]
+    })
 
     // Atualiza as ruas mais rapida e lenta
     this.updateRecordEdges()
+
+    this.onDestroy.push(() => {
+      if (Edge.slowestEdge == this) this.updateRecordEdges(this)
+      else if (Edge.fastestEdge == this) this.updateRecordEdges(this)
+    })
 
     // console.log(`from ${source.id} to ${destination.id}`)
 
@@ -81,6 +90,8 @@ export default class Edge extends Drawable {
 
     // Registra nas listas ordenadas
     Edge.sortedCoords.register(this)
+
+    this.onDestroy.push(() => Edge.sortedCoords.remove(this))
   }
 
   // Se desenha
@@ -137,17 +148,27 @@ export default class Edge extends Drawable {
     return '#' + lerpIndexToHex(0) + lerpIndexToHex(1) + lerpIndexToHex(2)
   }
 
-  updateRecordEdges() {
+  updateRecordEdges(excluded) {
     // Encontra a rua com a menor e a maior velocidade
     const streets = Object.values(this.instances)
 
     Edge.slowestEdge = streets.reduce((previousMin, newStreet) => {
-      if (previousMin.mapSpeed <= newStreet.mapSpeed) return previousMin
+      if (
+        (previousMin.mapSpeed <= newStreet.mapSpeed &&
+          previousMin != excluded) ||
+        newStreet == excluded
+      )
+        return previousMin
       else return newStreet
     })
 
-    Edge.fastestEdge = streets.reduce((previousMin, newStreet) => {
-      if (previousMin.mapSpeed >= newStreet.mapSpeed) return previousMin
+    Edge.fastestEdge = streets.reduce((previousMax, newStreet) => {
+      if (
+        (previousMax.mapSpeed >= newStreet.mapSpeed &&
+          previousMax != excluded) ||
+        newStreet == excluded
+      )
+        return previousMax
       else return newStreet
     })
   }

@@ -151,6 +151,20 @@ export default class IO {
     this.listeners[type].push(callback)
   }
 
+  // Permite observar eventos
+  static removeEventListener(type, callback) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `A classe IO nao fornece um eventListener do tipo "${type}"`
+      )
+
+    const index = this.listeners[type].indexOf(callback)
+
+    if (index == -1) return
+
+    this.listeners[type].splice(index, 1)
+  }
+
   // Permite levantar eventos
   static #raiseEvent(type, payload) {
     if (this.listeners[type] == undefined)

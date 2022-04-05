@@ -26,13 +26,16 @@ export default class Vertex extends Drawable {
   }
 
   // Armazena referencia das arestas que saem deste veretice
-  sourceOf = []
+  sourceOf = {}
 
   // Armazena referencia das arestas que chegam deste veretice
-  destinationOf = []
+  destinationOf = {}
 
   get edges() {
-    return [...this.sourceOf, ...this.destinationOf]
+    return [
+      ...Object.values(this.sourceOf),
+      ...Object.values(this.destinationOf),
+    ]
   }
 
   constructor(id, realX, realY, isAlreadyConverted = false) {
@@ -46,6 +49,7 @@ export default class Vertex extends Drawable {
 
     // Adiciona nas listas ordenadas por coordenada
     Vertex.sortedCoords.register(this)
+    this.onDestroy.push(() => Vertex.sortedCoords.remove(this))
   }
 
   // Se desenha

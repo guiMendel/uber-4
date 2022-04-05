@@ -179,8 +179,7 @@ export default class Node {
   expand() {
     this.closed = true
 
-    // Retorna uma copia do vetor
-    return [...this.edge.destination.sourceOf]
+    return Object.values(this.edge.destination.sourceOf)
   }
 
   // Retorna verdadeiro se os 2 nodes sao iguais

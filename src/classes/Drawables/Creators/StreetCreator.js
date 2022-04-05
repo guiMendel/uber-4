@@ -164,11 +164,7 @@ export default class StreetCreator extends Creator {
         vertex.y = y
 
         // Reposiciona os carros que dependem deste vertices
-        for (const edge of vertex.sourceOf) {
-          for (const car of Object.values(edge.cars)) car.fixPosition()
-        }
-
-        for (const edge of vertex.destinationOf) {
+        for (const edge of vertex.edges) {
           for (const car of Object.values(edge.cars)) car.fixPosition()
         }
 
@@ -188,10 +184,7 @@ export default class StreetCreator extends Creator {
     // No modo apagar
     if (this.eraseStreets.isActive) {
       if (this.hoveredVertex != null) {
-        for (const edge of new Set([
-          ...this.hoveredVertex.sourceOf,
-          ...this.hoveredVertex.destinationOf,
-        ])) {
+        for (const edge of this.hoveredVertex.edges) {
           for (const car of Object.values(edge.cars)) car.destroy()
 
           edge.destroy()

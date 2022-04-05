@@ -66,7 +66,9 @@ export default class Car extends Drawable {
     // super(id, { x: realX, y: realY, edge })
 
     // Registra na aresta
-    edge.cars[id] = this
+    edge.cars[this.id] = this
+
+    this.onDestroy.push(() => this.edge.cars && delete this.edge.cars[this.id])
 
     // Pega a imagem do carro
     this.carImage = Map.instance.carImage
@@ -85,13 +87,19 @@ export default class Car extends Drawable {
       condition: () => Client.selected != null && this.isHovered,
     })
 
-    // Observa cliques
-    IO.addEventListener('leftclick', () => {
+    const handleLeftClick = () => {
       // Se estiver em hover E um cliente estiver selecionado, seleciona
       if (Client.selected != null && this.isHovered) {
         Car.selected = this
       }
-    })
+    }
+
+    // Observa cliques
+    IO.addEventListener('leftclick', handleLeftClick)
+
+    this.onDestroy.push(() =>
+      IO.removeEventListener('leftclick', handleLeftClick)
+    )
   }
 
   draw(drawer) {
