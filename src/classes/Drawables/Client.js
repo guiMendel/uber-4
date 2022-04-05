@@ -45,12 +45,21 @@ export default class Client extends Drawable {
   // A rota selecionada para este cliente
   #selectedRoute = null
 
+  // Para qual versao do mapa esta rota eh valida
+  #selectedRouteCompatibility = null
+
   get selectedRoute() {
+    // Se a rota nao eh mais compativel, descarta ela
+    if (this.#selectedRouteCompatibility != Map.version) {
+      this.selectedRoute = null
+    }
+
     return this.#selectedRoute
   }
 
   set selectedRoute(value) {
     this.#selectedRoute = value
+    this.#selectedRouteCompatibility = Map.version
     Client.raiseEvent('routeselect', { client: this, route: value })
   }
 

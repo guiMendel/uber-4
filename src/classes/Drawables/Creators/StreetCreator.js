@@ -175,25 +175,35 @@ export default class StreetCreator extends Creator {
       // Recalcula os vetores ordenados do vertice
       Vertex.sortedCoords.remove(vertex)
       Vertex.sortedCoords.register(vertex)
+
+      // Atualiza a versao do mapa
+      Map.advanceVersion()
     }, 200)
   }
 
   static moveVertexCancelToken = { cancelled: false }
 
+  eraseVertex(vertex) {
+    for (const edge of vertex.edges) {
+      for (const car of Object.values(edge.cars)) car.destroy()
+
+      edge.destroy()
+    }
+
+    vertex.destroy()
+
+    // Atualiza o mapa
+    Map.advanceVersion()
+  }
+
   handleClick(position) {
     // No modo apagar
     if (this.eraseStreets.isActive) {
       if (this.hoveredVertex != null) {
-        for (const edge of this.hoveredVertex.edges) {
-          for (const car of Object.values(edge.cars)) car.destroy()
+        this.eraseVertex(this.hoveredVertex)
 
-          edge.destroy()
-        }
+        this.hoveredVertex = null
       }
-
-      this.hoveredVertex.destroy()
-
-      this.hoveredVertex = null
 
       return
     }

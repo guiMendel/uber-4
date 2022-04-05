@@ -45,6 +45,10 @@ export default class Map {
   // Guarda todos os cursores que estao atualmente tentado ser mostrados (mostra o mais recente)
   static activeCursors = []
 
+  // Permite que os agentes saibam qual versao do mapa este eh
+  // A versao muda sempre que algo eh modificado ou removido do mapa (introducoes nao alteram a versao)
+  static version = 1
+
   // Listeners
   static listeners = {
     activateinteractionclass: [],
@@ -100,6 +104,10 @@ export default class Map {
 
     // Carrega as imagens, e entao inicia o app
     this.loadAssets().then(start)
+  }
+
+  static advanceVersion() {
+    this.version++
   }
 
   static setCursor(newCursor) {
