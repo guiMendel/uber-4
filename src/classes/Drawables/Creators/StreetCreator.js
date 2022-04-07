@@ -15,7 +15,6 @@ const { streetColorSlowest, streetWidth, highlightColor, eraseColor } = theme
 const { newStreetVertexSnapRange } = appConfig
 
 const streetSourceCancelToken = 'create-street-source-cancel'
-
 const eraseStreetsToken = 'erase-streets'
 const deselectEdgeToken = 'deselect-edge'
 
@@ -25,7 +24,20 @@ export default class StreetCreator extends Creator {
   streetSpeed = null
 
   // De qual vertice a proxima rua a ser desenhada deve sair
-  sourceVertex = null
+  #sourceVertex = null
+
+  get sourceVertex() {
+    return this.#sourceVertex
+  }
+
+  set sourceVertex(value) {
+    this.#sourceVertex = value
+
+    if (value != null) {
+      this.selectedEdge = null
+      IO.removeCancelCallback(streetSourceCancelToken)
+    }
+  }
 
   // Qual vertice esta sob o mouse
   hoveredVertex = null
@@ -44,6 +56,11 @@ export default class StreetCreator extends Creator {
   set selectedEdge(value) {
     this.#selectedEdge = value
     StreetCreator.raiseEvent('selectstreet', value)
+
+    if (value != null) {
+      this.sourceVertex = null
+      IO.removeCancelCallback(deselectEdgeToken)
+    }
   }
 
   #selectedEdge = null
@@ -145,6 +162,9 @@ export default class StreetCreator extends Creator {
 
       // Usa o vertice como destination
       destination = this.hoveredVertex
+
+      if (this.selectedEdge != null)
+        this.highlightEdge(this.selectedEdge, drawer)
     }
 
     // Se nao, desenha um pontinho no cursor
@@ -484,6 +504,7 @@ export default class StreetCreator extends Creator {
 
     IO.removeCancelCallback(streetSourceCancelToken)
     IO.removeCancelCallback(deselectEdgeToken)
+    IO.removeCancelCallback(eraseStreetsToken)
   }
 
   // Permite que o componente de configuracoes configure essa velocidade
