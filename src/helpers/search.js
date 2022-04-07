@@ -1,17 +1,16 @@
 // Fornece uma implementacao de binary search
 // Retorna o indice do valor mais proximo do valor recebido
 export function binarySearch(array, searchValue, limit = 0) {
-  return findSmallestValues(array, (value) => value - searchValue, limit)
+  return findFittest(array, (value) => value - searchValue, limit)
 }
 
-// Retorna o indice do valor que mais se aproximou de 0 quando aplicado no callback
+// Retorna o intervalo de indices dos valores que mais se aproximaram de 0 quando aplicados no callback
 // Se for fornecido um limit, retorna vetor vazio se o valor absoluto mais proximo de 0 ainda for maior que limit
 // Essa funcao ASSUME que os valores do vetor estao ordenados em relacao aos seus resultados quando aplicados em callback, DE MENOR PARA MAIOR
-function findSmallestValues(array, evaluate, limit) {
+export function findFittest(array, evaluate, limit) {
   const validateLimit = (index) => {
-    console.log(limit, Math.abs(evaluate(index), limit != undefined && Math.abs(evaluate(index)) > limit))
-    
-    if (limit != undefined && Math.abs(evaluate(index)) > limit) return []
+    if (limit != undefined && Math.abs(evaluate(array[index])) > limit)
+      return []
     return getAllEqualValues(array, index, evaluate)
   }
 
@@ -74,7 +73,7 @@ function findSmallestValues(array, evaluate, limit) {
   return validateLimit(lowerBound)
 }
 
-// Retorna um vetor com todos os indices cujos elementos resultam no mesmo valor de evaluate que o indice fornecido
+// Retorna um vetor intervalo com os indices cujos elementos resultam no mesmo valor de evaluate que o indice fornecido
 // Assume as mesmas coisas que as demais funcoes sobre o vetor
 function getAllEqualValues(array, index, evaluate) {
   // Helpers
@@ -82,7 +81,7 @@ function getAllEqualValues(array, index, evaluate) {
   const evalIndex = (i) => evaluate(array[i])
 
   // Valor final
-  const result = [index]
+  const result = [index, index + 1]
 
   // Realiza buscas pra esquerda a pra direita para encontrar os limites do intervalo de elementos com o mesmo valor
 
@@ -104,7 +103,7 @@ function getAllEqualValues(array, index, evaluate) {
     }
 
     // Ao final, upperBound aponta para o indice da primeira occorencia
-    while (upperBound < index) result.push(upperBound++)
+    result[0] = upperBound
   }
 
   // Verifica a necessidade de buscar para a direita: se o elemento da direita tambem eh value
@@ -125,8 +124,39 @@ function getAllEqualValues(array, index, evaluate) {
     }
 
     // Ao final, upperBound aponta para 1 + o indice da ultima occorencia
-    while (--upperBound > index) result.push(upperBound)
+    result[1] = upperBound
   }
 
   return result
+}
+
+// Retorna o valor cuja avaliacao mais se aproxima de 0
+// Nao assume nada sobre o vetor
+export function unorderedFindFittest(
+  array,
+  evaluate,
+  limit,
+  interval,
+  returnIndex
+) {
+  // Encontra um valor que consiga superar o limite
+  let bestValueSoFar = limit ? limit + 1 : 99999999
+  let bestElementIndex = null
+
+  const considerElement = (index) => {
+    const elementValue = Math.abs(evaluate(array[index]))
+
+    if (elementValue < bestValueSoFar) {
+      bestElementIndex = index
+      bestValueSoFar = elementValue
+    }
+  }
+
+  // Se nao ha intervalo
+  if (interval == undefined)
+    for (const elementIndex in array) considerElement(elementIndex)
+  // Caso haja um intervalo
+  else for (let i = interval[0]; i < interval[1]; i++) considerElement(i)
+
+  return returnIndex ? bestElementIndex : array[bestElementIndex]
 }

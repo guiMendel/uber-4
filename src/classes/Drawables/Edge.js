@@ -71,22 +71,7 @@ export default class Edge extends Drawable {
 
     // console.log(`from ${source.id} to ${destination.id}`)
 
-    if (source.x <= destination.x) {
-      this.leftVertex = source
-      this.rightVertex = destination
-    } else {
-      this.leftVertex = destination
-      this.rightVertex = source
-    }
-
-    // Lembrando que y cresce pra baixo
-    if (source.y <= destination.y) {
-      this.upperVertex = source
-      this.lowerVertex = destination
-    } else {
-      this.upperVertex = destination
-      this.lowerVertex = source
-    }
+    this.setBoundVertices()
 
     // Registra nas listas ordenadas
     Edge.sortedCoords.register(this)
@@ -103,6 +88,26 @@ export default class Edge extends Drawable {
     })
 
     strokePath(this.source, this.destination)
+  }
+
+  // Verifica qual o vertice da esquerda, direita, cima e baixo
+  setBoundVertices() {
+    if (this.source.x <= this.destination.x) {
+      this.leftVertex = this.source
+      this.rightVertex = this.destination
+    } else {
+      this.leftVertex = this.destination
+      this.rightVertex = this.source
+    }
+
+    // Lembrando que y cresce pra baixo
+    if (this.source.y <= this.destination.y) {
+      this.upperVertex = this.source
+      this.lowerVertex = this.destination
+    } else {
+      this.upperVertex = this.destination
+      this.lowerVertex = this.source
+    }
   }
 
   // Retorna o angulo desta aresta
@@ -174,7 +179,7 @@ export default class Edge extends Drawable {
   }
 
   // Dado um ponto de coordenadas x e y, encontra a distancia de sua projecao ate source, e o quadrado de sua distancia ate source e destination
-  getDistances(x, y) {
+  getDistances({ x, y }) {
     // Encontramos as distancias do ponto para source e destination
     const [sourceDistance, destinationDistance] = [
       getSquaredDistance(this.source, { x, y }),
@@ -199,10 +204,17 @@ export default class Edge extends Drawable {
     }
   }
 
+  getProjectionDistanceSquared(coords) {
+    // Vamos fazer pitagoras
+    const { projection, sourceSquared } = this.getDistances(coords)
+
+    return sourceSquared - Math.pow(projection, 2)
+  }
+
   // Dado um ponto de coordenadas x e y, encontra as coordenadas da projecao deste ponto na reta desta aresta
-  getProjectionCoordinates(x, y) {
+  getProjectionCoordinates(coords) {
     // Pegamos a projectionDistance de getProjectionLengths
-    const displacement = this.getDistances(x, y).projection
+    const displacement = this.getDistances(coords).projection
 
     // Encontramos as coordenadas da projecao aplicando o deslocamento em source
     return [

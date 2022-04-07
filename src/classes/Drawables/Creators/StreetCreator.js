@@ -1,6 +1,6 @@
 import appConfig from '../../../configuration/appConfig'
 import theme from '../../../configuration/theme'
-import { findSmallestValues } from '../../../helpers/search'
+import { findFittest, unorderedFindFittest } from '../../../helpers/search'
 import { angleBetween, getDistance } from '../../../helpers/vectorDistance'
 import IO from '../../IO'
 import Map from '../../Map'
@@ -31,6 +31,9 @@ export default class StreetCreator extends Creator {
 
   // Qual aresta esta sob o mouse
   hoveredEdge = null
+
+  // Se havia uma edge hovered na ultima frame
+  wasEdgeHovered = false
 
   // Listeners
   static listeners = {
@@ -77,10 +80,18 @@ export default class StreetCreator extends Creator {
     this.detectVertexHover()
 
     // Detecta se o mouse esta sobre uma aresta
-    this.detectEdgeHover()
+    this.detectEdgeHover(drawer)
 
+    // Atualiza o cursor
+    if (this.wasEdgeHovered && this.hoveredEdge == null) {
+      this.wasEdgeHovered = false
+      Map.removeCursor('pointer')
+    } else if (!this.wasEdgeHovered && this.hoveredEdge != null) {
+      this.wasEdgeHovered = true
+      Map.setCursor('pointer')
+    }
 
-    // No modo apagar, nao desenha nada
+    // No modo apagar, nao desenha o normal
     if (this.eraseStreets.isActive) {
       // Desenha o vertice hovered em vermelho
       if (this.hoveredVertex != null) {
@@ -95,6 +106,12 @@ export default class StreetCreator extends Creator {
         for (const edge of this.hoveredVertex.edges) {
           this.arrowDrawable.drawForEdge(edge, drawer)
         }
+      }
+
+      // Desenha a aresta hovered tambem
+      else if (this.hoveredEdge != null) {
+        this.hoveredEdge.draw(drawer, eraseColor)
+        this.arrowDrawable.drawForEdge(this.hoveredEdge, drawer)
       }
 
       return
@@ -123,7 +140,12 @@ export default class StreetCreator extends Creator {
     }
 
     // Se nao, desenha um pontinho no cursor
-    else fillArc(IO.mouse.mapCoords, streetWidth / 2)
+    else {
+      fillArc(IO.mouse.mapCoords, streetWidth / 2)
+
+      // Tambem verifica se esta edge hovered
+      if (this.hoveredEdge != null) this.highlightEdge(this.hoveredEdge, drawer)
+    }
 
     // Se tiver um source
     if (this.sourceVertex == null) return
@@ -136,6 +158,23 @@ export default class StreetCreator extends Creator {
 
     // Desenha as setas
     this.drawArrows(this.sourceVertex, destination, drawer)
+  }
+
+  highlightEdge(edge, drawer, color) {
+    const { strokePath, fillArc } = drawer.drawWith({
+      style: color ?? highlightColor,
+      lineWidth: streetWidth * 1.5,
+    })
+
+    fillArc(edge.source, streetWidth * 0.75)
+    fillArc(edge.destination, streetWidth * 0.75)
+
+    strokePath(edge.source, edge.destination)
+
+    edge.destination.draw(drawer)
+    edge.source.draw(drawer)
+    edge.draw(drawer)
+    this.arrowDrawable.drawForEdge(edge, drawer)
   }
 
   // Utiliza o arro indicator para desenhar flechas de source ate destination
@@ -159,14 +198,18 @@ export default class StreetCreator extends Creator {
   moveVertex(vertex, cancelToken) {
     // Espera 1s antes de comecar
     setTimeout(async () => {
+      // Remove o cancel callback
+      if (!cancelToken.cancelled)
+        IO.removeCancelCallback(streetSourceCancelToken)
+
       // Execute ate ser cancelado
       while (!cancelToken.cancelled) {
         // Retira o source
         this.sourceVertex = null
 
-        // Ajusta a posicao do vertice
         const { x, y } = IO.mouse.mapCoords
 
+        // Ajusta a posicao do vertice
         vertex.x = x
         vertex.y = y
 
@@ -183,6 +226,17 @@ export default class StreetCreator extends Creator {
       Vertex.sortedCoords.remove(vertex)
       Vertex.sortedCoords.register(vertex)
 
+      console.log(vertex.edges)
+
+      for (const edge of vertex.edges) {
+        // Recalcula os vetores ordenados das arestas
+        Edge.sortedCoords.remove(edge)
+
+        edge.setBoundVertices()
+
+        Edge.sortedCoords.register(edge)
+      }
+
       // Atualiza a versao do mapa
       Map.advanceVersion()
     }, 200)
@@ -190,12 +244,16 @@ export default class StreetCreator extends Creator {
 
   static moveVertexCancelToken = { cancelled: false }
 
-  eraseVertex(vertex) {
-    for (const edge of vertex.edges) {
-      for (const car of Object.values(edge.cars)) car.destroy()
+  eraseEdge(edge, advanceMapVersion = true) {
+    for (const car of Object.values(edge.cars)) car.destroy()
 
-      edge.destroy()
-    }
+    edge.destroy()
+
+    if (advanceMapVersion) Map.advanceVersion()
+  }
+
+  eraseVertex(vertex) {
+    for (const edge of vertex.edges) this.eraseEdge(edge, false)
 
     vertex.destroy()
 
@@ -206,10 +264,18 @@ export default class StreetCreator extends Creator {
   handleClick(position) {
     // No modo apagar
     if (this.eraseStreets.isActive) {
+      // Se clicou num vertice
       if (this.hoveredVertex != null) {
         this.eraseVertex(this.hoveredVertex)
 
         this.hoveredVertex = null
+      }
+
+      // Se clicou numa aresta
+      else if (this.hoveredEdge != null) {
+        this.eraseEdge(this.hoveredEdge)
+
+        this.hoveredEdge = null
       }
 
       return
@@ -282,33 +348,108 @@ export default class StreetCreator extends Creator {
     // Distancia maxima ate o cursor
     const maxDistance = streetWidth / 2 + newStreetVertexSnapRange
 
+    const xSortedVertices = Vertex.sortedCoords.get('x')
+
     // Entre os vertices, encontra os mais proximos
-    // TODO: garantir q isso seja feito com binary search
-    const closestByX = findSmallestValues(
-      Vertex.sortedCoords.get('x'),
-      (vertex) => Math.abs(vertex.x - mouse.x)
+    const closestByXInterval = findFittest(
+      xSortedVertices,
+      (vertex) => vertex.x - mouse.x,
+      maxDistance
     )
 
-    // Se a distancia x for muito, ja ignora
-    if (Math.abs(closestByX[0].x - mouse.x) > maxDistance) {
-      this.hoveredVertex = null
-      return
-    }
-
-    // TODO: usar o find smallest values aqui tb, e depois pegar o vertice mais proximo dos resultados
-    // Encontra um vertice proximo o suficiente
-    for (const vertex of closestByX) {
-      if (getDistance(vertex, mouse) <= maxDistance) {
-        this.hoveredVertex = vertex
-        return
-      }
-    }
-
-    this.hoveredVertex = null
+    // Encontra um vertice proximo o suficiente em y tambem
+    this.hoveredVertex = unorderedFindFittest(
+      // Mapeia os indices em vertices
+      xSortedVertices,
+      (vertex) => vertex.y - mouse.y,
+      maxDistance,
+      closestByXInterval
+    )
   }
 
-  detectEdgeHover() {
-    
+  detectEdgeHover(drawer) {
+    // Pega as coordenadas do mouse
+    const { mapCoords: mouse } = IO.mouse
+
+    // Distancia maxima ate o cursor
+    const maxDistance = streetWidth / 2
+
+    // Pega as 4 listas ordenadas
+    const leftSorted = Edge.sortedCoords.get('leftVertexX')
+    const rightSorted = Edge.sortedCoords.get('rightVertexX')
+    const upperSorted = Edge.sortedCoords.get('upperVertexY')
+    const lowerSorted = Edge.sortedCoords.get('lowerVertexY')
+
+    // Filtra as listas de x
+
+    // Encontra as arestas cujo vertice da esquerda esta para a esquerda do cursor
+    const leftBounded = findFittest(
+      leftSorted,
+      (edge) => Math.max(0, edge.leftVertex.x - mouse.x - maxDistance),
+      maxDistance
+    )
+
+    // Encontra as arestas cujo vertice da direita esta para a direita do cursor
+    const rightBounded = findFittest(
+      rightSorted,
+      (edge) => Math.min(0, edge.rightVertex.x - mouse.x + maxDistance),
+      maxDistance
+    )
+
+    // Encontra as arestas cujo vertice de cima esta para cima do cursor
+    // Lembrando q y cresce para baixo
+    const upperBounded = findFittest(
+      upperSorted,
+      (edge) => Math.max(0, edge.upperVertex.y - mouse.y - maxDistance),
+      maxDistance
+    )
+
+    // Encontra as arestas cujo vertice de baixo esta para baixo do cursor
+    // Lembrando q y cresce para baixo
+    const lowerBounded = findFittest(
+      lowerSorted,
+      (edge) => Math.min(0, edge.lowerVertex.y - mouse.y + maxDistance),
+      maxDistance
+    )
+
+    // console.log(`
+    // left: [${leftBounded}]
+    // right: [${rightBounded}]
+    // upper: [${upperBounded}]
+    // lower: [${lowerBounded}]
+    // `)
+
+    const boundArray = [leftBounded, rightBounded, upperBounded, lowerBounded]
+    const sortedArrays = [leftSorted, rightSorted, upperSorted, lowerSorted]
+
+    // Encontra qual das 4 listas de arestas tem menos arestas (i.e. o menor intervalo de indices)
+    const shortestIntervalIndex = unorderedFindFittest(
+      boundArray,
+      // Se for um vetor vazio, ele deve ter prioridade
+      (interval) => (interval[1] != undefined ? interval[1] - interval[0] : 0),
+      null,
+      null,
+      // Esse parametro solicite que retorne o indice
+      true
+    )
+
+    // for (
+    //   let i = boundArray[shortestIntervalIndex][0];
+    //   i < boundArray[shortestIntervalIndex][1];
+    //   i++
+    // ) {
+    //   this.highlightEdge(sortedArrays[shortestIntervalIndex][i], drawer, 'red')
+    // }
+
+    // console.log(['left', 'right', 'upper', 'lower'][shortestIntervalIndex])
+
+    // Buscando dentro deste intervalo somente, encontramos qual aresta esta mais proxima do mouse
+    this.hoveredEdge = unorderedFindFittest(
+      sortedArrays[shortestIntervalIndex],
+      (edge) => edge.getProjectionDistanceSquared(mouse),
+      Math.pow(maxDistance, 2),
+      boundArray[shortestIntervalIndex]
+    )
   }
 
   onCancel() {

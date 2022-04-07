@@ -53,10 +53,7 @@ export default class Node {
     }
 
     // Se nao, calcula
-    const distances = this.edge.getDistances(
-      this.stepper.destination.x,
-      this.stepper.destination.y
-    )
+    const distances = this.edge.getDistances(this.stepper.destination)
 
     // Calcula a distancia minima do cliente ate a aresta
     const clientDistance = Math.sqrt(
@@ -106,10 +103,7 @@ export default class Node {
   // Nos demais casos, o carro vai ser considerado em source
   calculateExceptionalH(source) {
     // Pegamos as distancias do cliente ate essa aresta
-    const distances = this.edge.getDistances(
-      this.stepper.destination.x,
-      this.stepper.destination.y
-    )
+    const distances = this.edge.getDistances(this.stepper.destination)
 
     const carSourceDistance = getDistance(this.edge.source, source)
 
