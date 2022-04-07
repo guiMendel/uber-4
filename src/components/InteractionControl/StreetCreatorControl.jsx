@@ -15,13 +15,23 @@ export default function StreetCreatorControl() {
   // Gerar velocidades aleatorias ou nao
   const [isRandom, setIsRandom] = useState(true)
 
+  // Caso a velocidade na interface se refere a proxima rua a ser criada, ou a rua selecionada
+  const [isStreetSelected, setIsStreetSelected] = useState(false)
+
   // Funcao que atualiza o valor da velocidade e avisa a classe de criar ruas
   function setSpeedFromEvent({ target }) {
     // Ignora se o tamanho for maior q 3
     if (target.value.toString().length > 3) return
 
     setSpeed(target.value)
-    applySpeed(target.value)
+
+    // Se tiver uma rua selecionada, altera a velocidade da rua
+    console.log(isStreetSelected)
+
+    if (isStreetSelected) {
+      StreetCreator.getInstance().selectedEdge.mapSpeed =
+        target.value * pixelsPerKilometer
+    } else applySpeed(target.value)
   }
 
   // Avisa a classe de criar ruas da velocidade
@@ -29,13 +39,24 @@ export default function StreetCreatorControl() {
     StreetCreator.setStreetSpeed((overrideSpeed ?? speed) * pixelsPerKilometer)
   }
 
-  function randomizeSpeed() {
+  function randomizeSpeed(forceRandomize) {
     const toggleElement = document.getElementById('toggle-speed-random')
 
-    if (!toggleElement.classList.contains('off')) {
+    if (forceRandomize || !toggleElement.classList.contains('off')) {
       const newSpeed = randomSpeed()
       setSpeed(newSpeed)
       applySpeed(newSpeed)
+    }
+  }
+
+  function handleStreetSelect(selectedEdge) {
+    setIsStreetSelected(selectedEdge != null)
+
+    // Atualiza o indicador de velocidade
+    if (selectedEdge != null) {
+      setSpeed(Math.round(selectedEdge.mapSpeed / pixelsPerKilometer))
+    } else {
+      randomizeSpeed(true)
     }
   }
 
@@ -46,9 +67,13 @@ export default function StreetCreatorControl() {
     // Quando criar uma nova rua, se estiver em modo aleatorio, muda a velocidade
     StreetCreator.addEventListener('createstreet', randomizeSpeed)
 
+    // Fica de olho em selecao de rua
+    StreetCreator.addEventListener('selectstreet', handleStreetSelect)
+
     // Quando o componente for desmontar, tira o listener
     return () => {
       StreetCreator.removeEventListener('createstreet', randomizeSpeed)
+      StreetCreator.removeEventListener('selectstreet', handleStreetSelect)
     }
   }, [])
 
@@ -60,14 +85,16 @@ export default function StreetCreatorControl() {
       {/* Area de controle */}
       <div className="speed-input-container">
         {/* Ativa / Desliga modo aleatorio */}
-        <span
-          id="toggle-speed-random"
-          className={`toggle-random ${!isRandom && 'off'}`}
-          onClick={() => setIsRandom(!isRandom)}
-        >
-          <label>Aleatoria</label>
-          <div className="toggler"></div>
-        </span>
+        {!isStreetSelected && (
+          <span
+            id="toggle-speed-random"
+            className={`toggle-random ${!isRandom && 'off'}`}
+            onClick={() => setIsRandom(!isRandom)}
+          >
+            <label>Aleatoria</label>
+            <div className="toggler"></div>
+          </span>
+        )}
 
         {/* Entrada */}
         <input
@@ -76,7 +103,7 @@ export default function StreetCreatorControl() {
           autoFocus
           value={speed}
           onChange={setSpeedFromEvent}
-          disabled={isRandom}
+          disabled={isRandom && !isStreetSelected}
         />
 
         {/* Indicacao de velocidade */}

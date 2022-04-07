@@ -130,6 +130,8 @@
   align-items: center;
   justify-content: center;
 
+  width: 13rem;
+
   gap: 0.5rem;
 }
 

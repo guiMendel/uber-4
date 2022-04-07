@@ -17,6 +17,7 @@ const { newStreetVertexSnapRange } = appConfig
 const streetSourceCancelToken = 'create-street-source-cancel'
 
 const eraseStreetsToken = 'erase-streets'
+const deselectEdgeToken = 'deselect-edge'
 
 // Permite criar novos vertices e arestas
 export default class StreetCreator extends Creator {
@@ -35,19 +36,26 @@ export default class StreetCreator extends Creator {
   // Se havia uma edge hovered na ultima frame
   wasEdgeHovered = false
 
+  // Se ha uma aresta selecionada
+  get selectedEdge() {
+    return this.#selectedEdge
+  }
+
+  set selectedEdge(value) {
+    this.#selectedEdge = value
+    StreetCreator.raiseEvent('selectstreet', value)
+  }
+
+  #selectedEdge = null
+
   // Listeners
   static listeners = {
     createstreet: [],
+    selectstreet: [],
   }
 
   // Reflete o estado do botao de apagar ruas
   eraseStreets = { isActive: false, set: null }
-
-  onCancel() {
-    IO.removeCancelCallback(eraseStreetsToken)
-
-    this.eraseStreets.set(false)
-  }
 
   constructor() {
     super()
@@ -144,7 +152,10 @@ export default class StreetCreator extends Creator {
       fillArc(IO.mouse.mapCoords, streetWidth / 2)
 
       // Tambem verifica se esta edge hovered
-      if (this.hoveredEdge != null) this.highlightEdge(this.hoveredEdge, drawer)
+      if (this.selectedEdge != null)
+        this.highlightEdge(this.selectedEdge, drawer)
+      else if (this.hoveredEdge != null)
+        this.highlightEdge(this.hoveredEdge, drawer)
     }
 
     // Se tiver um source
@@ -245,6 +256,8 @@ export default class StreetCreator extends Creator {
   static moveVertexCancelToken = { cancelled: false }
 
   eraseEdge(edge, advanceMapVersion = true) {
+    if (edge == this.selectedEdge) this.selectedEdge = null
+
     for (const car of Object.values(edge.cars)) car.destroy()
 
     edge.destroy()
@@ -277,6 +290,16 @@ export default class StreetCreator extends Creator {
 
         this.hoveredEdge = null
       }
+
+      return
+    }
+
+    // Verifica se clicou numa aresta (mas nao um vertice)
+    if (this.hoveredEdge != null && this.hoveredVertex == null) {
+      this.selectedEdge = this.hoveredEdge
+
+      // Adiciona um cancel callback
+      IO.addCancelCallback(deselectEdgeToken, () => (this.selectedEdge = null))
 
       return
     }
@@ -453,10 +476,14 @@ export default class StreetCreator extends Creator {
   }
 
   onCancel() {
+    if (this.eraseStreets.set != null) this.eraseStreets.set(false)
+
+    this.selectedEdge = null
     this.sourceVertex = null
     this.streetSpeed = null
 
     IO.removeCancelCallback(streetSourceCancelToken)
+    IO.removeCancelCallback(deselectEdgeToken)
   }
 
   // Permite que o componente de configuracoes configure essa velocidade
