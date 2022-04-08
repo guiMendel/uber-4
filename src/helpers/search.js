@@ -8,6 +8,8 @@ export function binarySearch(array, searchValue, limit = 0) {
 // Se for fornecido um limit, retorna vetor vazio se o valor absoluto mais proximo de 0 ainda for maior que limit
 // Essa funcao ASSUME que os valores do vetor estao ordenados em relacao aos seus resultados quando aplicados em callback, DE MENOR PARA MAIOR
 export function findFittest(array, evaluate, limit) {
+  if (array.length == 0) return []
+
   const validateLimit = (index) => {
     if (limit != undefined && Math.abs(evaluate(array[index])) > limit)
       return []
@@ -139,6 +141,8 @@ export function unorderedFindFittest(
   interval,
   returnIndex
 ) {
+  if (array.length == 0) return null
+
   // Encontra um valor que consiga superar o limite
   let bestValueSoFar = limit ? limit + 1 : 99999999
   let bestElementIndex = null

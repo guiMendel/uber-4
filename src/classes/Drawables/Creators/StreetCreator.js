@@ -88,12 +88,27 @@ export default class StreetCreator extends Creator {
     // Ouve botao de apagar ruas
     IO.addButtonListener('delete-streets', ({ value, setValue }) => {
       // Inicia o modo apagar ruas
-      IO.addCancelCallback(eraseStreetsToken, () =>
-        this.eraseStreets.set(false)
-      )
 
-      this.eraseStreets.isActive = value
+      // Se ja possui um set
+      if (this.eraseStreets.set != null) this.eraseStreets.set(value)
+      // Do contrario, inicializa o set
+      else {
+        IO.addCancelCallback(eraseStreetsToken, () =>
+          this.eraseStreets.set(false)
+        )
+
+        this.eraseStreets.isActive = value
+      }
+
       this.eraseStreets.set = (newValue) => {
+        if (newValue == false && this.eraseStreets.isActive) {
+          IO.removeCancelCallback(eraseStreetsToken)
+        } else if (newValue == true && this.eraseStreets.isActive == false) {
+          IO.addCancelCallback(eraseStreetsToken, () =>
+            this.eraseStreets.set(false)
+          )
+        }
+
         this.eraseStreets.isActive = newValue
         setValue(newValue)
       }
@@ -502,7 +517,6 @@ export default class StreetCreator extends Creator {
 
     IO.removeCancelCallback(streetSourceCancelToken)
     IO.removeCancelCallback(deselectEdgeToken)
-    IO.removeCancelCallback(eraseStreetsToken)
   }
 
   // Permite que o componente de configuracoes configure essa velocidade

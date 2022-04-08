@@ -30,6 +30,7 @@ export default class IO {
     rightclick: [],
     rightup: [],
     cancel: [],
+    mousemove: [],
   }
 
   // Guarda um callback que deve ser executado em vez de emitir um cancel no proximo comando de cancel
@@ -50,6 +51,12 @@ export default class IO {
         // Levanta evento de drag se estiver pressionando com botao direito
         if (IO.mouse.isRightPressed)
           this.#raiseEvent('mouserightdrag', { x: movementX, y: movementY })
+
+        this.#raiseEvent('mousemove', {
+          mapPosition: IO.mouse.mapCoords,
+          screenPosition: IO.mouse.screenCoords,
+          delta: { x: movementX, y: movementY },
+        })
       }
     )
 

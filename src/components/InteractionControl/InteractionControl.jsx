@@ -9,6 +9,8 @@ import './InteractionControl.css'
 import Client from '../../classes/Drawables/Client'
 import ClientRouteControl from './ClientRouteControl'
 import ClientButtons from './ClientButtons'
+import ClientCreator from '../../classes/Drawables/Creators/ClientCreator'
+import ClientCreatorButtons from './ClientCreatorButtons'
 
 // Mapeia as interaction keys com componentes
 const interactionKeyMap = {
@@ -17,6 +19,7 @@ const interactionKeyMap = {
 }
 
 const buttonPanelsKeyMap = {
+  [ClientCreator.name]: ClientCreatorButtons,
   [StreetCreator.name]: StreetCreatorButtons,
   [Client.name]: ClientButtons,
 }
