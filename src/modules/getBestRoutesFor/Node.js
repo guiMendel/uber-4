@@ -28,6 +28,7 @@ export default class Node {
 
     // Se recebemos o source, calculamos um valor de h e time excepcional
     if (source != null) {
+      this.source = source
       this.time = getDistance(source, edge.destination) / edge.mapSpeed
       this.calculateExceptionalH(source)
     } else {
@@ -52,10 +53,7 @@ export default class Node {
     }
 
     // Se nao, calcula
-    const distances = this.edge.getDistances(
-      this.stepper.destination.x,
-      this.stepper.destination.y
-    )
+    const distances = this.edge.getDistances(this.stepper.destination)
 
     // Calcula a distancia minima do cliente ate a aresta
     const clientDistance = Math.sqrt(
@@ -105,10 +103,7 @@ export default class Node {
   // Nos demais casos, o carro vai ser considerado em source
   calculateExceptionalH(source) {
     // Pegamos as distancias do cliente ate essa aresta
-    const distances = this.edge.getDistances(
-      this.stepper.destination.x,
-      this.stepper.destination.y
-    )
+    const distances = this.edge.getDistances(this.stepper.destination)
 
     const carSourceDistance = getDistance(this.edge.source, source)
 
@@ -178,7 +173,13 @@ export default class Node {
   expand() {
     this.closed = true
 
-    // Retorna uma copia do vetor
-    return [...this.edge.destination.sourceOf]
+    return Object.values(this.edge.destination.sourceOf)
+  }
+
+  // Retorna verdadeiro se os 2 nodes sao iguais
+  isEqualTo(node) {
+    return (
+      this.edge.id == node.edge.id && this.stepper.car.id == node.stepper.car.id
+    )
   }
 }

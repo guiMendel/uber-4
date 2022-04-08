@@ -1,12 +1,16 @@
 .App {
-  cursor: url(../assets/arrow.cur), auto;
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .actions {
   position: fixed;
   display: flex;
 
-  flex-direction: column-reverse;
+  flex-direction: column;
   align-items: center;
   gap: 2rem;
 }
@@ -14,4 +18,56 @@
 .client.actions {
   bottom: 2rem;
   left: 2rem;
+}
+
+.map.actions {
+  bottom: 2rem;
+  right: 2rem;
+}
+
+.new-car-icons * {
+  min-width: unset !important;
+  min-height: unset !important;
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* font-size: 1rem; */
+}
+
+.new-car-icons .car-icon {
+  position: absolute;
+
+  font-size: 1.5rem;
+  right: 1rem;
+  bottom: 20%;
+}
+
+.new-car-icons .plus-icon {
+  position: relative;
+
+  left: 0.7rem;
+  bottom: 0.2rem;
+
+  font-size: 0.7rem;
+}
+
+/* Define os cursores */
+body {
+  cursor: url(../assets/arrow.cur), auto;
+}
+
+body.move {
+  cursor: url(../assets/move.cur), auto;
+}
+
+body.pencil {
+  cursor: url(../assets/pen.cur), auto;
+}
+
+body.pointer {
+  cursor: url(../assets/link.cur), auto;
 }

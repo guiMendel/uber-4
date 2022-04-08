@@ -1,0 +1,2 @@
+Cliente_id loc_cliente_x loc_cliente_y dest_cliente_x dest_cliente_y
+443 5.0 3.0 2.7 4.1
