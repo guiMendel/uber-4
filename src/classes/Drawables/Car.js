@@ -5,6 +5,7 @@ import Client from './Client'
 import IO from '../IO'
 import { getDistance } from '../../helpers/vectorDistance'
 import { cos, sin } from '../../helpers/trygonometry'
+import SortProperties from '../SortProperties'
 
 const { highlightColor, clientHoverGrow } = theme
 
@@ -12,6 +13,12 @@ const cancelCarSelect = 'car-select-cancel'
 
 // Define os carros
 export default class Car extends Drawable {
+  // Guarda os carros ordenados pelas coordenada
+  static sortedCoords = new SortProperties({
+    x: (c1, c2) => c1.x < c2.x,
+    y: (c1, c2) => c1.y < c2.y,
+  })
+
   // Armazena referencia de qual carro esta selecionado
   static #selected = null
 
@@ -57,13 +64,16 @@ export default class Car extends Drawable {
 
   constructor(id, edge, realX, realY) {
     // Dada a posicao inicial e aresta, descobrimos em que parte da rua o carro esta, e com isso qual a real posicao inicial dele
-    const [x, y] = edge.getProjectionCoordinates({ x: realX, y: realY })
+    const { x, y } = edge.getProjectionCoordinates({ x: realX, y: realY })
 
     // console.log(`Original: ${realX}, ${realY}\nNew: ${x}, ${y}\n\n`)
 
     // Invoca construtor pai
     super(id, { x, y, edge })
     // super(id, { x: realX, y: realY, edge })
+
+    Car.sortedCoords.register(this)
+    this.onDestroy.push(() => Car.sortedCoords.remove(this))
 
     // Registra na aresta
     edge.cars[this.id] = this
@@ -125,9 +135,13 @@ export default class Car extends Drawable {
 
   // Se reposiciona na aresta
   fixPosition() {
+    Car.sortedCoords.remove(this)
+
     const distanceToSource = this.edgeProgress * this.edge.mapDistance
 
     this.x = this.edge.source.x + distanceToSource * cos(this.edge.angle)
     this.y = this.edge.source.y - distanceToSource * sin(this.edge.angle)
+
+    Car.sortedCoords.register(this)
   }
 }

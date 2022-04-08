@@ -5,6 +5,7 @@ import Edge from '../classes/Drawables/Edge'
 import Vertex from '../classes/Drawables/Vertex'
 import appConfig from '../configuration/appConfig'
 import { sin, cos } from './trygonometry'
+import { getDistance } from './vectorDistance'
 
 const { pixelsPerKilometer } = appConfig
 
@@ -14,7 +15,8 @@ export default function seedGraph(
   numberOfCars = 3,
   numberOfClients = 3,
   mapWidth = window.innerWidth - 20,
-  mapHeight = window.innerHeight - 20
+  mapHeight = window.innerHeight - 20,
+  minDistanceBetweenVertices = 200
 ) {
   // Destroi os anteriormente definidos
   Drawable.drawableInstances = {}
@@ -23,14 +25,26 @@ export default function seedGraph(
     throw new Error('Necessita de pelo menos 2 vertices')
 
   // Helper para gerar coordenadas aleatorias centralizadas em 0,0
-  const randomCoords = () => ({
-    x: Math.random() * mapWidth - mapWidth / 2,
-    y: Math.random() * mapHeight - mapHeight / 2,
-  })
+  const randomCoords = () => {
+    // Gera coordenadas
+    const newCoords = {
+      x: Math.random() * mapWidth - mapWidth / 2,
+      y: Math.random() * mapHeight - mapHeight / 2,
+    }
+
+    // Verifica se as coordenadas estao boas
+    for (const vertex of Object.values(Vertex.instances)) {
+      if (getDistance(vertex, newCoords) < minDistanceBetweenVertices)
+        return randomCoords()
+    }
+
+    return newCoords
+  }
 
   // Gerar vertices
   for (let vertexId = 0; vertexId < numberOfVertices; vertexId++) {
-    new Vertex(vertexId, randomCoords().x, randomCoords().y, true)
+    const newCoords = randomCoords()
+    new Vertex(vertexId, newCoords.x, newCoords.y, true)
   }
 
   // Helpers para pegar vertice aleatorio

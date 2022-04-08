@@ -18,6 +18,7 @@ import RouteHighlighter from './Drawables/RouteHighlighter'
 import ClientCreator from './Drawables/Creators/ClientCreator'
 import StreetCreator from './Drawables/Creators/StreetCreator'
 import Car from './Drawables/Car'
+import CarCreator from './Drawables/Creators/CarCreator'
 
 // Extrai valores uteis
 const { carWidth, clientWidth } = theme
@@ -87,6 +88,8 @@ export default class Map {
       new ClientCreator()
 
       new StreetCreator()
+
+      new CarCreator()
 
       // Armazena o wrapper de contexto para desenhar
       this.drawer = new Drawer(canvasContext)

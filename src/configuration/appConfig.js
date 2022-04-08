@@ -19,6 +19,7 @@ export default {
     'Car',
     'ClientCreator',
     'StreetCreator',
+    'CarCreator',
     'Debug',
   ],
 
@@ -40,6 +41,9 @@ export default {
 
   // Alcance em que ocorre o snap para vertices ja existentes, quando criando novas ruas
   newStreetVertexSnapRange: 20,
+
+  // Distancia maxima permitida entre o mouse e uma aresta em que vai ser colocado um novo carro
+  maxCarSnapDistance: 100,
 
   //=== CAMERA
 

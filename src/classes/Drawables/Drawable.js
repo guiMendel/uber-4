@@ -96,10 +96,6 @@ export default class Drawable {
     throw new Error('Este método deve ser implementado por uma classe filho')
   }
 
-  // TODO falta fazer um evento levantado quando for destruido, que sempre que for criada uma referencia para este drawable, deve ter tambem uma rotina que remove essa refertencia quando este evento eh levantado
-
-  // rambem precisa colcoar uns remove event lsitener nos caras destruidos
-
   destroy() {
     // Limpa as referencias deste objeto
     this.onDestroy.forEach((callback) => callback())

@@ -217,9 +217,9 @@ export default class Edge extends Drawable {
     const displacement = this.getDistances(coords).projection
 
     // Encontramos as coordenadas da projecao aplicando o deslocamento em source
-    return [
-      this.source.x + sin(this.angle + 90) * displacement,
-      this.source.y + cos(this.angle + 90) * displacement,
-    ]
+    return {
+      x: this.source.x + sin(this.angle + 90) * displacement,
+      y: this.source.y + cos(this.angle + 90) * displacement,
+    }
   }
 }
