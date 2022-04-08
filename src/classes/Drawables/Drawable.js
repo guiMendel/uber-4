@@ -21,8 +21,8 @@ export default class Drawable {
 
   constructor(id, properties) {
     // Verifica se ja exist euma instancia com o id fornecido
-    if (id && this.instances[id] != undefined) {
-      const existingDrawable = this.instances[id]
+    if (id && this.constructor.instances[id] != undefined) {
+      const existingDrawable = this.constructor.instances[id]
 
       // Compara a instancia existente com as propriedades fornecidas
       const result = existingDrawable.compareTo(properties)
@@ -39,15 +39,15 @@ export default class Drawable {
     Object.assign(this, properties)
 
     // Registrar drawable
-    this.instances[this.id] = this
+    this.constructor.instances[this.id] = this
   }
 
   // Retorna o objeto que armazena todas as instancias da classe de this
-  get instances() {
-    if (Drawable.drawableInstances[this.constructor.name] == undefined)
-      Drawable.drawableInstances[this.constructor.name] = {}
+  static get instances() {
+    if (Drawable.drawableInstances[this.name] == undefined)
+      Drawable.drawableInstances[this.name] = {}
 
-    return Drawable.drawableInstances[this.constructor.name]
+    return Drawable.drawableInstances[this.name]
   }
 
   // Permite saber a distancia do cursor ate este drawable

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import StreetCreator from '../../classes/Drawables/Creators/StreetCreator'
+import Edge from '../../classes/Drawables/Edge'
 import appConfig from '../../configuration/appConfig'
 
 const { pixelsPerKilometer } = appConfig
@@ -26,11 +27,12 @@ export default function StreetCreatorControl() {
     setSpeed(target.value)
 
     // Se tiver uma rua selecionada, altera a velocidade da rua
-    console.log(isStreetSelected)
-
     if (isStreetSelected) {
       StreetCreator.getInstance().selectedEdge.mapSpeed =
         target.value * pixelsPerKilometer
+
+      // Atualiza os valores recorde
+      Edge.updateRecordEdges()
     } else applySpeed(target.value)
   }
 

@@ -257,8 +257,6 @@ export default class StreetCreator extends Creator {
       Vertex.sortedCoords.remove(vertex)
       Vertex.sortedCoords.register(vertex)
 
-      console.log(vertex.edges)
-
       for (const edge of vertex.edges) {
         // Recalcula os vetores ordenados das arestas
         Edge.sortedCoords.remove(edge)

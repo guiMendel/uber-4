@@ -62,11 +62,11 @@ export default class Edge extends Drawable {
     })
 
     // Atualiza as ruas mais rapida e lenta
-    this.updateRecordEdges()
+    Edge.updateRecordEdges()
 
     this.onDestroy.push(() => {
-      if (Edge.slowestEdge == this) this.updateRecordEdges(this)
-      else if (Edge.fastestEdge == this) this.updateRecordEdges(this)
+      if (Edge.slowestEdge == this) Edge.updateRecordEdges(this)
+      else if (Edge.fastestEdge == this) Edge.updateRecordEdges(this)
     })
 
     // console.log(`from ${source.id} to ${destination.id}`)
@@ -153,7 +153,7 @@ export default class Edge extends Drawable {
     return '#' + lerpIndexToHex(0) + lerpIndexToHex(1) + lerpIndexToHex(2)
   }
 
-  updateRecordEdges(excluded) {
+  static updateRecordEdges(excluded) {
     // Encontra a rua com a menor e a maior velocidade
     const streets = Object.values(this.instances)
 
