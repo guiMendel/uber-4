@@ -16,10 +16,13 @@ export default class Drawable {
   // Quais animacoes estao sendo executadas neste drawable
   animations = []
 
+  // Callbacks para executar no momento da destruicao deste objeto
+  onDestroy = []
+
   constructor(id, properties) {
     // Verifica se ja exist euma instancia com o id fornecido
-    if (this.instances[id] != undefined) {
-      const existingDrawable = this.instances[id]
+    if (id && this.constructor.instances[id] != undefined) {
+      const existingDrawable = this.constructor.instances[id]
 
       // Compara a instancia existente com as propriedades fornecidas
       const result = existingDrawable.compareTo(properties)
@@ -32,19 +35,19 @@ export default class Drawable {
     }
 
     // Keep the properties
-    this.id = id
+    this.id = id ?? Drawable.generateId(this)
     Object.assign(this, properties)
 
     // Registrar drawable
-    this.instances[id] = this
+    this.constructor.instances[this.id] = this
   }
 
   // Retorna o objeto que armazena todas as instancias da classe de this
-  get instances() {
-    if (Drawable.drawableInstances[this.constructor.name] == undefined)
-      Drawable.drawableInstances[this.constructor.name] = {}
+  static get instances() {
+    if (Drawable.drawableInstances[this.name] == undefined)
+      Drawable.drawableInstances[this.name] = {}
 
-    return Drawable.drawableInstances[this.constructor.name]
+    return Drawable.drawableInstances[this.name]
   }
 
   // Permite saber a distancia do cursor ate este drawable
@@ -66,10 +69,12 @@ export default class Drawable {
     this.animations.push(() => {
       if (condition()) {
         // Soma o alteration
-        this[property] = Math.min(max, this[property] + frameAlteration)
+        if (this[property] != max)
+          this[property] = Math.min(max, this[property] + frameAlteration)
       } else {
         // Subtrai o alteration
-        this[property] = Math.max(min, this[property] - frameAlteration)
+        if (this[property] != min)
+          this[property] = Math.max(min, this[property] - frameAlteration)
       }
     })
   }
@@ -91,11 +96,22 @@ export default class Drawable {
     throw new Error('Este método deve ser implementado por uma classe filho')
   }
 
+  destroy() {
+    // Limpa as referencias deste objeto
+    this.onDestroy.forEach((callback) => callback())
+
+    // Remove a referencia principal
+    delete Drawable.drawableInstances[this.constructor.name][this.id]
+
+    // Destroi as propriedades
+    Object.keys(this).forEach((property) => delete this[property])
+  }
+
   // Permite observar eventos
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe IO nao fornece um eventListener do tipo "${type}"`
+        `A classe ${this.name} nao fornece um eventListener do tipo "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -105,9 +121,38 @@ export default class Drawable {
   static raiseEvent(type, payload) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `Tentativa em IO de levantar evento de tipo inexistente "${type}"`
+        `Tentativa em ${this.name} de levantar evento de tipo inexistente "${type}"`
       )
 
     for (const listener of this.listeners[type]) listener(payload)
+  }
+
+  // Permite observar eventos
+  static removeEventListener(type, callback) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `A classe ${this.name} nao fornece um eventListener do tipo "${type}"`
+      )
+
+    const index = this.listeners[type].indexOf(callback)
+
+    if (index == -1) return
+
+    this.listeners[type].splice(index, 1)
+  }
+
+  // Gera um id valido para uma nova instancia desta clase
+  static generateId(callingInstance) {
+    const callingClass = callingInstance?.constructor ?? this
+
+    let newId
+
+    const instanceArray = Drawable.drawableInstances[callingClass.name]
+
+    do {
+      newId = Math.round(Math.random() * 99999)
+    } while (instanceArray && instanceArray[newId] != undefined)
+
+    return newId
   }
 }

@@ -15,14 +15,46 @@ import Client from './Drawables/Client'
 import RouteCalculator from './RouteCalculator'
 import Debug from './Drawables/Debug'
 import RouteHighlighter from './Drawables/RouteHighlighter'
+import ClientCreator from './Drawables/Creators/ClientCreator'
+import StreetCreator from './Drawables/Creators/StreetCreator'
+import Car from './Drawables/Car'
+import CarCreator from './Drawables/Creators/CarCreator'
 
 // Extrai valores uteis
-const { streetWidth, carWidth, clientWidth } = theme
+const { carWidth, clientWidth } = theme
 
 // Classe singleton que governa o mapa, os desenhos do mapa e suas atualizacoes
 export default class Map {
   // Guarda a unica instancia do mapa
   static instance = null
+
+  // Guarda qual classe de interacao com o usuario esta atualmente em atividade
+  static #activeInteractionClass = null
+
+  static get activeInteractionClass() {
+    return this.#activeInteractionClass
+  }
+
+  static set activeInteractionClass(value) {
+    const oldValue = this.#activeInteractionClass
+
+    this.#activeInteractionClass = value
+
+    this.#raiseEvent('activateinteractionclass', { value, oldValue })
+  }
+
+  // Guarda todos os cursores que estao atualmente tentado ser mostrados (mostra o mais recente)
+  static activeCursors = []
+
+  // Permite que os agentes saibam qual versao do mapa este eh
+  // A versao muda sempre que algo eh modificado ou removido do mapa (introducoes nao alteram a versao)
+  static version = 1
+
+  // Listeners
+  static listeners = {
+    activateinteractionclass: [],
+    newframe: [],
+  }
 
   constructor(canvasContext) {
     // Se ja ha uma instancia, use ela
@@ -42,20 +74,29 @@ export default class Map {
       // Gera um grafo de teste
       seedGraph()
 
+      Car.setup()
       Client.setup()
       RouteCalculator.setup()
 
-      // Cria o singleton ArrowIndicators
+      // Cria os Singletons
       new ArrowIndicators()
 
       new Debug()
 
       new RouteHighlighter()
 
+      new ClientCreator()
+
+      new StreetCreator()
+
+      new CarCreator()
+
       // Armazena o wrapper de contexto para desenhar
       this.drawer = new Drawer(canvasContext)
 
       while (true) {
+        Map.#raiseEvent('newframe')
+
         // Renderiza uma frame
         this.drawer.drawFrame()
 
@@ -66,6 +107,38 @@ export default class Map {
 
     // Carrega as imagens, e entao inicia o app
     this.loadAssets().then(start)
+  }
+
+  static advanceVersion() {
+    this.version++
+  }
+
+  static setCursor(newCursor) {
+    this.activeCursors.push(newCursor)
+
+    // Atualiza a classe de body com base no cursor
+    document.body.className = newCursor
+  }
+
+  static removeCursor(cursor) {
+    this.activeCursors.splice(
+      this.activeCursors.findIndex((activeCursor) => activeCursor == cursor),
+      1
+    )
+
+    document.body.className = this.activeCursors[0]
+  }
+
+  // Resolve assim que um novo frame comecar
+  static async endOfFrame() {
+    return new Promise((resolve) => {
+      function resolveAndUnsubcribe() {
+        resolve()
+        Map.removeEventListener('newframe', resolveAndUnsubcribe)
+      }
+
+      this.addEventListener('newframe', resolveAndUnsubcribe)
+    })
   }
 
   async loadAssets() {
@@ -117,5 +190,39 @@ export default class Map {
         resolve(image)
       }
     })
+  }
+
+  // Permite observar eventos
+  static addEventListener(type, callback) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `A classe IO nao fornece um eventListener do tipo "${type}"`
+      )
+
+    this.listeners[type].push(callback)
+  }
+
+  // Permite observar eventos
+  static removeEventListener(type, callback) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `A classe IO nao fornece um eventListener do tipo "${type}"`
+      )
+
+    const index = this.listeners[type].indexOf(callback)
+
+    if (index == -1) return
+
+    this.listeners[type].splice(index, 1)
+  }
+
+  // Permite levantar eventos
+  static #raiseEvent(type, payload) {
+    if (this.listeners[type] == undefined)
+      throw new Error(
+        `Tentativa em IO de levantar evento de tipo inexistente "${type}"`
+      )
+
+    for (const listener of this.listeners[type]) listener(payload)
   }
 }

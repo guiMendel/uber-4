@@ -1,6 +1,8 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import configurateCanvas from './configurateCanvas'
 import Map from '../../classes/Map'
+
+import defaultCursor from '../../assets/arrow.cur'
 
 export default function Canvas() {
   // Pega a referencia do canvas
@@ -25,7 +27,7 @@ export default function Canvas() {
   }, [])
 
   return (
-    <canvas ref={canvasRef}>
+    <canvas id='canvas' ref={canvasRef}>
       Não foi possível carregar o conteúdo do aplicativo.
     </canvas>
   )

@@ -7,9 +7,13 @@ export default class Heap {
   #newHighestPriorityListeners = []
 
   // compareMethod vai permitir definir a prioridade dos elementos do heap. Recebe 2 elementos, e deve retornar true se o primeiro tem mais prioridade do que o segundo
-  constructor(compareMethod) {
+  constructor(compareMethod, alwaysKeepCorrespondentArray = false) {
     // Armazena o metodo de comparacao
     this.compare = compareMethod
+
+    // Caso sera necessario gerar o array correspondente para cada modificacao do heap
+    this.alwaysKeepCorrespondentArray = alwaysKeepCorrespondentArray
+    if (alwaysKeepCorrespondentArray) this.array = []
   }
 
   get length() {
@@ -32,10 +36,12 @@ export default class Heap {
       for (const listener of this.#newHighestPriorityListeners)
         listener(this.#data[0])
     }
+
+    if (this.alwaysKeepCorrespondentArray) this.array = this.toArray()
   }
 
   // Permite retirar o elemento de maior prioridade do heap
-  pop() {
+  pop(preventArrayGeneration) {
     if (this.length == 0) return undefined
 
     // Pega o elemento com maior prioridade
@@ -48,6 +54,9 @@ export default class Heap {
 
     // Faz o swim down
     this.#swimDown(0)
+
+    if (this.alwaysKeepCorrespondentArray && !preventArrayGeneration)
+      this.array = this.toArray()
 
     return returnValue
   }
@@ -64,6 +73,8 @@ export default class Heap {
 
   setRawData(data) {
     this.#data = data
+
+    if (this.alwaysKeepCorrespondentArray) this.array = this.toArray()
   }
 
   toArray() {
@@ -71,11 +82,33 @@ export default class Heap {
     const dataBackup = [...this.#data]
 
     const array = []
-    while (this.#data.length > 0) array.push(this.pop())
+    while (this.#data.length > 0) array.push(this.pop(true))
 
     this.#data = dataBackup
 
     return array
+  }
+
+  // Remove o elemento fornecido
+  // Retorna verdadeiro se removeu um elemento, falso do contrario
+  remove(element) {
+    // Encontra ele no array
+    const elementIndex = this.#data.indexOf(element)
+
+    if (elementIndex == -1) return false
+
+    // Coloca o ultimo elemento no lugar deste
+    this.#data[elementIndex] = this.#data[this.#data.length - 1]
+
+    // Remove o ultimo element
+    this.#data.pop()
+
+    // Faz swim down para consertar o heap
+    this.#swimDown(elementIndex)
+
+    if (this.alwaysKeepCorrespondentArray) this.array = this.toArray()
+
+    return true
   }
 
   // Define como o elemento faz swim up no array que armazena os dados do heap

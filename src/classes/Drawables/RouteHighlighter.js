@@ -1,5 +1,4 @@
 import theme from '../../configuration/theme'
-import IO from '../IO'
 import ArrowIndicators from './ArrowIndicators'
 import Drawable from './Drawable'
 
@@ -13,44 +12,36 @@ const {
 } = theme
 
 // Este singleton permite destacar as arestas que compoem uma rota
-export default class RouteHighlighter extends Drawable {
+export default class RouteHighlighter {
   static #instance
-
-  // De qual node retirar a rota para destaque
-  highlightedNode = null
 
   constructor() {
     if (RouteHighlighter.#instance != undefined)
       return RouteHighlighter.#instance
 
-    super(1, {})
-
     RouteHighlighter.#instance = this
 
     // Guarda uma referencia ao arrow drawable
     this.arrowDrawable = Drawable.drawableInstances[ArrowIndicators.name][0]
-
-    // Para de desenhar no cancel
-    IO.addEventListener('cancel', () => (this.highlightedNode = null))
   }
 
-  draw(drawer) {
-    if (this.highlightedNode == null) return
-
+  draw(drawer, highlightedNode) {
     // Pega o carro e o cliente
-    const car = this.highlightedNode.stepper.parentNode.stepper.source
-    const client = this.highlightedNode.stepper.parentNode.stepper.destination
+    const car = highlightedNode.stepper.parentNode.stepper.source
 
     this.drawRoute(
-      this.highlightedNode.stepper.parentNode,
+      highlightedNode.stepper.parentNode,
       selectedRouteHighlightBeforeRdv,
       drawer
     )
 
-    this.drawRoute(this.highlightedNode, selectedRouteHighlight, drawer)
+    this.drawRoute(highlightedNode, selectedRouteHighlight, drawer)
 
-    // Desenha cliente
-    client.draw(drawer)
+    // Desenha as flechas
+    this.drawArrows(highlightedNode.stepper.parentNode, drawer)
+
+    // Desenha as flechas
+    this.drawArrows(highlightedNode, drawer)
 
     // Desenha carro
     car.draw(drawer)
@@ -71,9 +62,6 @@ export default class RouteHighlighter extends Drawable {
 
     // Desenha as ruas
     this.drawStreet(node, drawer)
-
-    // Desenha as flechas
-    this.drawArrows(node, drawer)
 
     // Desenha destaque da origem
     fillArc(node.stepper.source, 30)
@@ -139,10 +127,10 @@ export default class RouteHighlighter extends Drawable {
   }
 
   // Dado um node, destaca a rota correspondente
-  static highlightRoute(node) {
+  static highlightRoute(node, drawer) {
     const instance = this.#getInstance()
 
-    instance.highlightedNode = node
+    instance.draw(drawer, node)
   }
 
   static #getInstance() {

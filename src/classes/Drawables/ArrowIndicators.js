@@ -33,7 +33,7 @@ export default class ArrowIndicators extends Drawable {
   }
 
   // Desenha as setas da aresta fornecida
-  drawForEdge(edge, drawer) {
+  drawForEdge(edge, drawer, options) {
     // A comecar da origem da aresta, desenhar flechas ao longo dela, e ir deslocando o ponto de desenho
     let displacement = 0
 
@@ -43,7 +43,8 @@ export default class ArrowIndicators extends Drawable {
         edge.source.x + displacement * sin(edge.angle + 90),
         edge.source.y + displacement * cos(edge.angle + 90),
         edge.angle + 90,
-        drawer
+        drawer,
+        options
       )
 
       // Aumenta o deslocamento
@@ -52,7 +53,7 @@ export default class ArrowIndicators extends Drawable {
   }
 
   // x e y devem apontar para o centro da base do triangulo
-  drawArrow(x, y, pointAngle, drawer) {
+  drawArrow(x, y, pointAngle, drawer, options) {
     // Permite obter as coordenadas x, y desloacadas no angulo indicado, numa distancia indicada
     // Ja torna o angulo relativo ao angulo de rotacao do triangulo, e soma 90 para que 0 seja a direita
     const displacement = (amount, angle) => ({
@@ -63,6 +64,7 @@ export default class ArrowIndicators extends Drawable {
     const { strokePath } = drawer.drawWith({
       style: streetArrowColor,
       lineWidth: streetArrowWidth,
+      ...options,
     })
 
     strokePath(

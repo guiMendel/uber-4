@@ -52,6 +52,16 @@ export default class AStarStepper {
     })
   }
 
+  get car() {
+    if (this.parentNode != null) return this.parentNode.stepper.car
+    else return this.source
+  }
+
+  get client() {
+    if (this.parentNode != null) return this.parentNode.stepper.client
+    else return this.destination
+  }
+
   // Realiza a expansao do proximo openNode
   // Retorna true se ja finalizou o A*
   async step() {

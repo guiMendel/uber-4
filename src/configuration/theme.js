@@ -10,6 +10,9 @@ export default {
   // Velocidade geral de animacoes simples, em segundos
   generalAnimationSpeed: 0.05,
 
+  // A cor do highlight
+  highlightColor: '#0287f4',
+
   //=== SETAS DE SENTIDO DA RUA
 
   // A cor das setas que indica o sentido das ruas
@@ -41,14 +44,8 @@ export default {
   // O quanto a imagem do cliente cresce quando sob o cursor
   clientHoverGrow: 1.3,
 
-  // A cor do highlight do cliente selecionado
-  selectedClientColor: '#168ece',
-
   // O raio do highlight do cliente selecionado
   selectedClientRadius: streetWidth * 0.8,
-
-  // Cor do destino do cliente
-  clientDestinationColor: '#f24f43',
 
   // O raio do destino
   clientDestinationRadius: streetWidth * 0.5,
@@ -73,4 +70,9 @@ export default {
 
   // O espaco entre as linhas do trastejado
   clientWalkPathLineGap: 15,
+
+  //=== EDICAO
+
+  // Cor de apagar
+  eraseColor: '#f74a33',
 }
