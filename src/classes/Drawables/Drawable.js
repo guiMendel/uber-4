@@ -82,7 +82,7 @@ export default class Drawable {
   // Compara this com o objeto fornecido, e retorna true se todas suas propriedades coincidirem
   // Se alguma for diferente, retorna o seu nome
   compareTo(otherObject) {
-    for (const property in this) {
+    for (const property in otherObject) {
       if (property != 'id' && this[property] != otherObject[property])
         return property
     }

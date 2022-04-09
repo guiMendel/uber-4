@@ -7,6 +7,7 @@ import Creator from './Creator'
 const { highlightColor, clientDestinationRadius } = theme
 
 const eraseClientsToken = 'erase-clients'
+const clientPositionToken = 'client-position'
 
 // Classe que permite criar novos clientes
 export default class ClientCreator extends Creator {
@@ -78,6 +79,8 @@ export default class ClientCreator extends Creator {
     this.#nextCreateClient = null
 
     if (this.eraseClients.set) this.eraseClients.set(false)
+
+    IO.removeCancelCallback(clientPositionToken)
   }
 
   handleClick(position) {
@@ -89,6 +92,12 @@ export default class ClientCreator extends Creator {
     // Se tem um cliente em preview, mas ele ainda nao tem coordenadas, confere as coordenadas a ele
     if (this.nextClient.x == null) {
       Object.assign(this.#nextCreateClient, position.map)
+
+      // Cria um cancel callback
+      IO.addCancelCallback(
+        clientPositionToken,
+        () => (this.#nextCreateClient = null)
+      )
 
       return
     }

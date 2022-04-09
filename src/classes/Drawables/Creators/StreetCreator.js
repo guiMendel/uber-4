@@ -35,8 +35,8 @@ export default class StreetCreator extends Creator {
 
     if (value != null) {
       this.selectedEdge = null
-      IO.removeCancelCallback(streetSourceCancelToken)
-    }
+      IO.removeCancelCallback(deselectEdgeToken)
+    } else IO.removeCancelCallback(streetSourceCancelToken)
   }
 
   // Qual vertice esta sob o mouse

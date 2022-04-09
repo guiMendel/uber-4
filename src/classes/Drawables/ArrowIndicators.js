@@ -26,6 +26,8 @@ export default class ArrowIndicators extends Drawable {
 
   // Desenha triangulos de direcao para cada rua
   draw(drawer) {
+    if (Drawable.drawableInstances[Edge.name] == undefined) return
+
     // Para cada aresta
     for (const edge of Object.values(Drawable.drawableInstances[Edge.name])) {
       this.drawForEdge(edge, drawer)

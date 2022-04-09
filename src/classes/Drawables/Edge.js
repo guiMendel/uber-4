@@ -45,7 +45,11 @@ export default class Edge extends Drawable {
       )
 
     // Encontra a velocidade de mapa, se ja nao estiver definida
-    mapSpeed ??= Edge.getMapSpeed(realDistance, this.mapDistance, realSpeed)
+    mapSpeed ??= Edge.getMapSpeed(
+      realDistance,
+      getDistance(source, destination),
+      realSpeed
+    )
 
     // console.log(`New edge with speed ${mapSpeed / pixelsPerKilometer}`)
 
