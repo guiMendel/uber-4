@@ -19,10 +19,12 @@ export default class Drawable {
   // Callbacks para executar no momento da destruicao deste objeto
   onDestroy = []
 
-  constructor(id, properties) {
+  static createOrGet(id, ...rawProperties) {
+    const properties = this.nameProperties(...rawProperties)
+
     // Verifica se ja exist euma instancia com o id fornecido
-    if (id && this.constructor.instances[id] != undefined) {
-      const existingDrawable = this.constructor.instances[id]
+    if (id && this.instances[id] != undefined) {
+      const existingDrawable = this.instances[id]
 
       // Compara a instancia existente com as propriedades fornecidas
       const result = existingDrawable.compareTo(properties)
@@ -30,10 +32,14 @@ export default class Drawable {
       if (result === true) return existingDrawable
 
       throw new Error(
-        `Tentativa de inserir nova instancia de "${this.constructor.name}" com id repetido, mas o campo "${result}" difere.\nValor preexistente: ${existingDrawable[result]}. Valor novo ${properties[result]}`
+        `Tentativa de inserir nova instancia de "${this.name}" com id repetido, mas o campo "${result}" difere.\nValor preexistente: ${existingDrawable[result]}. Valor novo ${properties[result]}`
       )
     }
 
+    return new this(id, ...rawProperties)
+  }
+
+  constructor(id, properties) {
     // Keep the properties
     this.id = id ?? Drawable.generateId(this)
     Object.assign(this, properties)

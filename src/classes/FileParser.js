@@ -59,14 +59,14 @@ export default class FileParser {
     // Para cada prototipo
     for (const prototype of prototypes) {
       // Cria os vertices
-      const source = new Vertex(
+      const source = Vertex.createOrGet(
         prototype.sourceId,
         prototype.sourceX,
         prototype.sourceY,
         false
       )
 
-      const destination = new Vertex(
+      const destination = Vertex.createOrGet(
         prototype.destinationId,
         prototype.destinationX,
         prototype.destinationY,
@@ -74,7 +74,7 @@ export default class FileParser {
       )
 
       // Cria a aresta
-      lastEdge = new Edge(prototype.id, source, destination, {
+      lastEdge = Edge.createOrGet(prototype.id, source, destination, {
         realDistance: prototype.length,
         realSpeed: prototype.speed,
       })
