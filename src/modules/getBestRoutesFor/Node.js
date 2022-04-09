@@ -2,7 +2,10 @@ import Debug from '../../classes/Drawables/Debug'
 import appConfig from '../../configuration/appConfig'
 import { displacePoint, getDistance } from '../../helpers/vectorDistance'
 
-const { pixelsPerKilometer, clientWalkSpeed } = appConfig
+const { pixelsPerKilometer, clientWalkSpeed: originalWalkSpeed } = appConfig
+
+// Otimizamos para o cliente andar menos
+const clientWalkSpeed = originalWalkSpeed / 10
 
 // Define cada no do A*
 export default class Node {
