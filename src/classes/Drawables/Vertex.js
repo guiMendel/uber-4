@@ -20,8 +20,8 @@ export default class Vertex extends Drawable {
   // Converte de quilometros para pixels, mas tambem centraliza coordenada (0,0) no centro do mapa
   static realToMap({ x, y }) {
     return {
-      x: x * pixelsPerKilometer + window.innerWidth / 2,
-      y: y * pixelsPerKilometer + window.innerHeight / 2,
+      x: x * pixelsPerKilometer,
+      y: y * pixelsPerKilometer,
     }
   }
 

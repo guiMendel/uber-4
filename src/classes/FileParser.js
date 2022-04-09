@@ -1,8 +1,11 @@
+import appConfig from '../configuration/appConfig'
 import Camera from './Camera'
 import Car from './Drawables/Car'
 import Client from './Drawables/Client'
 import Edge from './Drawables/Edge'
 import Vertex from './Drawables/Vertex'
+
+const { pixelsPerKilometer } = appConfig
 
 // Este arquivo interpreta o conteudo de um arquivo e adiciona as entidades correspondentes
 export default class FileParser {
@@ -120,10 +123,17 @@ export default class FileParser {
     const prototypeInstantiator = (prototype) => {
       // Cria cliente
 
-      const client = Client.createOrGet(prototype.id, prototype, {
-        x: prototype.destinationX,
-        y: prototype.destinationY,
-      })
+      const client = Client.createOrGet(
+        prototype.id,
+        {
+          x: prototype.x * pixelsPerKilometer,
+          y: prototype.y * pixelsPerKilometer,
+        },
+        {
+          x: prototype.destinationX * pixelsPerKilometer,
+          y: prototype.destinationY * pixelsPerKilometer,
+        }
+      )
 
       // Ao final, leva a camera ate o resultado
       Camera.center(client)
@@ -145,7 +155,12 @@ export default class FileParser {
       // Recupera a aresta
       const edge = Edge.instances[prototype.edgeId]
 
-      const car = Car.createOrGet(prototype.id, edge, prototype.x, prototype.y)
+      const car = Car.createOrGet(
+        prototype.id,
+        edge,
+        prototype.x * pixelsPerKilometer,
+        prototype.y * pixelsPerKilometer
+      )
 
       // Ao final, leva a camera ate o resultado
       Camera.center(car)

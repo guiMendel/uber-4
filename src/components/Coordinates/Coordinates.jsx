@@ -14,10 +14,13 @@ export default function Coordinates() {
     () =>
       IO.addEventListener('mousemove', ({ mapPosition }) => {
         setCoords({
-          map: mapPosition,
+          map: {
+            x: Math.round(mapPosition.x * 100) / 100,
+            y: Math.round(mapPosition.y * 100) / 100,
+          },
           real: {
-            x: mapPosition.x / pixelsPerKilometer,
-            y: mapPosition.y / pixelsPerKilometer,
+            x: Math.round((mapPosition.x / pixelsPerKilometer) * 100) / 100,
+            y: Math.round((mapPosition.y / pixelsPerKilometer) * 100) / 100,
           },
         })
       }),
@@ -29,7 +32,7 @@ export default function Coordinates() {
       <div className="coordinates">
         <section>
           {' '}
-          <span>MAP</span>
+          <span>MAPA</span>
           <span> {coords.map.x} </span> <span> {coords.map.y} </span>
         </section>
         <section>
