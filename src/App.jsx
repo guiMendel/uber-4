@@ -2,6 +2,7 @@ import './styles/App.css'
 import Canvas from './components/Canvas/Canvas.jsx'
 import Button from './components/Button/Button.jsx'
 import InteractionControl from './components/InteractionControl/InteractionControl'
+import Coordinates from './components/Coordinates/Coordinates'
 
 // Icones
 import { FaUserPlus, FaPencilAlt, FaCarSide, FaPlus } from 'react-icons/fa'
@@ -13,6 +14,9 @@ export default function App() {
 
       {/* Espaco em que aparecem os controles da interacao atual com o mapa */}
       <InteractionControl />
+
+      {/* Mostra as coordenadas do cursor */}
+      <Coordinates />
 
       {/* Contem os botoes de acoes do mapa */}
       <div className="map actions">
