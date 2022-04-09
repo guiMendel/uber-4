@@ -62,15 +62,13 @@ export default class Car extends Drawable {
     })
   }
 
-  constructor(id, edge, realX, realY) {
-    // Dada a posicao inicial e aresta, descobrimos em que parte da rua o carro esta, e com isso qual a real posicao inicial dele
-    const { x, y } = edge.getProjectionCoordinates({ x: realX, y: realY })
-
-    // console.log(`Original: ${realX}, ${realY}\nNew: ${x}, ${y}\n\n`)
+  constructor(id, ...rawProperties) {
+    const properties = Car.nameProperties(...rawProperties)
 
     // Invoca construtor pai
-    super(id, { x, y, edge })
-    // super(id, { x: realX, y: realY, edge })
+    super(id, properties)
+
+    const { edge } = properties
 
     Car.sortedCoords.register(this)
     this.onDestroy.push(() => Car.sortedCoords.remove(this))
@@ -143,5 +141,14 @@ export default class Car extends Drawable {
     this.y = this.edge.source.y - distanceToSource * sin(this.edge.angle)
 
     Car.sortedCoords.register(this)
+  }
+
+  static nameProperties(edge, realX, realY) {
+    // Dada a posicao inicial e aresta, descobrimos em que parte da rua o carro esta, e com isso qual a real posicao inicial dele
+    const { x, y } = edge.getProjectionCoordinates({ x: realX, y: realY })
+
+    // console.log(`Original: ${realX}, ${realY}\nNew: ${x}, ${y}\n\n`)
+
+    return { x, y, edge }
   }
 }

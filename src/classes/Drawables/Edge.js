@@ -37,26 +37,22 @@ export default class Edge extends Drawable {
   cars = {}
 
   // Se for fornecido um mapSpeed, ele eh utilizado. Se nao, usa-se os valores reais para calcular o mapSpeed
-  constructor(id, source, destination, { mapSpeed, realDistance, realSpeed }) {
-    // Erro se source e destination forem iguais
-    if (source.id == destination.id)
-      throw new Error(
-        `Tentativa de criar aresta saindo e chegando no mesmo vertice de id ${source.id}`
-      )
-
-    // Encontra a velocidade de mapa, se ja nao estiver definida
-    mapSpeed ??= Edge.getMapSpeed(realDistance, this.mapDistance, realSpeed)
-
-    // console.log(`New edge with speed ${mapSpeed / pixelsPerKilometer}`)
+  constructor(id, ...properties) {
+    const namedProperties = Edge.nameProperties(...properties)
 
     // Invoca construtor pai
-    super(id, { source, destination, mapSpeed, realDistance })
+    super(id, namedProperties)
+
+    const { source, destination } = namedProperties
 
     // Avisa os vertices de sua existencia
+
     source.sourceOf[this.id] = this
     destination.destinationOf[this.id] = this
 
     this.onDestroy.push(() => {
+      console.log(this)
+
       delete source.sourceOf[this.id]
       delete destination.destinationOf[this.id]
     })
@@ -221,5 +217,26 @@ export default class Edge extends Drawable {
       x: this.source.x + sin(this.angle + 90) * displacement,
       y: this.source.y + cos(this.angle + 90) * displacement,
     }
+  }
+
+  static nameProperties(
+    source,
+    destination,
+    { mapSpeed, realDistance, realSpeed }
+  ) {
+    // Erro se source e destination forem iguais
+    if (source.id == destination.id)
+      throw new Error(
+        `Tentativa de criar aresta saindo e chegando no mesmo vertice de id ${source.id}`
+      )
+
+    // Encontra a velocidade de mapa, se ja nao estiver definida
+    mapSpeed ??= Edge.getMapSpeed(
+      realDistance,
+      getDistance(source, destination),
+      realSpeed
+    )
+
+    return { source, destination, mapSpeed, realDistance }
   }
 }

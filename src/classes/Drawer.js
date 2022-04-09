@@ -34,10 +34,10 @@ export default class Drawer {
       (element) => !drawableSubclasses.includes(element)
     )
 
-    if (extraClass != undefined)
-      throw new Error(
-        `Voce forneceu em drawOrder uma classe nao definida como subclasse de Drawable: ${extraClass}`
-      )
+    // if (extraClass != undefined)
+    //   throw new Error(
+    //     `Voce forneceu em drawOrder uma classe nao definida como subclasse de Drawable: ${extraClass}`
+    //   )
   }
 
   // Desenha o frame atual da tela
@@ -52,6 +52,8 @@ export default class Drawer {
 
     // Renderiza as instancias em ordem
     for (const drawableClassName of drawOrder) {
+      if (Drawable.drawableInstances[drawableClassName] == undefined) continue
+
       // Desenha cada instancia desta classe
       for (const instance of Object.values(
         Drawable.drawableInstances[drawableClassName]

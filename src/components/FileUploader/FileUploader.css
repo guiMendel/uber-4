@@ -1,0 +1,97 @@
+.file-uploader {
+  width: 50rem;
+  height: 30rem;
+
+  position: relative;
+
+  position: fixed;
+  left: 0;
+  top: 20vh;
+
+  background-color: whitesmoke;
+
+  border-radius: 0 20px 20px 0;
+
+  transition: all 300ms ease-out;
+
+  cursor: url(../../assets/arrow.cur), auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  padding: 1.5rem;
+}
+
+.file-uploader input {
+  display: none;
+}
+
+.file-uploader label {
+  cursor: url(../../assets/link.cur), auto;
+
+  background-color: rgb(231, 231, 231);
+  border-radius: 20px;
+
+  transition: all 100ms;
+
+  padding: 0.5rem 0.8rem;
+}
+
+.file-uploader label:hover {
+  filter: brightness(1.02);
+}
+
+.file-uploader label:active {
+  filter: brightness(0.95);
+
+  box-shadow: inset 0 0 10px 1px rgba(199, 199, 199, 0.7);
+}
+
+.file-uploader .inform {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  gap: 0.3rem;
+}
+
+.file-uploader textarea {
+  resize: none;
+
+  width: 100%;
+  flex: 1;
+
+  border-radius: 20px;
+
+  outline: none;
+
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.file-uploader .custom-button {
+  position: absolute;
+
+  bottom: 0;
+
+  transform: translateY(60%);
+
+  right: 2rem;
+
+  font-size: 1rem;
+}
+
+.file-uploader .submit {
+  background-color: rgb(193, 239, 193);
+}
+
+.file-uploader .cancel {
+  background-color: rgb(202, 202, 202);
+
+  margin-right: 5rem;
+}
+
+.file-uploader.hide {
+  transform: translateX(-100%);
+}

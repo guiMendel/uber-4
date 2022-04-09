@@ -9,6 +9,7 @@ export default function Button({
   help,
   rigthTooltip,
   isSwitch,
+  ...other
 }) {
   // Caso seja interruptor, guarda o estado
   const [value, setValue] = useState(false)
@@ -28,10 +29,13 @@ export default function Button({
     <button
       onClick={activate}
       className={`custom-button ${isSwitch && value ? 'active' : ''}`}
+      {...other}
     >
       {children}
 
-      <p className={'tooltip' + (rigthTooltip ? ' right' : '')}>{help}</p>
+      {help != undefined && (
+        <p className={'tooltip' + (rigthTooltip ? ' right' : '')}>{help}</p>
+      )}
     </button>
   )
 }

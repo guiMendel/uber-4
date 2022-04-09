@@ -27,8 +27,6 @@ export default class Creator extends Drawable {
       .slice(0, nameEnd)
       .toLowerCase()}`
 
-    console.log(buttonName)
-
     IO.addButtonListener(buttonName, () => {
       this.constructor.isActive = true
     })

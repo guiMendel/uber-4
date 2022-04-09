@@ -8,7 +8,7 @@ export default {
   //=== MAPA
 
   // Quantos pixels tem um quilometro no mapa
-  pixelsPerKilometer: 100,
+  pixelsPerKilometer: 128,
 
   // Em qual ordem cada classe sera desenhada. As primeiras ficam embaixo
   drawOrder: [
@@ -35,7 +35,7 @@ export default {
   newBestPathReward: 4,
 
   // Quantos dos melhores nos considerar quando for calcular o tempo de entrega no-destino de cada carro
-  countOfNodesToConsider: 5,
+  countOfNodesToConsider: 7,
 
   //=== CRIACAO
 
