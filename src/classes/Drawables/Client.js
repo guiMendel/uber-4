@@ -181,7 +181,7 @@ export default class Client extends Drawable {
 
   constructor(id, location, destination, image, rotation) {
     // Invoca construtor pai
-    super(id, { ...location, destination })
+    super(id, Client.nameProperties(location, destination))
 
     // Registra no sorted coords
     Client.sortedCoords.register(this)
@@ -263,5 +263,9 @@ export default class Client extends Drawable {
 
     this.destination = target
     this.selectedRoute = null
+  }
+
+  static nameProperties(location, destination) {
+    return { ...location, destination }
   }
 }

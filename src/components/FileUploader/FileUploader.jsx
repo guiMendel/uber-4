@@ -2,9 +2,8 @@ import Button from '../Button/Button'
 import { useEffect, useRef, useState } from 'react'
 import { FaCheck, FaTimes } from 'react-icons/fa'
 import './FileUploader.css'
-import FileParser from '../../classes/FileParser'
 
-export default function FileUploader({ show, hide }) {
+export default function FileUploader({ show, hide, parser }) {
   const input = useRef()
 
   // Conteudo do textarea
@@ -46,7 +45,7 @@ export default function FileUploader({ show, hide }) {
   }
 
   function accept() {
-    FileParser.parseStreets(content)
+    parser(content)
 
     hide()
     setContent('')
