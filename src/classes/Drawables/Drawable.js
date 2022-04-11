@@ -32,7 +32,11 @@ export default class Drawable {
       if (result === true) return existingDrawable
 
       throw new Error(
-        `Tentativa de inserir nova instancia de "${this.name}" com id repetido, mas o campo "${result}" difere.\nValor preexistente: ${existingDrawable[result]}. Valor novo ${properties[result]}`
+        `Tentativa de inserir nova instancia de "${
+          this.name
+        }" com id repetido, mas o campo "${result}" difere.\nValor preexistente: ${JSON.stringify(
+          existingDrawable[result]
+        )}. Valor novo ${JSON.stringify(properties[result])}`
       )
     }
 

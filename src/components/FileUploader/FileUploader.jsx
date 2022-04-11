@@ -2,6 +2,7 @@ import Button from '../Button/Button'
 import { useEffect, useRef, useState } from 'react'
 import { FaCheck, FaTimes } from 'react-icons/fa'
 import './FileUploader.css'
+import Map from '../../classes/Map'
 
 export default function FileUploader({ show, hide, parser }) {
   const input = useRef()
@@ -45,7 +46,11 @@ export default function FileUploader({ show, hide, parser }) {
   }
 
   function accept() {
-    parser(content)
+    try {
+      parser(content)
+    } catch (error) {
+      Map.announceError(error)
+    }
 
     hide()
     setContent('')

@@ -111,7 +111,10 @@ export default class Map {
   }
 
   static announceError(error) {
-    this.#raiseEvent('error', error)
+    if (typeof error == 'string') this.#raiseEvent('error', error)
+    else {
+      this.#raiseEvent('error', error.message)
+    }
   }
 
   static advanceVersion() {

@@ -6,7 +6,7 @@ export default {
   maxFramesPerSecond: 60,
 
   // O tempo (segundos) que as mensagens de erro ficam em tela
-  errorMessageDuration: 8,
+  errorMessageDuration: 11,
 
   //=== MAPA
 

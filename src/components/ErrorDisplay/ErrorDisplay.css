@@ -34,7 +34,7 @@
 
   animation: slidein 300ms;
 
-  height: 2.5rem;
+  min-height: 2.5rem;
 }
 
 .error-display .error-entry:hover {

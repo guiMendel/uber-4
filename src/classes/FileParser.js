@@ -16,6 +16,9 @@ export default class FileParser {
     prototypeInstantiator,
     fixHeaderPiece = (piece) => piece
   ) {
+    // Descobre os campos necessarios
+    const requiredFields = new Set(Object.values(headerTransaltor))
+
     // Separa as linhas e o header
     const [header, ...lines] = fileData.split('\n')
 
@@ -38,6 +41,12 @@ export default class FileParser {
       propertyOrder.push(property)
     }
 
+    // Verifica que tem a quantidade necessaria de colunas
+    if ([...requiredFields].length != propertyOrder.length) {
+      Map.announceError('Quantidade incorreta de colunas')
+      return
+    }
+
     // Vai guardar os prototipos de aresta a serem gerados
     const prototypes = []
 
@@ -45,6 +54,16 @@ export default class FileParser {
     for (const line of lines) {
       // Pega os numeros isolados
       const numbers = line.split(/\s/)
+
+      // Descarta o \n
+      if (numbers[numbers.length - 1] == '') numbers.pop()
+
+      if (numbers.length != propertyOrder.length) {
+        Map.announceError(
+          'Uma (ou mais) das linhas do arquivo não possui a quantidade correta de colunas'
+        )
+        return
+      }
 
       // Cria o prototipo
       const prototype = {}
@@ -59,7 +78,14 @@ export default class FileParser {
     }
 
     // Para cada prototipo
-    for (const prototype of prototypes) prototypeInstantiator(prototype)
+    for (const prototype of prototypes) {
+      try {
+        prototypeInstantiator(prototype)
+      } catch (error) {
+        console.log(error.error)
+        Map.announceError(error.message)
+      }
+    }
   }
 
   static parseStreets(fileData) {
@@ -85,25 +111,50 @@ export default class FileParser {
     // Define como instanciar a aresta dado o seu prototipo
     const prototypeInstantiator = (prototype) => {
       // Cria os vertices
-      const source = Vertex.createOrGet(
-        prototype.sourceId,
-        prototype.sourceX,
-        prototype.sourceY,
-        false
-      )
+      let source
 
-      const destination = Vertex.createOrGet(
-        prototype.destinationId,
-        prototype.destinationX,
-        prototype.destinationY,
-        false
-      )
+      try {
+        source = Vertex.createOrGet(
+          prototype.sourceId,
+          prototype.sourceX,
+          prototype.sourceY,
+          false
+        )
+      } catch (error) {
+        // Se falhar, pega o vertice com esse id
+        Map.announceError(error)
+        source = Vertex.instances[prototype.sourceId]
+      }
+
+      let destination
+      try {
+        destination = Vertex.createOrGet(
+          prototype.destinationId,
+          prototype.destinationX,
+          prototype.destinationY,
+          false
+        )
+      } catch (error) {
+        // Se falhar, pega o vertice com esse id
+        Map.announceError(error)
+        destination = Vertex.instances[prototype.destinationId]
+      }
 
       // Cria a aresta
-      const edge = Edge.createOrGet(prototype.id, source, destination, {
-        realDistance: prototype.length,
-        realSpeed: prototype.speed,
-      })
+      let edge
+      try {
+        edge = Edge.createOrGet(prototype.id, source, destination, {
+          realDistance: prototype.length,
+          realSpeed: prototype.speed,
+        })
+      } catch (error) {
+        // Se falhar, cria com qualquer id
+        Map.announceError(error)
+        edge = new Edge(undefined, source, destination, {
+          realDistance: prototype.length,
+          realSpeed: prototype.speed,
+        })
+      }
 
       // Ao final, leva a camera ate o resultado
       Camera.center(edge.source)
@@ -131,17 +182,34 @@ export default class FileParser {
     const prototypeInstantiator = (prototype) => {
       // Cria cliente
 
-      const client = Client.createOrGet(
-        prototype.id,
-        {
-          x: prototype.x * pixelsPerKilometer,
-          y: prototype.y * pixelsPerKilometer,
-        },
-        {
-          x: prototype.destinationX * pixelsPerKilometer,
-          y: prototype.destinationY * pixelsPerKilometer,
-        }
-      )
+      let client
+
+      try {
+        client = Client.createOrGet(
+          prototype.id,
+          {
+            x: prototype.x * pixelsPerKilometer,
+            y: prototype.y * pixelsPerKilometer,
+          },
+          {
+            x: prototype.destinationX * pixelsPerKilometer,
+            y: prototype.destinationY * pixelsPerKilometer,
+          }
+        )
+      } catch (error) {
+        Map.announceError(error)
+        client = new Client(
+          undefined,
+          {
+            x: prototype.x * pixelsPerKilometer,
+            y: prototype.y * pixelsPerKilometer,
+          },
+          {
+            x: prototype.destinationX * pixelsPerKilometer,
+            y: prototype.destinationY * pixelsPerKilometer,
+          }
+        )
+      }
 
       // Ao final, leva a camera ate o resultado
       Camera.center(client)
@@ -163,12 +231,30 @@ export default class FileParser {
       // Recupera a aresta
       const edge = Edge.instances[prototype.edgeId]
 
-      const car = Car.createOrGet(
-        prototype.id,
-        edge,
-        prototype.x * pixelsPerKilometer,
-        prototype.y * pixelsPerKilometer
-      )
+      // Verifica se aresta existe
+      if (edge == undefined) {
+        Map.announceError(`Aresta de id ${prototype.edgeId} não existe`)
+        return
+      }
+
+      let car
+
+      try {
+        car = Car.createOrGet(
+          prototype.id,
+          edge,
+          prototype.x * pixelsPerKilometer,
+          prototype.y * pixelsPerKilometer
+        )
+      } catch (error) {
+        Map.announceError(error)
+        car = new Car(
+          undefined,
+          edge,
+          prototype.x * pixelsPerKilometer,
+          prototype.y * pixelsPerKilometer
+        )
+      }
 
       // Ao final, leva a camera ate o resultado
       Camera.center(car)
