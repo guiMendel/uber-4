@@ -13,6 +13,8 @@
 
   z-index: 20;
   font-family: 'Share Tech Mono', monospace;
+
+  pointer-events: none;
 }
 
 .coordinates section {

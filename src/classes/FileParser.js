@@ -4,6 +4,7 @@ import Car from './Drawables/Car'
 import Client from './Drawables/Client'
 import Edge from './Drawables/Edge'
 import Vertex from './Drawables/Vertex'
+import Map from './Map'
 
 const { pixelsPerKilometer } = appConfig
 
@@ -27,7 +28,14 @@ export default class FileParser {
 
       headerPiece = fixHeaderPiece(headerPiece)
 
-      propertyOrder.push(headerTransaltor[headerPiece.toLowerCase()])
+      const property = headerTransaltor[headerPiece.toLowerCase()]
+
+      if (property == undefined) {
+        Map.announceError('Cabeçalho inválido de arquivo')
+        return
+      }
+
+      propertyOrder.push(property)
     }
 
     // Vai guardar os prototipos de aresta a serem gerados

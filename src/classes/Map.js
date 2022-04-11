@@ -54,6 +54,7 @@ export default class Map {
   static listeners = {
     activateinteractionclass: [],
     newframe: [],
+    error: [],
   }
 
   constructor(canvasContext) {
@@ -107,6 +108,10 @@ export default class Map {
 
     // Carrega as imagens, e entao inicia o app
     this.loadAssets().then(start)
+  }
+
+  static announceError(error) {
+    this.#raiseEvent('error', error)
   }
 
   static advanceVersion() {

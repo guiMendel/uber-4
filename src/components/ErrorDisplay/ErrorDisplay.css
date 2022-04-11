@@ -1,0 +1,57 @@
+.error-display {
+  position: fixed;
+  top: 0;
+  left: 10%;
+
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1rem;
+
+  z-index: 40;
+
+  padding-top: 1rem;
+}
+
+.error-display .error-entry {
+  background-color: rgb(255, 225, 225);
+  color: rgb(173, 86, 86);
+
+  border-radius: 20px;
+
+  padding: 0.5rem 0.8rem;
+
+  transition: all 100ms;
+
+  font-size: 1.2rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: url(../../assets/link.cur), auto;
+
+  animation: slidein 300ms;
+
+  height: 2.5rem;
+}
+
+.error-display .error-entry:hover {
+  filter: brightness(1.05);
+}
+
+.error-display .error-entry .icon {
+  font-size: 1.5rem;
+
+  margin-right: 0.5rem;
+}
+
+@keyframes slidein {
+  from {
+    margin-top: -2.5rem;
+  }
+  to {
+    margin-top: unset;
+  }
+}

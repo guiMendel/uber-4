@@ -6,11 +6,15 @@ import Coordinates from './components/Coordinates/Coordinates'
 
 // Icones
 import { FaUserPlus, FaPencilAlt, FaCarSide, FaPlus } from 'react-icons/fa'
+import ErrorDisplay from './components/ErrorDisplay/ErrorDisplay'
 
 export default function App() {
   return (
     <div className="App">
       <Canvas />
+
+      {/* Mostra erros conforme eles aparecem */}
+      <ErrorDisplay />
 
       {/* Espaco em que aparecem os controles da interacao atual com o mapa */}
       <InteractionControl />

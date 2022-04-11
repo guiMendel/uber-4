@@ -5,6 +5,9 @@ export default {
   // Numero maximo de frames por segundo
   maxFramesPerSecond: 60,
 
+  // O tempo (segundos) que as mensagens de erro ficam em tela
+  errorMessageDuration: 8,
+
   //=== MAPA
 
   // Quantos pixels tem um quilometro no mapa
