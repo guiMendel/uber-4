@@ -1,6 +1,7 @@
 import Drawable from './Drawables/Drawable'
 import IO from './IO'
 import Map from './Map'
+import RouteCalculator from './RouteCalculator'
 
 // Essa classe eh responsavel por acionar o modo simulacao e fazer os objetos se moverem e interagirem no tempo
 export default class Simulation {
@@ -34,6 +35,9 @@ export default class Simulation {
 
     // Levanta
     this.#raiseEvent('start')
+
+    // Atribui rotas aos carros e clientes que faltam
+    RouteCalculator.calculateForRemainingClients()
 
     // Inicializa a simulacao
     this.simulation(cancelToken)

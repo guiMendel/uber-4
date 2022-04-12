@@ -40,6 +40,11 @@ export default class Heap {
     if (this.alwaysKeepCorrespondentArray) this.array = this.toArray()
   }
 
+  // Permite verificar o primeiro elemento sem remvoer
+  peek() {
+    return this.#data[0]
+  }
+
   // Permite retirar o elemento de maior prioridade do heap
   pop(preventArrayGeneration) {
     if (this.length == 0) return undefined

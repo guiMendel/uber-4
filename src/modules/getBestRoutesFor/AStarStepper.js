@@ -34,7 +34,8 @@ export default class AStarStepper {
     startingEdge,
     hCache,
     iterationCallbacks,
-    parentNode
+    parentNode,
+    isSequential = false
   ) {
     // Armazena o carro & cliente
     this.source = source
@@ -42,6 +43,7 @@ export default class AStarStepper {
     this.hCache = hCache
     this.iterationCallbacks = iterationCallbacks
     this.parentNode = parentNode
+    this.isSequential = isSequential
 
     // Inicializa o primeiro no
     this.#registerNodeFor(startingEdge, null, source, parentNode?.totalCost)
@@ -106,7 +108,14 @@ export default class AStarStepper {
     }
 
     // Se nao havia um node, criar
-    const node = new Node(parentNode, edge, this, source, additionalCost)
+    const node = new Node(
+      parentNode,
+      edge,
+      this,
+      source,
+      additionalCost,
+      this.isSequential
+    )
 
     this.openNodes.insert(node)
     this.edgeToNode[edge.id] = node

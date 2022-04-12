@@ -3,6 +3,8 @@ import getBestRoutesFor from '../modules/getBestRoutesFor'
 import Client from './Drawables/Client'
 import { getDistance } from '../helpers/vectorDistance'
 import appConfig from '../configuration/appConfig'
+import Car from './Drawables/Car'
+import assignRoutes from '../modules/assignRoutes'
 
 const { clientWalkSpeed, pixelsPerKilometer } = appConfig
 
@@ -13,14 +15,12 @@ export default class RouteCalculator {
 
   static setup() {
     // Observa a selecao do botao de calcular rota
-    IO.addButtonListener('select-route', this.calculate)
+    IO.addButtonListener('select-route', () => this.calculate(Client.selected))
   }
 
-  // Faz o caluclo das melhores rotas para o cliente selecionado, e destaca elas em tela
-  static calculate() {
-    if (Client.selected == null) return
-
-    const client = Client.selected
+  // Faz o caluclo das melhores rotas para o cliente fornecido
+  static async calculate(client, noRaise = false) {
+    if (client == null) return
 
     // Encontra o tempo para ir andando ate o objetivo
     const walkTime =
@@ -28,14 +28,76 @@ export default class RouteCalculator {
       pixelsPerKilometer /
       clientWalkSpeed
 
+    // Descarta as rotas mais lentas que o tempo de caminhada
+    const bestRoutes = await getBestRoutesFor(client).then((bestNodes) =>
+      bestNodes.filter((route) => route.totalCost <= walkTime)
+    )
+
     // Levanta evento com as rotas calculadas
-    getBestRoutesFor(client).then((bestNodes) =>
+    if (noRaise == false)
       RouteCalculator.#raiseEvent('calculateroutes', {
-        // Descarta as rotas mais lentas que o tempo de caminhada
-        routes: bestNodes.filter((route) => route.totalCost <= walkTime),
+        routes: bestRoutes,
         client,
       })
+
+    return bestRoutes
+  }
+
+  // Calcula rotas para todos os clientes que ainda nao tem
+  static async calculateForRemainingClients() {
+    // Pega todos os clientes sem rota
+    const routelessClients = Object.values(Client.instances).filter(
+      (client) => client.selectedRoute == null
     )
+
+    // Verifica se tem algum
+    if (routelessClients.length == 0) return
+
+    // Armazenara as rotas, catalogadas pelo recurso
+    const routes = { client: {}, car: {} }
+
+    // Armazena as promessas de encontrar rotas para cada cliente
+    const promiseArray = []
+
+    // Encontra as melhores rotas para cada cliente
+    for (const client of routelessClients) {
+      promiseArray.push(
+        this.calculate(client, true).then((routes) => ({ client, routes }))
+      )
+    }
+
+    // Para cada conjunto de rotas de cliente
+    for (const { client, routes: clientRoutes } of await Promise.all(
+      promiseArray
+    )) {
+      // Se nao obteve rotas para este cliente, bota ele pra andar
+      if (clientRoutes.length == 0) {
+        client.selectedRoute = 'walk'
+
+        // Remove do array de clientes
+        const clientIndex = routelessClients.indexOf(client)
+        routelessClients.splice(clientIndex, 1)
+
+        continue
+      }
+
+      // Adiciona esta rota
+      routes.client[client.id] = clientRoutes
+
+      // Categorizada como carro tambem
+      for (const route of clientRoutes) {
+        const { car } = route.stepper
+
+        if (routes.car[car.id] == undefined) routes.car[car.id] = [route]
+        else routes.car[car.id].push(route)
+      }
+    }
+
+    // Da as rotas encontradas na mao de quem sabe oq fazer
+    assignRoutes(routes)
+
+    // Recomeca, ate que nao tenham mais clientes sem rota
+    this.calculateForRemainingClients()
   }
 
   // Permite observar eventos

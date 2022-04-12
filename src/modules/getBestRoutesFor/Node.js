@@ -15,10 +15,18 @@ export default class Node {
   // Este campo aramazenara o valor de h se ele for excepcional para este node
   #exceptionalH = undefined
 
-  constructor(parent, edge, stepper, source, additionalCost) {
+  constructor(
+    parent,
+    edge,
+    stepper,
+    source,
+    additionalCost,
+    isSequential = false
+  ) {
     this.stepper = stepper
     this.edge = edge
     this.parent = parent
+    this.isSequential = isSequential
 
     // A partir do pai, descobre o seu g
     this.g = parent == null ? 0 : parent.g + parent.time
@@ -96,12 +104,16 @@ export default class Node {
   // Retorna o custo total deste carro
   get totalCost() {
     // O custo total eh o que demorar mais: o carro chegar no rdv ou o cliente chegar no rdv
-    return Math.max(this.g + this.h.car, this.h.client)
+    return this.isSequential
+      ? this.g + this.h.car + this.h.client
+      : Math.max(this.g + this.h.car, this.h.client)
   }
 
   // Retorna o custo total mas considera o tempo do cliente muito mais lento
   get totalCostSlowClient() {
-    return Math.max(this.g + this.h.car, this.h.client * 10)
+    return this.isSequential
+      ? this.g + this.h.car + this.h.client * 10
+      : Math.max(this.g + this.h.car, this.h.client * 10)
   }
 
   // Deve ser utilziado somente no node inicial, quando o carro se encontra em algum ponto da aresta

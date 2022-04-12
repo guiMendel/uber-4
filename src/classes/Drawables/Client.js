@@ -81,7 +81,7 @@ export default class Client extends Drawable {
     Client.raiseEvent('routeselect', { client: this, route: value })
 
     // Se tinha uma rota antes
-    if (oldRoute != null) {
+    if (oldRoute != null && oldRoute != 'walk') {
       // Avisa o antigo carro
       oldRoute.stepper.car.setRouteUnchained(null)
     }

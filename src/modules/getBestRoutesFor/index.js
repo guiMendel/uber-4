@@ -118,7 +118,8 @@ export default async function getBestRoutesFor(client) {
           node.edge,
           hCache,
           iterationCallbacks,
-          node
+          node,
+          true
         )
 
         // Sempre que o stepper arrumar um novo best, aumenta o nmr de iteracoes
