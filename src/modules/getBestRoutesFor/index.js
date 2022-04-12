@@ -163,6 +163,9 @@ function getSubsetOfCarsFor(client) {
   // Se tiver um carro selecionado, usa somente ele
   if (Car.selected != null) return [Car.selected]
 
-  // Pega todos os carros que nao estejam ja ocupados
-  return Object.values(Car.instances)
+  // Pega todos os carros que nao estejam ja ocupados (ou estao ocupados por este cliente)
+  return Object.values(Car.instances).filter(
+    (car) =>
+      car.assignedRoute == null || car.assignedRoute.stepper.client == client
+  )
 }

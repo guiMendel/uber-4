@@ -168,11 +168,7 @@ export default function ClientRouteControl() {
     const newIndex = selectedRouteIndex + indexChange
 
     // Caso exceda o limite de rotas
-    if (newIndex >= routes.length) {
-      setSelectedRouteIndex(routes.length - 1)
-      selectedClient.selectedRoute = routes[routes.length - 1]
-      return
-    }
+    if (newIndex >= routes.length) return
 
     // Caso vire um numero negativo
     if (newIndex < 0) {
