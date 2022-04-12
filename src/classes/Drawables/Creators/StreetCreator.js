@@ -123,10 +123,17 @@ export default class StreetCreator extends Creator {
     this.detectEdgeHover(drawer)
 
     // Atualiza o cursor
-    if (this.wasEdgeHovered && this.hoveredEdge == null) {
+    if (
+      this.wasEdgeHovered &&
+      (this.hoveredEdge == null || this.hoveredVertex != null)
+    ) {
       this.wasEdgeHovered = false
       Map.removeCursor('pointer')
-    } else if (!this.wasEdgeHovered && this.hoveredEdge != null) {
+    } else if (
+      !this.wasEdgeHovered &&
+      this.hoveredEdge != null &&
+      this.hoveredVertex == null
+    ) {
       this.wasEdgeHovered = true
       Map.setCursor('pointer')
     }

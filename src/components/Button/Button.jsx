@@ -9,8 +9,11 @@ export default function Button({
   help,
   rigthTooltip,
   isSwitch,
+  switchOnChildren,
   ...other
 }) {
+  switchOnChildren ??= children
+
   // Caso seja interruptor, guarda o estado
   const [value, setValue] = useState(false)
 
@@ -21,17 +24,25 @@ export default function Button({
   }, [])
 
   const activate = () => {
-    if (isSwitch) setValue(!value)
+    if (isSwitch) {
+      setValue(!value)
+      console.log(!value)
+    }
     IO.triggerButton(name, { value: !value, setValue })
   }
 
   return (
     <button
       onClick={activate}
+      style={
+        isSwitch && value
+          ? { backgroundColor: 'rgb(58, 58, 241)', color: 'white' }
+          : {}
+      }
       className={`custom-button ${isSwitch && value ? 'active' : ''}`}
       {...other}
     >
-      {children}
+      {isSwitch && value ? switchOnChildren : children}
 
       {help != undefined && (
         <p className={'tooltip' + (rigthTooltip ? ' right' : '')}>{help}</p>

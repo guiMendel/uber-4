@@ -168,5 +168,5 @@ function getSubsetOfCarsFor(client) {
   if (Car.selected != null) return [Car.selected]
 
   // Por enquanto, vamos analisar todos os carros
-  return Object.values(Drawable.drawableInstances[Car.name])
+  return Object.values(Car.instances)
 }

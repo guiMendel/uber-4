@@ -55,6 +55,25 @@
   font-size: 0.7rem;
 }
 
+.toggle-simulation.custom-button {
+  --button-size: 5rem;
+
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+
+  font-size: 2.5rem;
+
+  /* color: rgb(72, 102, 209); */
+
+  /* background: none;
+  box-shadow: none; */
+}
+
+.toggle-simulation.custom-button svg {
+  min-width: unset;
+}
+
 /* Define os cursores */
 body {
   cursor: url(../assets/arrow.cur), auto;

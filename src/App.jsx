@@ -5,7 +5,14 @@ import InteractionControl from './components/InteractionControl/InteractionContr
 import Coordinates from './components/Coordinates/Coordinates'
 
 // Icones
-import { FaUserPlus, FaPencilAlt, FaCarSide, FaPlus } from 'react-icons/fa'
+import {
+  FaUserPlus,
+  FaPencilAlt,
+  FaCarSide,
+  FaPlus,
+  FaPlay,
+  FaPause,
+} from 'react-icons/fa'
 import ErrorDisplay from './components/ErrorDisplay/ErrorDisplay'
 
 export default function App() {
@@ -21,6 +28,16 @@ export default function App() {
 
       {/* Mostra as coordenadas do cursor */}
       <Coordinates />
+
+      {/* Botao de pausar e retomar simulacao */}
+      <Button
+        className={'toggle-simulation custom-button'}
+        name={'toggle-simulation'}
+        isSwitch
+        switchOnChildren={<FaPause />}
+      >
+        <FaPlay style={{marginLeft: '0.4rem'}} />
+      </Button>
 
       {/* Contem os botoes de acoes do mapa */}
       <div className="map actions">
