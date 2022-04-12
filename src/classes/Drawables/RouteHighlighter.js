@@ -126,6 +126,25 @@ export default class RouteHighlighter {
     )
   }
 
+  static drawClientWalkRoute(client, drawer) {
+    const instance = this.#getInstance()
+
+    instance.drawClientWalkLine(
+      client,
+      client.destination,
+      drawer,
+      selectedRouteHighlight
+    )
+
+    const { fillArc } = drawer.drawWith({
+      style: selectedRouteHighlight,
+      lineWidth: 1.5 * streetWidth,
+    })
+
+    fillArc(client, 30)
+    fillArc(client.destination, 30)
+  }
+
   // Dado um node, destaca a rota correspondente
   static highlightRoute(node, drawer) {
     const instance = this.#getInstance()

@@ -218,7 +218,11 @@ export default class Client extends Drawable {
   draw(drawer) {
     // Antes de mais nada, desataca sua rota
     if (this.isSelected && this.selectedRoute != null) {
-      RouteHighlighter.highlightRoute(this.selectedRoute, drawer)
+      if (this.selectedRoute != 'walk')
+        RouteHighlighter.highlightRoute(this.selectedRoute, drawer)
+      else {
+        RouteHighlighter.drawClientWalkRoute(this, drawer)
+      }
     }
 
     // Pega a transparencia do highlight em hex

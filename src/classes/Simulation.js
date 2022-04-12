@@ -32,6 +32,9 @@ export default class Simulation {
     // Inicaliza um cancel token
     const cancelToken = { cancelled: false }
 
+    // Levanta
+    this.#raiseEvent('start')
+
     // Inicializa a simulacao
     this.simulation(cancelToken)
 
@@ -63,7 +66,7 @@ export default class Simulation {
     }
   }
 
-  static listeners = { timepass: [] }
+  static listeners = { timepass: [], start: [] }
 
   // Permite observar eventos
   static addEventListener(type, callback) {

@@ -15,7 +15,7 @@ import theme from '../../configuration/theme'
 import { getDistance } from '../../helpers/vectorDistance'
 
 const { selectedRouteHighlight, selectedRouteHighlightBeforeRdv } = theme
-const { pixelsPerKilometer } = appConfig
+const { pixelsPerKilometer, clientWalkSpeed } = appConfig
 
 // Um componente com a interface para configurar a criacao de nvoas ruas
 export default function ClientRouteControl() {
@@ -29,6 +29,9 @@ export default function ClientRouteControl() {
   const [selectedRouteIndex, setSelectedRouteIndex] = useState(-1)
 
   const handleRouteCalculation = ({ client, routes: newRoutes }) => {
+    newRoutes.push('walk')
+
+    // Adiciona a rota de caminhada
     setRoutes(newRoutes)
 
     // Ja seleciona a melhor rota para este cliente
@@ -102,8 +105,20 @@ export default function ClientRouteControl() {
   //   return totalKm / pixelsPerKilometer
   // })
 
+  const getTotalDistance = (route) => {
+    if (route == 'walk')
+      return (
+        getDistance(selectedClient, selectedClient.destination) /
+        pixelsPerKilometer
+      )
+
+    return getCarToClientKm(route) + getClientToDestinationKm(route)
+  }
+
   // Pega as distancias
   const getClientToDestinationKm = useCallback((route) => {
+    if (route == 'walk') return null
+
     // Ja soma os km do fim da rota
     let totalKm = getDistance(route.edge.source, route.projectionCoords)
     route = route.parent
@@ -120,20 +135,30 @@ export default function ClientRouteControl() {
 
   const getCarToClientKm = useCallback((route) => {
     // Pega a rota antecessora
-    route = route.stepper.parentNode
+    route = route.stepper?.parentNode ?? 'walk'
 
     return getClientToDestinationKm(route)
   })
 
   const getTimeCost = (route) => {
-    const hours = Math.floor(selectedClient.selectedRoute.totalCost)
+    let totalCost = selectedClient.selectedRoute.totalCost
 
-    return `${hours}h${Math.floor(
-      (selectedClient.selectedRoute.totalCost - hours) * 60
-    ).toLocaleString('pt-BR', {
-      minimumIntegerDigits: 2,
-      useGrouping: false,
-    })}`
+    // Se for caminhando, considera o custo de caminhar
+    if (totalCost == null)
+      totalCost =
+        getDistance(selectedClient, selectedClient.destination) /
+        pixelsPerKilometer /
+        clientWalkSpeed
+
+    const hours = Math.floor(totalCost)
+
+    return `${hours}h${Math.floor((totalCost - hours) * 60).toLocaleString(
+      'pt-BR',
+      {
+        minimumIntegerDigits: 2,
+        useGrouping: false,
+      }
+    )}`
   }
 
   // Permite alterar entre as rotas
@@ -200,7 +225,9 @@ export default function ClientRouteControl() {
                 <FaCarSide className="car-icon" /> <FaLongArrowAltRight />{' '}
                 <FaUserTie />{' '}
                 <b>
-                  {getCarToClientKm(selectedClient.selectedRoute).toFixed(2)} km
+                  {getCarToClientKm(selectedClient.selectedRoute)?.toFixed(2) ??
+                    '-'}{' '}
+                  km
                 </b>
               </span>
 
@@ -210,7 +237,7 @@ export default function ClientRouteControl() {
                 <b>
                   {getClientToDestinationKm(
                     selectedClient.selectedRoute
-                  ).toFixed(2)}{' '}
+                  )?.toFixed(2) ?? '-'}{' '}
                   km
                 </b>
               </span>
@@ -218,11 +245,8 @@ export default function ClientRouteControl() {
 
             {/* Distancia total */}
             <span className="total">
-              {(
-                getCarToClientKm(selectedClient.selectedRoute) +
-                getClientToDestinationKm(selectedClient.selectedRoute)
-              ).toFixed(2)}{' '}
-              km, {getTimeCost(selectedClient.selectedRoute)}
+              {getTotalDistance(selectedClient.selectedRoute).toFixed(2)} km,{' '}
+              {getTimeCost(selectedClient.selectedRoute)}
             </span>
           </div>
         ) : (

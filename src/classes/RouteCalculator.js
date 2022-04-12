@@ -1,7 +1,10 @@
 import IO from './IO'
 import getBestRoutesFor from '../modules/getBestRoutesFor'
 import Client from './Drawables/Client'
-import Debug from './Drawables/Debug'
+import { getDistance } from '../helpers/vectorDistance'
+import appConfig from '../configuration/appConfig'
+
+const { clientWalkSpeed, pixelsPerKilometer } = appConfig
 
 // Fornece a classe responsavel por saber quando e como calcular as rotas dos clientes, e o que fazer depois
 export default class RouteCalculator {
@@ -19,10 +22,17 @@ export default class RouteCalculator {
 
     const client = Client.selected
 
+    // Encontra o tempo para ir andando ate o objetivo
+    const walkTime =
+      getDistance(client, client.destination) /
+      pixelsPerKilometer /
+      clientWalkSpeed
+
     // Levanta evento com as rotas calculadas
     getBestRoutesFor(client).then((bestNodes) =>
       RouteCalculator.#raiseEvent('calculateroutes', {
-        routes: bestNodes,
+        // Descarta as rotas mais lentas que o tempo de caminhada
+        routes: bestNodes.filter((route) => route.totalCost <= walkTime),
         client,
       })
     )

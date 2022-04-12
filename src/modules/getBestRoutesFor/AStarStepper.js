@@ -4,8 +4,8 @@ import Node from './Node'
 // Helper para criar um Heap de nodes
 export const newNodeHeap = () =>
   new Heap((nodeA, nodeB) => {
-    if (nodeA.totalCost < nodeB.totalCost) return true
-    if (nodeA.totalCost > nodeB.totalCost) return false
+    if (nodeA.totalCostSlowClient < nodeB.totalCostSlowClient) return true
+    if (nodeA.totalCostSlowClient > nodeB.totalCostSlowClient) return false
 
     // Se os custos sao iguais, o maior custo dos 2 eh igual. Entao, comparamos o menor custo
     if (nodeA.g + nodeA.h.car < nodeB.g + nodeB.h.car) return true

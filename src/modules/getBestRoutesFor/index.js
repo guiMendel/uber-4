@@ -129,12 +129,8 @@ export default async function getBestRoutesFor(client) {
     }
   )
 
-  // console.log(bestNodes.toArray().map((node) => node.totalCost))
-
   // Monta um vetor com os N melhores nodes totais
   const finalNodes = []
-
-  // console.log(bestStepperNodes.getRawDataCopy().map((node) => node.totalCost))
 
   for (let i = 0; i < countOfNodesToConsider; i++) {
     let node = bestNodes.pop()

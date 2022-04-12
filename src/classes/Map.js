@@ -1,3 +1,4 @@
+import seedGraph from '../helpers/seedGraph'
 import delay from '../helpers/delay'
 import theme from '../configuration/theme'
 import appConfig from '../configuration/appConfig'
@@ -73,7 +74,7 @@ export default class Map {
       Camera.setup(canvasContext)
 
       // Gera um grafo de teste
-      // seedGraph()
+      seedGraph()
 
       Car.setup()
       Client.setup()

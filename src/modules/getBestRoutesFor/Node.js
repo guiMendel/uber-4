@@ -2,10 +2,7 @@ import Debug from '../../classes/Drawables/Debug'
 import appConfig from '../../configuration/appConfig'
 import { displacePoint, getDistance } from '../../helpers/vectorDistance'
 
-const { pixelsPerKilometer, clientWalkSpeed: originalWalkSpeed } = appConfig
-
-// Otimizamos para o cliente andar menos
-const clientWalkSpeed = originalWalkSpeed / 10
+const { pixelsPerKilometer, clientWalkSpeed } = appConfig
 
 // Define cada no do A*
 export default class Node {
@@ -100,6 +97,11 @@ export default class Node {
   get totalCost() {
     // O custo total eh o que demorar mais: o carro chegar no rdv ou o cliente chegar no rdv
     return Math.max(this.g + this.h.car, this.h.client)
+  }
+
+  // Retorna o custo total mas considera o tempo do cliente muito mais lento
+  get totalCostSlowClient() {
+    return Math.max(this.g + this.h.car, this.h.client * 10)
   }
 
   // Deve ser utilziado somente no node inicial, quando o carro se encontra em algum ponto da aresta
