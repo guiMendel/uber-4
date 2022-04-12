@@ -62,7 +62,10 @@ export default class Client extends Drawable {
 
   get selectedRoute() {
     // Se a rota nao eh mais compativel, descarta ela
-    if (this.#selectedRouteCompatibility != Map.version) {
+    if (
+      this.#selectedRoute != null &&
+      this.#selectedRouteCompatibility != Map.version
+    ) {
       this.selectedRoute = null
     }
 
@@ -70,9 +73,22 @@ export default class Client extends Drawable {
   }
 
   set selectedRoute(value) {
+    const oldRoute = this.#selectedRoute
+
     this.#selectedRoute = value
     this.#selectedRouteCompatibility = Map.version
+
     Client.raiseEvent('routeselect', { client: this, route: value })
+
+    // Se tinha uma rota antes
+    if (oldRoute != null) {
+      // Avisa o antigo carro
+      oldRoute.stepper.car.setRouteUnchained(null)
+    }
+
+    // Marca o carro como ocupado
+    if (this.#selectedRoute != null && this.#selectedRoute != 'walk')
+      this.#selectedRoute.stepper.car.assignedRoute = this.#selectedRoute
   }
 
   static deselect() {
@@ -160,7 +176,6 @@ export default class Client extends Drawable {
           // Destroi esse cliente
           this.hovered.destroy()
           this.hovered = null
-          console.log(Client.sortedCoords)
 
           return
         }
@@ -212,6 +227,13 @@ export default class Client extends Drawable {
       min: 0,
       max: 1,
       condition: () => this.isSelected,
+    })
+
+    // Se tiver uma rota quando for desturido, avisa o carro
+    this.onDestroy.push(() => {
+      if (this.selectedRoute != null) {
+        this.selectedRoute.stepper.car.setRouteUnchained(null)
+      }
     })
   }
 
@@ -267,6 +289,18 @@ export default class Client extends Drawable {
 
     this.destination = target
     this.selectedRoute = null
+  }
+
+  // Nao avisa o antigo carro que mudou de rota
+  setRouteUnchained(newRoute) {
+    this.#selectedRoute = newRoute
+    this.#selectedRouteCompatibility = Map.version
+
+    Client.raiseEvent('routeselect', { client: this, route: newRoute })
+
+    // Marca o carro como ocupado
+    if (newRoute != null && newRoute != 'walk')
+      this.#selectedRoute.stepper.car.assignedRoute = this.#selectedRoute
   }
 
   static nameProperties(location, destination) {

@@ -4,6 +4,7 @@ import theme from '../configuration/theme'
 import appConfig from '../configuration/appConfig'
 import ArrowIndicators from './Drawables/ArrowIndicators'
 
+import redCar from '../assets/red-car.png'
 import whiteCar from '../assets/white-car.png'
 import man from '../assets/man.png'
 import woman from '../assets/woman.png'
@@ -161,6 +162,10 @@ export default class Map {
         // Carrega o carro
         this.loadImage(whiteCar, carWidth).then(
           (carImage) => (this.carImage = carImage)
+        ),
+
+        this.loadImage(redCar, carWidth).then(
+          (carImage) => (this.redCarImage = carImage)
         ),
 
         // Carrega o man

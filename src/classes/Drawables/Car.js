@@ -52,6 +52,24 @@ export default class Car extends Drawable {
     return this == Car.selected
   }
 
+  // Qual a rota atual desse carro
+  #assignedRoute = null
+
+  get assignedRoute() {
+    return this.#assignedRoute
+  }
+
+  set assignedRoute(value) {
+    const oldRoute = this.#assignedRoute
+
+    this.#assignedRoute = value
+
+    // Se tivesse uma rota antes, tira ela do cliente que a tinha
+    if (oldRoute != null) {
+      oldRoute.stepper.client.setRouteUnchained(null)
+    }
+  }
+
   // Caso o carro estava no estado hovered na ultima iteracao
   wasHovered = false
 
@@ -80,6 +98,7 @@ export default class Car extends Drawable {
 
     // Pega a imagem do carro
     this.carImage = Map.instance.carImage
+    this.redCarImage = Map.instance.redCarImage
 
     // O atual scale da imagem
     this.scale = 1
@@ -108,6 +127,13 @@ export default class Car extends Drawable {
     this.onDestroy.push(() =>
       IO.removeEventListener('leftclick', handleLeftClick)
     )
+
+    // Se tiver uma rota, avisa o cliente quando for destruido
+    this.onDestroy.push(() => {
+      if (this.assignedRoute != null) {
+        this.#assignedRoute.stepper.client.setRouteUnchained(null)
+      }
+    })
   }
 
   draw(drawer) {
@@ -128,7 +154,12 @@ export default class Car extends Drawable {
     // Desenha um highlight, se estiver selecionado
     if (this.isSelected) strokeArc(this, this.carImage.height / 2 + 5)
 
-    drawImage(this.carImage, this, this.edge.angle - 90, this.scale)
+    drawImage(
+      this.assignedRoute == null ? this.carImage : this.redCarImage,
+      this,
+      this.edge.angle - 90,
+      this.scale
+    )
   }
 
   // Se reposiciona na aresta
@@ -141,6 +172,11 @@ export default class Car extends Drawable {
     this.y = this.edge.source.y - distanceToSource * sin(this.edge.angle)
 
     Car.sortedCoords.register(this)
+  }
+
+  // Nao avisa o antigo cliente
+  setRouteUnchained(newRoute) {
+    this.#assignedRoute = newRoute
   }
 
   static nameProperties(edge, realX, realY) {
