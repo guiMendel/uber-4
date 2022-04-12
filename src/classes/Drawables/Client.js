@@ -7,6 +7,12 @@ import Camera from '../Camera'
 import SortProperties from '../SortProperties'
 import { findFittest, unorderedFindFittest } from '../../helpers/search'
 import ClientCreator from './Creators/ClientCreator'
+import appConfig from '../../configuration/appConfig'
+import {
+  angleBetween,
+  displacePoint,
+  getDistance,
+} from '../../helpers/vectorDistance'
 
 const {
   clientHoverGrow,
@@ -15,7 +21,14 @@ const {
   clientDestinationRadius,
 } = theme
 
+const { clientWalkSpeed, pixelsPerKilometer } = appConfig
+
 const alterDestinationKey = 'client-alter-destination'
+
+// Fases de uma rota
+const walkToRendezVous = 0
+const waitingCar = 1
+const inCar = 2
 
 // Define um cliente
 export default class Client extends Drawable {
@@ -90,6 +103,9 @@ export default class Client extends Drawable {
     if (this.#selectedRoute != null && this.#selectedRoute != 'walk')
       this.#selectedRoute.stepper.car.assignedRoute = this.#selectedRoute
   }
+
+  // O estagio atual da rota
+  routePhase = null
 
   static deselect() {
     this.selected = null
@@ -231,7 +247,7 @@ export default class Client extends Drawable {
 
     // Se tiver uma rota quando for desturido, avisa o carro
     this.onDestroy.push(() => {
-      if (this.selectedRoute != null) {
+      if (this.selectedRoute != null && this.selectedRoute != 'walk') {
         this.selectedRoute.stepper.car.setRouteUnchained(null)
       }
     })
@@ -280,6 +296,91 @@ export default class Client extends Drawable {
         fillArc(this.destination, clientDestinationRadius)
       }
     }
+  }
+
+  simulationStep(deltaTime) {
+    if (this.selectedRoute == null) return
+
+    // Helper para andar ate a posicao
+    const walkTo = (position, finishCallback) => {
+      const walkDistance = clientWalkSpeed * deltaTime * pixelsPerKilometer
+
+      if (getDistance(this, position) <= walkDistance) {
+        // Se desloca ate o destino
+        Object.assign(this, position)
+
+        finishCallback()
+
+        return
+      }
+
+      // Simplesmente avanca a posicao
+      const walkAngle = angleBetween(this, position)
+
+      this.rotation = walkAngle
+
+      Object.assign(this, displacePoint(this, walkDistance, walkAngle))
+    }
+
+    // Caso a rota seja andar
+    if (this.selectedRoute == 'walk') {
+      // Se move ate la
+      walkTo(this.destination, () => this.reachDestination())
+
+      return
+    }
+
+    // Garante que isso esteja inicializado
+    this.routePhase ??= walkToRendezVous
+
+    const phaseHandler = {
+      [walkToRendezVous]: () => {
+        // Encontra o ponto de rdv
+        const rendezVous =
+          this.selectedRoute.stepper.parentNode.projectionCoords
+
+        // Se move ate la
+        walkTo(rendezVous, () => this.routePhase++)
+      },
+
+      [waitingCar]: () => {
+        // Verifica se o carro esta a alcance
+        const walkDistance = clientWalkSpeed * deltaTime * pixelsPerKilometer
+
+        // Se estiver
+        if (getDistance(this.selectedRoute.stepper.car, this) <= walkDistance) {
+          // Avanca a fase
+          this.routePhase++
+        }
+      },
+
+      [inCar]: () => {
+        const { car } = this.selectedRoute.stepper
+
+        // Verifica se ja esta proximo o suficiente do ponto de entrega
+        if (getDistance(car, this.selectedRoute.projectionCoords)) {
+          // Atualiza coordenadas
+          Object.assign(this, this.selectedRoute.projectionCoords)
+
+          // Finaliza a rota e anda o resto
+          this.routePhase = null
+          this.selectedRoute = 'walk'
+
+          return
+        }
+
+        // Atualiza suas coordenadas para a do carro
+        this.x = car.x
+        this.y = car.y
+      },
+    }
+
+    phaseHandler[this.routePhase]()
+  }
+
+  // Informa que o cliente chegou no destino
+  reachDestination() {
+    this.destroy()
   }
 
   alterDestination(target) {

@@ -26,3 +26,11 @@ export function angleBetween(pointA, pointB) {
     (pointB.x < pointA.x ? 180 : 0)
   )
 }
+
+// Retorna as novas coordenadas de um ponto q se deslocou de source ate destination, mas nao se deslocou mais que movementLimit
+export function moveTowards(source, destination, movementLimit) {
+  if (getDistance(source, destination) <= movementLimit)
+    return { x: destination.x, y: destination.y }
+
+  return displacePoint(source, movementLimit, angleBetween(source, destination))
+}

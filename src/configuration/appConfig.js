@@ -8,6 +8,9 @@ export default {
   // O tempo (segundos) que as mensagens de erro ficam em tela
   errorMessageDuration: 11,
 
+  // Quantas horas da simulacao se passam em um segundo real
+  timeScale: 0.2,
+
   //=== MAPA
 
   // Quantos pixels tem um quilometro no mapa

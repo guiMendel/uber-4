@@ -1,7 +1,6 @@
 // Este modulo atribui as rotas fornecidas entre clientes e carros da maneira mais otima
 
 import Heap from '../../classes/DataStructures/Heap'
-import Debug from '../../classes/Drawables/Debug'
 
 // Recebe as rotas categorizadas entre clientes e carros
 export default function assignRoutes(categorizedRoutes) {
@@ -26,6 +25,8 @@ export default function assignRoutes(categorizedRoutes) {
 
   // Adiciona todas as rotas
   addRoutes(routes, wrappedRoutes, config)
+
+  if (wrappedRoutes.length == 0) return
 
   // Atualiza o config
   config.minCost = wrappedRoutes.peek().route.totalCost

@@ -24,9 +24,18 @@ export default function App() {
   // Se inscreve para manter o tempo atualizado
   useEffect(
     () =>
-      Simulation.addEventListener('timepass', (newTime) =>
-        setTime(newTime.toFixed(2))
-      ),
+      Simulation.addEventListener('timepass', (newTime) => {
+        const roundedTime = Math.floor(newTime)
+
+        setTime(
+          roundedTime +
+            'h' +
+            Math.round((newTime - roundedTime) * 60).toLocaleString('pt-BR', {
+              minimumIntegerDigits: 2,
+              useGrouping: false,
+            })
+        )
+      }),
     []
   )
 

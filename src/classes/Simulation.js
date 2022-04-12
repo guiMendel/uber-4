@@ -1,11 +1,14 @@
+import appConfig from '../configuration/appConfig'
 import Drawable from './Drawables/Drawable'
 import IO from './IO'
 import Map from './Map'
 import RouteCalculator from './RouteCalculator'
 
+const { timeScale } = appConfig
+
 // Essa classe eh responsavel por acionar o modo simulacao e fazer os objetos se moverem e interagirem no tempo
 export default class Simulation {
-  // Guarda o tempo atual passado na simulacao, em segundos
+  // Guarda o tempo atual passado na simulacao, em horas simuladas
   static #time = 0
 
   static get time() {
@@ -51,17 +54,17 @@ export default class Simulation {
   static async simulation(cancelToken) {
     // Roda indefinidamente
     while (cancelToken.cancelled == false) {
-      // Conta a passagem de tempo
+      // Conta a passagem de tempo. Convertemos de segundos reais para horas simuladas
       const deltaTime = Date.now() - this.#lastStepRealTime
 
-      this.time += deltaTime / 1000
+      this.time += (deltaTime / 1000) * timeScale
       this.#lastStepRealTime += deltaTime
 
       // Passa por cada entidade
       for (const drawableClass of Object.values(Drawable.drawableInstances)) {
         for (const drawable of Object.values(drawableClass)) {
           // Executa um step da simulacao
-          drawable.simulationStep(deltaTime)
+          drawable.simulationStep((deltaTime / 1000) * timeScale)
         }
       }
 
