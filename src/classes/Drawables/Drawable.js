@@ -106,6 +106,9 @@ export default class Drawable {
     throw new Error('Este método deve ser implementado por uma classe filho')
   }
 
+  // Permite agir dentro da simulacao
+  simulationStep(deltaTime) {}
+
   destroy() {
     // Limpa as referencias deste objeto
     this.onDestroy.forEach((callback) => callback())

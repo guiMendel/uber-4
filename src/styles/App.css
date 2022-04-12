@@ -55,19 +55,26 @@
   font-size: 0.7rem;
 }
 
-.toggle-simulation.custom-button {
-  --button-size: 5rem;
-
+.simulation-toggle-container {
   position: fixed;
   top: 2rem;
   right: 2rem;
 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.simulation-toggle-container span {
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.toggle-simulation.custom-button {
+  --button-size: 5rem;
+
   font-size: 2.5rem;
-
-  /* color: rgb(72, 102, 209); */
-
-  /* background: none;
-  box-shadow: none; */
 }
 
 .toggle-simulation.custom-button svg {

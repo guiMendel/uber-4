@@ -14,8 +14,22 @@ import {
   FaPause,
 } from 'react-icons/fa'
 import ErrorDisplay from './components/ErrorDisplay/ErrorDisplay'
+import { useEffect, useState } from 'react'
+import Simulation from './classes/Simulation'
 
 export default function App() {
+  // Mantem registro do tempo atual da simulacao
+  const [time, setTime] = useState(0)
+
+  // Se inscreve para manter o tempo atualizado
+  useEffect(
+    () =>
+      Simulation.addEventListener('timepass', (newTime) =>
+        setTime(newTime.toFixed(2))
+      ),
+    []
+  )
+
   return (
     <div className="App">
       <Canvas />
@@ -30,14 +44,18 @@ export default function App() {
       <Coordinates />
 
       {/* Botao de pausar e retomar simulacao */}
-      <Button
-        className={'toggle-simulation custom-button'}
-        name={'toggle-simulation'}
-        isSwitch
-        switchOnChildren={<FaPause />}
-      >
-        <FaPlay style={{marginLeft: '0.4rem'}} />
-      </Button>
+      <div className="simulation-toggle-container">
+        <Button
+          className={'toggle-simulation custom-button'}
+          name={'toggle-simulation'}
+          isSwitch
+          switchOnChildren={<FaPause />}
+        >
+          <FaPlay style={{ marginLeft: '0.4rem' }} />
+        </Button>
+
+        {time != 0 && <span>{time}</span>}
+      </div>
 
       {/* Contem os botoes de acoes do mapa */}
       <div className="map actions">

@@ -24,10 +24,8 @@ export default function Button({
   }, [])
 
   const activate = () => {
-    if (isSwitch) {
-      setValue(!value)
-      console.log(!value)
-    }
+    if (isSwitch) setValue(!value)
+
     IO.triggerButton(name, { value: !value, setValue })
   }
 

@@ -1,7 +1,6 @@
 import delay from '../helpers/delay'
 import theme from '../configuration/theme'
 import appConfig from '../configuration/appConfig'
-import seedGraph from '../helpers/seedGraph'
 import ArrowIndicators from './Drawables/ArrowIndicators'
 
 import whiteCar from '../assets/white-car.png'
@@ -13,6 +12,7 @@ import Camera from './Camera'
 import Drawer from './Drawer'
 import Client from './Drawables/Client'
 import RouteCalculator from './RouteCalculator'
+import Simulation from './Simulation'
 import Debug from './Drawables/Debug'
 import RouteHighlighter from './Drawables/RouteHighlighter'
 import ClientCreator from './Drawables/Creators/ClientCreator'
@@ -78,6 +78,7 @@ export default class Map {
       Car.setup()
       Client.setup()
       RouteCalculator.setup()
+      Simulation.setup()
 
       // Cria os Singletons
       new ArrowIndicators()
