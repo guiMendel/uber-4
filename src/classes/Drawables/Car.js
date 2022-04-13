@@ -3,7 +3,11 @@ import Map from '../Map'
 import theme from '../../configuration/theme'
 import Client from './Client'
 import IO from '../IO'
-import { getDistance } from '../../helpers/vectorDistance'
+import {
+  angleBetween,
+  displacePoint,
+  getDistance,
+} from '../../helpers/vectorDistance'
 import { cos, sin } from '../../helpers/trygonometry'
 import SortProperties from '../SortProperties'
 
@@ -160,6 +164,101 @@ export default class Car extends Drawable {
       this.edge.angle - 90,
       this.scale
     )
+  }
+
+  simulationStep(deltaTime) {
+    // Fica paradao se nao tem rota
+    if (this.assignedRoute == null) return
+
+    // Pega o cliente da rota
+    const { client } = this.assignedRoute.stepper
+
+    // Se a fase da rota do cliente for 0 ou 1, ainda nao ocorreu o rendez vous, portanto, usa a rota pai
+    const movementRoute =
+      client.routePhase > 1
+        ? this.assignedRoute
+        : this.assignedRoute.stepper.parentNode
+
+    // Pega a aresta da rota
+    const nodeArray = [movementRoute]
+
+    const getFirstNode = () => nodeArray[nodeArray.length - 1]
+
+    // Popula o vetor de nodes
+    while (getFirstNode().parent != null) {
+      nodeArray.push(getFirstNode().parent)
+    }
+
+    if (getFirstNode().edge.id != this.edge.id) {
+      // Garante que seja a mesma que o carro esta (se nao estiver talvez seja pq ele acabou de comecar a 2a rota, mas por alguma razao ainda nao atualizaou a aresta)
+      console.warn('A aresta da rota nao coincide com a aresta do carro')
+
+      // Atualiza a rota do carro
+      this.edge = getFirstNode().edge
+      Object.assign(this, this.edge.source)
+    }
+
+    // Se esta no ultimo node e em sua projecao, nao precisa se deslocar
+    if (
+      nodeArray.length == 1 &&
+      this.x == getFirstNode().projectionCoords.x &&
+      this.y == getFirstNode().projectionCoords.y
+    )
+      return
+
+    // Descobre deslocamento do carro
+    let carMovement = this.edge.mapSpeed * deltaTime
+
+    // Descobre o destino nesta aresta
+    // Se esse for o ultimo node, vai ate o ponto de projecao
+    let nodeDestination =
+      nodeArray.length == 1
+        ? getFirstNode().projectionCoords
+        : this.edge.destination
+
+    // Desloca o carro pelas arestas ate seu movimento acabar
+    while (carMovement > 0) {
+      // Verifica se ja esta proximo o suficiente do fim da aresta
+      const distanceToEdgeDestination = getDistance(this, nodeDestination)
+
+      if (distanceToEdgeDestination < carMovement) {
+        // Se este eh o ultimo node da rota, finaliza ela
+        if (nodeArray.length == 1) {
+          // Se posiciona la
+          Object.assign(this, getFirstNode().projectionCoords)
+          return
+        }
+
+        // Se sim, passa pro proximo node
+        nodeArray.pop()
+
+        // Deleta o ultrapassado
+        getFirstNode().parent = null
+
+        // Atualiza a aresta
+        this.edge = getFirstNode().edge
+
+        // Subtrai do movimento
+        carMovement -= distanceToEdgeDestination
+
+        // Atualiza posicao
+        Object.assign(this, this.edge.source)
+
+        nodeDestination =
+          nodeArray.length == 1
+            ? getFirstNode().projectionCoords
+            : this.edge.destination
+
+        continue
+      }
+
+      // Se nao, apenas se move essa distancia
+      const directionAngle = angleBetween(this, nodeDestination)
+
+      Object.assign(this, displacePoint(this, carMovement, directionAngle))
+
+      break
+    }
   }
 
   // Se reposiciona na aresta

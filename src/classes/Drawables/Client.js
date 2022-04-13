@@ -86,6 +86,9 @@ export default class Client extends Drawable {
   }
 
   set selectedRoute(value) {
+    // Descarta informacao de fase
+    this.routePhase = null
+
     const oldRoute = this.#selectedRoute
 
     this.#selectedRoute = value
@@ -357,8 +360,15 @@ export default class Client extends Drawable {
       [inCar]: () => {
         const { car } = this.selectedRoute.stepper
 
+        // Ve a velocidade do carro
+        const driveDisplacement = car.edge.mapSpeed * deltaTime
+
         // Verifica se ja esta proximo o suficiente do ponto de entrega
-        if (getDistance(car, this.selectedRoute.projectionCoords)) {
+        if (
+          car.edge == this.selectedRoute.edge &&
+          getDistance(car, this.selectedRoute.projectionCoords) <=
+            driveDisplacement
+        ) {
           // Atualiza coordenadas
           Object.assign(this, this.selectedRoute.projectionCoords)
 

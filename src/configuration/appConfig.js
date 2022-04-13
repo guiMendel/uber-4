@@ -9,7 +9,7 @@ export default {
   errorMessageDuration: 11,
 
   // Quantas horas da simulacao se passam em um segundo real
-  timeScale: 0.2,
+  timeScale: 0.01,
 
   //=== MAPA
 
