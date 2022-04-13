@@ -357,6 +357,10 @@ export default class Client extends Drawable {
         if (getDistance(this.selectedRoute.stepper.car, this) <= walkDistance) {
           // Avanca a fase
           this.routePhase++
+
+          // Ajusta o source na nova rota para ser o carro em vez do rendez vous
+          // Assim o desenho da rota fica correto
+          this.selectedRoute.stepper.source = this.selectedRoute.stepper.car
         }
       },
 

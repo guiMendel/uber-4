@@ -27,18 +27,21 @@ export default class RouteHighlighter {
 
   draw(drawer, highlightedNode) {
     // Pega o carro e o cliente
-    const car = highlightedNode.stepper.parentNode.stepper.source
+    const { car, client } = highlightedNode.stepper
 
-    this.drawRoute(
-      highlightedNode.stepper.parentNode,
-      selectedRouteHighlightBeforeRdv,
-      drawer
-    )
+    // Se ja estiver apos a fase 1, nao desenha a primeira rota
+    if (client.routePhase <= 1)
+      this.drawRoute(
+        highlightedNode.stepper.parentNode,
+        selectedRouteHighlightBeforeRdv,
+        drawer
+      )
 
     this.drawRoute(highlightedNode, selectedRouteHighlight, drawer)
 
-    // Desenha as flechas
-    this.drawArrows(highlightedNode.stepper.parentNode, drawer)
+    // Desenha as flechas da primeira rota
+    if (client.routePhase <= 1)
+      this.drawArrows(highlightedNode.stepper.parentNode, drawer)
 
     // Desenha as flechas
     this.drawArrows(highlightedNode, drawer)
