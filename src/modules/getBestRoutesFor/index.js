@@ -48,10 +48,7 @@ async function expandSteppers(getTotalIterations, makeSteppers) {
     )
 
     // Se todos steppers terminaram, finalize as iteracoes
-    if (iterationResult.every((result) => result == true)) {
-      console.log(`Todos steppers finalizaram em ${iteration + 1} iteracoes`)
-      break
-    }
+    if (iterationResult.every((result) => result == true)) break
   }
 
   // Coleta os melhores resultados finais

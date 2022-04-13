@@ -5,6 +5,7 @@ import { getDistance } from '../helpers/vectorDistance'
 import appConfig from '../configuration/appConfig'
 import Car from './Drawables/Car'
 import assignRoutes from '../modules/assignRoutes'
+import Simulation from './Simulation'
 
 const { clientWalkSpeed, pixelsPerKilometer } = appConfig
 
@@ -13,9 +14,41 @@ export default class RouteCalculator {
   // Listeners
   static listeners = { calculateroutes: [] }
 
+  // Se mantem informado se o auto assign esta ativo
+  static autoAssign = true
+
   static setup() {
     // Observa a selecao do botao de calcular rota
     IO.addButtonListener('select-route', () => this.calculate(Client.selected))
+
+    IO.addButtonListener(
+      'auto-assign',
+      ({ value }) => (this.autoAssign = value)
+    )
+
+    const assignIfAutoOn = () => {
+      if (this.autoAssign) this.calculateForRemainingClients()
+    }
+
+    // Atribui todas rotas quando a simulacao comeca se estiver em modo auto assign
+    Simulation.addEventListener('start', assignIfAutoOn)
+
+    // Tambem quando um carro finalizar sua rota
+    Car.addEventListener('liberate', () => {
+      // Da um tempinho pr an correr o risco de querer pegar o cliente q acaba de deixar
+      setTimeout(assignIfAutoOn, 300)
+    })
+
+    // Tambem quando tiver um novo carro
+    Car.addEventListener('new', assignIfAutoOn)
+
+    // Tambem quando tiver um novo cliente
+    Client.addEventListener('new', assignIfAutoOn)
+
+    // Tambem se um cliente perder sua rota
+    Client.addEventListener('routeselect', ({ route }) => {
+      if (route == null) assignIfAutoOn()
+    })
   }
 
   // Faz o caluclo das melhores rotas para o cliente fornecido
@@ -44,10 +77,12 @@ export default class RouteCalculator {
   }
 
   // Calcula rotas para todos os clientes que ainda nao tem
-  static async calculateForRemainingClients() {
+  static async calculateForRemainingClients(ignoreWalkClients = false) {
     // Pega todos os clientes sem rota
     const routelessClients = Object.values(Client.instances).filter(
-      (client) => client.selectedRoute == null
+      (client) =>
+        client.selectedRoute == null ||
+        (ignoreWalkClients == false && client.selectedRoute == 'walk')
     )
 
     // Verifica se tem algum
@@ -97,7 +132,7 @@ export default class RouteCalculator {
     assignRoutes(routes)
 
     // Recomeca, ate que nao tenham mais clientes sem rota
-    this.calculateForRemainingClients()
+    this.calculateForRemainingClients(true)
   }
 
   // Permite observar eventos

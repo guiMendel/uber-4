@@ -42,7 +42,7 @@ export default class Client extends Drawable {
   static #selected = null
 
   // Listeners
-  static listeners = { select: [], routeselect: [], delete: [] }
+  static listeners = { select: [], routeselect: [], delete: [], new: [] }
 
   static get selected() {
     return this.#selected
@@ -257,6 +257,8 @@ export default class Client extends Drawable {
 
     // Levanta quando for destruido
     this.onDestroy.push(() => Client.raiseEvent('delete', this))
+
+    Client.raiseEvent('new', this)
   }
 
   draw(drawer) {

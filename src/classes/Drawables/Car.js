@@ -27,7 +27,7 @@ export default class Car extends Drawable {
   static #selected = null
 
   // Listeners
-  static listeners = { select: [] }
+  static listeners = { select: [], liberate: [], new: [] }
 
   static get selected() {
     return this.#selected
@@ -64,6 +64,9 @@ export default class Car extends Drawable {
   }
 
   set assignedRoute(value) {
+    // Se receber uma rota nula, levanta evento de liberar
+    if (value == null) Car.raiseEvent('liberate', this)
+
     const oldRoute = this.#assignedRoute
 
     this.#assignedRoute = value
@@ -138,6 +141,8 @@ export default class Car extends Drawable {
         this.#assignedRoute.stepper.client.setRouteUnchained(null)
       }
     })
+
+    Car.raiseEvent('new', this)
   }
 
   draw(drawer) {
@@ -275,6 +280,8 @@ export default class Car extends Drawable {
 
   // Nao avisa o antigo cliente
   setRouteUnchained(newRoute) {
+    if (newRoute == null) Car.raiseEvent('liberate', this)
+
     this.#assignedRoute = newRoute
   }
 

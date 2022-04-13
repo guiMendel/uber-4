@@ -11,12 +11,12 @@ const { pixelsPerKilometer } = appConfig
 
 // Gera grafos e arestas aleatorios para fins de teste
 export default function seedGraph(
-  numberOfVertices = 8,
-  numberOfCars = 1,
-  numberOfClients = 1,
-  mapWidth = window.innerWidth - 20,
-  mapHeight = window.innerHeight - 20,
-  minDistanceBetweenVertices = 200
+  numberOfVertices = 20,
+  numberOfCars = 4,
+  numberOfClients = 10,
+  mapWidth = window.innerWidth * 2,
+  mapHeight = window.innerHeight * 2,
+  minDistanceBetweenVertices = 400
 ) {
   // Destroi os anteriormente definidos
   Drawable.drawableInstances = {}
@@ -25,7 +25,7 @@ export default function seedGraph(
     throw new Error('Necessita de pelo menos 2 vertices')
 
   // Helper para gerar coordenadas aleatorias centralizadas em 0,0
-  const randomCoords = () => {
+  const randomCoords = (distantFromVertices = true) => {
     // Gera coordenadas
     const newCoords = {
       x: Math.random() * mapWidth - mapWidth / 2,
@@ -33,10 +33,11 @@ export default function seedGraph(
     }
 
     // Verifica se as coordenadas estao boas
-    for (const vertex of Object.values(Vertex.instances)) {
-      if (getDistance(vertex, newCoords) < minDistanceBetweenVertices)
-        return randomCoords()
-    }
+    if (distantFromVertices)
+      for (const vertex of Object.values(Vertex.instances)) {
+        if (getDistance(vertex, newCoords) < minDistanceBetweenVertices)
+          return randomCoords()
+      }
 
     return newCoords
   }
@@ -116,6 +117,6 @@ export default function seedGraph(
 
   // Gerar clientes
   for (let clientId = 0; clientId < numberOfClients; clientId++) {
-    new Client(clientId, randomCoords(), randomCoords())
+    new Client(clientId, randomCoords(false), randomCoords(false))
   }
 }

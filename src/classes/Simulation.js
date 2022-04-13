@@ -39,9 +39,6 @@ export default class Simulation {
     // Levanta
     this.#raiseEvent('start')
 
-    // Atribui rotas aos carros e clientes que faltam
-    RouteCalculator.calculateForRemainingClients()
-
     // Inicializa a simulacao
     this.simulation(cancelToken)
 
