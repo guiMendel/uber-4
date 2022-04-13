@@ -10,6 +10,7 @@ export default function Button({
   rigthTooltip,
   isSwitch,
   switchOnChildren,
+  startOn = false,
   ...other
 }) {
   switchOnChildren ??= children
@@ -21,6 +22,8 @@ export default function Button({
     // Garante ter um nome
     if (name == undefined)
       throw new Error('Faltou passar o nome para um dos botoes')
+
+    if (startOn) activate()
   }, [])
 
   const activate = () => {

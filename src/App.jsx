@@ -3,42 +3,13 @@ import Canvas from './components/Canvas/Canvas.jsx'
 import Button from './components/Button/Button.jsx'
 import InteractionControl from './components/InteractionControl/InteractionControl'
 import Coordinates from './components/Coordinates/Coordinates'
+import ErrorDisplay from './components/ErrorDisplay/ErrorDisplay'
+import SimulationControl from './components/SimulationControl/SimulationControl'
 
 // Icones
-import {
-  FaUserPlus,
-  FaPencilAlt,
-  FaCarSide,
-  FaPlus,
-  FaPlay,
-  FaPause,
-} from 'react-icons/fa'
-import ErrorDisplay from './components/ErrorDisplay/ErrorDisplay'
-import { useEffect, useState } from 'react'
-import Simulation from './classes/Simulation'
+import { FaUserPlus, FaPencilAlt, FaCarSide, FaPlus } from 'react-icons/fa'
 
 export default function App() {
-  // Mantem registro do tempo atual da simulacao
-  const [time, setTime] = useState(0)
-
-  // Se inscreve para manter o tempo atualizado
-  useEffect(
-    () =>
-      Simulation.addEventListener('timepass', (newTime) => {
-        const roundedTime = Math.floor(newTime)
-
-        setTime(
-          roundedTime +
-            'h' +
-            Math.round((newTime - roundedTime) * 60).toLocaleString('pt-BR', {
-              minimumIntegerDigits: 2,
-              useGrouping: false,
-            })
-        )
-      }),
-    []
-  )
-
   return (
     <div className="App">
       <Canvas />
@@ -53,18 +24,7 @@ export default function App() {
       <Coordinates />
 
       {/* Botao de pausar e retomar simulacao */}
-      <div className="simulation-toggle-container">
-        <Button
-          className={'toggle-simulation custom-button'}
-          name={'toggle-simulation'}
-          isSwitch
-          switchOnChildren={<FaPause />}
-        >
-          <FaPlay style={{ marginLeft: '0.4rem' }} />
-        </Button>
-
-        {time != 0 && <span>{time}</span>}
-      </div>
+      <SimulationControl />
 
       {/* Contem os botoes de acoes do mapa */}
       <div className="map actions">
