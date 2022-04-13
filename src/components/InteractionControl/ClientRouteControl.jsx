@@ -9,6 +9,7 @@ import {
   FaMapMarkerAlt,
 } from 'react-icons/fa'
 import Client from '../../classes/Drawables/Client'
+import Map from '../../classes/Map'
 import RouteCalculator from '../../classes/RouteCalculator'
 import appConfig from '../../configuration/appConfig'
 import theme from '../../configuration/theme'
@@ -48,6 +49,15 @@ export default function ClientRouteControl() {
     setSelectedClient(client)
   }
 
+  const handleClientDelete = (client) =>
+    setSelectedClient((selectedClient) => {
+      if (selectedClient.id == client.id) {
+        Map.activeInteractionClass = null
+        return null
+      }
+      return selectedClient
+    })
+
   useEffect(() => {
     // Inicializa o cliente
     setSelectedClient(Client.selected)
@@ -55,12 +65,16 @@ export default function ClientRouteControl() {
     // Se inscreve para selecao de cliente
     Client.addEventListener('select', handleClientChange)
 
+    // Se inscreve para delecao
+    Client.addEventListener('delete', handleClientDelete)
+
     // Se inscreve para calculo de rota
     RouteCalculator.addEventListener('calculateroutes', handleRouteCalculation)
 
     return () => {
       // Se desinscreve
       Client.removeEventListener('select', handleClientChange)
+      Client.removeEventListener('delete', handleClientDelete)
       RouteCalculator.removeEventListener(
         'calculateroutes',
         handleRouteCalculation

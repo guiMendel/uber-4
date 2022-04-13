@@ -42,7 +42,7 @@ export default class Client extends Drawable {
   static #selected = null
 
   // Listeners
-  static listeners = { select: [], routeselect: [] }
+  static listeners = { select: [], routeselect: [], delete: [] }
 
   static get selected() {
     return this.#selected
@@ -254,6 +254,9 @@ export default class Client extends Drawable {
         this.selectedRoute.stepper.car.setRouteUnchained(null)
       }
     })
+
+    // Levanta quando for destruido
+    this.onDestroy.push(() => Client.raiseEvent('delete', this))
   }
 
   draw(drawer) {
