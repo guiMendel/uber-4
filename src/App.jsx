@@ -5,6 +5,7 @@ import InteractionControl from './components/InteractionControl/InteractionContr
 import Coordinates from './components/Coordinates/Coordinates'
 import ErrorDisplay from './components/ErrorDisplay/ErrorDisplay'
 import SimulationControl from './components/SimulationControl/SimulationControl'
+import SideMenu from './components/SideMenu/SideMenu'
 
 // Icones
 import { FaUserPlus, FaPencilAlt, FaCarSide, FaPlus } from 'react-icons/fa'
@@ -12,6 +13,8 @@ import { FaUserPlus, FaPencilAlt, FaCarSide, FaPlus } from 'react-icons/fa'
 export default function App() {
   return (
     <div className="App">
+      <SideMenu/>
+
       <Canvas />
 
       {/* Mostra erros conforme eles aparecem */}
