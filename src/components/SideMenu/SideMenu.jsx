@@ -1,7 +1,6 @@
 import './SideMenu.css'
 import Button from '../Button/Button'
 import { useState } from 'react'
-import seedGraph from '../../helpers/seedGraph'
 
 import { CgSidebarOpen } from 'react-icons/cg'
 import { BiCopyright } from 'react-icons/bi'
