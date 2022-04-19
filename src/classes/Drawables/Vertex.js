@@ -65,7 +65,13 @@ export default class Vertex extends Drawable {
       : Vertex.realToMap({ x: realX, y: realY })
   }
 
-  static eraseAllInstances() {
+  static resetMap() {
+    for (const instance of Object.values(this.instances)) {
+      instance.destroy()
+    }
+
+    this.instances = {}
+
     this.sortedCoords.clear()
   }
 }

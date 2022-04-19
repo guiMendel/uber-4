@@ -2,6 +2,7 @@ import { getDistance } from '../../helpers/vectorDistance'
 import IO from '../IO'
 import theme from '../../configuration/theme'
 import appConfig from '../../configuration/appConfig'
+import seedGraph from '../../helpers/seedGraph'
 
 const { generalAnimationSpeed } = theme
 const { maxFramesPerSecond } = appConfig
@@ -12,6 +13,8 @@ export default class Drawable {
   // A chave eh uma string com o nome de uma subclasse de drawable (como Edge, etc), os valores sao outro objeto
   // Esse outro objeto tem como chave o id de cada instancia, e aponta para a instancia correspondente
   static drawableInstances = {}
+
+  static listeners = { resetMap: [] }
 
   // Quais animacoes estao sendo executadas neste drawable
   animations = []
@@ -43,6 +46,9 @@ export default class Drawable {
     return new this(id, ...rawProperties)
   }
 
+  // Caso esteja apagando tudo, sera true
+  static isErasing = false
+
   constructor(id, properties) {
     // Keep the properties
     this.id = id ?? Drawable.generateId(this)
@@ -58,6 +64,10 @@ export default class Drawable {
       Drawable.drawableInstances[this.name] = {}
 
     return Drawable.drawableInstances[this.name]
+  }
+
+  static set instances(value) {
+    Drawable.drawableInstances[this.name] = value
   }
 
   // Permite saber a distancia do cursor ate este drawable
@@ -121,23 +131,27 @@ export default class Drawable {
   }
 
   static eraseAllInstances() {
-    if (this.name != 'Drawable') return
+    this.isErasing = true
 
-    // Apaga cada uma das classes
+    this.raiseEvent('resetMap')
+
+    // Avisa cada classe que vai apagar
     for (const drawableClassInstances of Object.values(
       this.drawableInstances
     )) {
-      const drawableClass = Object.values(drawableClassInstances)[0].constructor
+      const drawableClass = Object.values(drawableClassInstances)[0]
+        ?.constructor
 
-      drawableClass.eraseAllInstances()
-
-      for (const instance of Object.values(drawableClassInstances)) {
-        instance.destroy()
-      }
+      if (drawableClass?.resetMap != undefined) drawableClass.resetMap()
     }
 
-    // Reseta as referencias principais
-    this.drawableInstances = {}
+    this.isErasing = false
+  }
+
+  static generateNewMap() {
+    this.eraseAllInstances()
+
+    seedGraph()
   }
 
   // Permite observar eventos

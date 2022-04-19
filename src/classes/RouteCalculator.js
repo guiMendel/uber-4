@@ -1,5 +1,7 @@
 import IO from './IO'
-import getBestRoutesFor from '../modules/getBestRoutesFor'
+import getBestRoutesFor, {
+  invalidStepperDataError,
+} from '../modules/getBestRoutesFor'
 import Client from './Drawables/Client'
 import { getDistance } from '../helpers/vectorDistance'
 import appConfig from '../configuration/appConfig'
@@ -26,12 +28,14 @@ export default class RouteCalculator {
       ({ value }) => (this.autoAssign = value)
     )
 
-    const assignIfAutoOn = () => {
+    const assignIfAutoOn = (throwit = true) => {
+      if (throwit) throw new Error()
+
       if (this.autoAssign) this.calculateForRemainingClients()
     }
 
     // Atribui todas rotas quando a simulacao comeca se estiver em modo auto assign
-    Simulation.addEventListener('start', assignIfAutoOn)
+    Simulation.addEventListener('start', () => assignIfAutoOn(false))
 
     // Tambem quando um carro finalizar sua rota
     Car.addEventListener('liberate', () => {
@@ -62,9 +66,15 @@ export default class RouteCalculator {
       clientWalkSpeed
 
     // Descarta as rotas mais lentas que o tempo de caminhada
-    const bestRoutes = await getBestRoutesFor(client).then((bestNodes) =>
-      bestNodes.filter((route) => route.totalCost <= walkTime)
-    )
+    const bestRoutes = await getBestRoutesFor(client)
+      .then((bestNodes) =>
+        bestNodes.filter((route) => route.totalCost <= walkTime)
+      )
+      .catch((error) => {
+        // Ignora esse error
+        if (error.message != invalidStepperDataError) throw error
+        return []
+      })
 
     // Levanta evento com as rotas calculadas
     if (noRaise == false)

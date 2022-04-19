@@ -239,7 +239,13 @@ export default class Edge extends Drawable {
     return { source, destination, mapSpeed, realDistance }
   }
 
-  static eraseAllInstances() {
+  static resetMap() {
+    for (const instance of Object.values(this.instances)) {
+      instance.destroy()
+    }
+    
+    this.instances = {}
+
     this.sortedCoords.clear()
 
     this.slowestEdge = null
