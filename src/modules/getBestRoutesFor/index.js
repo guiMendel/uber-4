@@ -27,6 +27,8 @@ import AStarStepper, { newNodeHeap } from './AStarStepper'
 const { pathExpansionIterations, newBestPathReward, countOfNodesToConsider } =
   appConfig
 
+export const invalidStepperDataError = 'Dados invalidos para A Stepper'
+
 // Realiza todas as iteracoes dos steppers fornecidos
 // Retorna um heap com os melhores nodes encontrados
 async function expandSteppers(getTotalIterations, makeSteppers) {
@@ -83,6 +85,13 @@ export default async function getBestRoutesFor(client) {
     // Steppers para cada carro
     (hCache, iterationCallbacks) => {
       return getSubsetOfCarsFor(client).map((car) => {
+        if (
+          client.x == undefined ||
+          car.x == undefined ||
+          car.edge.source == undefined
+        )
+          throw new Error(invalidStepperDataError)
+
         const stepper = new AStarStepper(
           client,
           car,

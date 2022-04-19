@@ -23,10 +23,20 @@ export default class Simulation {
   // Tempo real medido na utlima iteracao, em ms
   static #lastStepRealTime = null
 
+  static setButton
+
   static setup() {
-    IO.addButtonListener('toggle-simulation', ({ value }) =>
+    IO.addButtonListener('toggle-simulation', ({ value, setValue }) => {
+      this.setButton = setValue
+
       value ? this.start() : this.stop()
-    )
+    })
+
+    // Prepara para resetar o mapa
+    Drawable.addEventListener('resetMap', () => {
+      if (this.setButton != null) this.setButton(false)
+      this.stop()
+    })
   }
 
   static start() {

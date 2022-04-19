@@ -49,6 +49,7 @@ export default class Car extends Drawable {
   }
 
   get isHovered() {
+    if (this.x == undefined) return false
     return this.distanceFromMouse < this.carImage.height + 3
   }
 
@@ -90,10 +91,12 @@ export default class Car extends Drawable {
   constructor(id, ...rawProperties) {
     const properties = Car.nameProperties(...rawProperties)
 
+    const { edge, raiseEvent } = properties
+
+    delete properties.raiseEvent
+
     // Invoca construtor pai
     super(id, properties)
-
-    const { edge } = properties
 
     Car.sortedCoords.register(this)
     this.onDestroy.push(() => Car.sortedCoords.remove(this))
@@ -142,10 +145,12 @@ export default class Car extends Drawable {
       }
     })
 
-    Car.raiseEvent('new', this)
+    if (raiseEvent) Car.raiseEvent('new', this)
   }
 
   draw(drawer) {
+    if (this.x == undefined) return
+
     const { drawImage, strokeArc } = drawer.drawWith({
       style: highlightColor,
       lineWidth: 5,
@@ -280,17 +285,30 @@ export default class Car extends Drawable {
 
   // Nao avisa o antigo cliente
   setRouteUnchained(newRoute) {
-    if (newRoute == null) Car.raiseEvent('liberate', this)
+    if (newRoute == null && Drawable.isErasing == false)
+      Car.raiseEvent('liberate', this)
 
     this.#assignedRoute = newRoute
   }
 
-  static nameProperties(edge, realX, realY) {
+  static nameProperties(edge, realX, realY, raiseEvent) {
     // Dada a posicao inicial e aresta, descobrimos em que parte da rua o carro esta, e com isso qual a real posicao inicial dele
     const { x, y } = edge.getProjectionCoordinates({ x: realX, y: realY })
 
     // console.log(`Original: ${realX}, ${realY}\nNew: ${x}, ${y}\n\n`)
 
-    return { x, y, edge }
+    return { x, y, edge, raiseEvent }
+  }
+
+  static resetMap() {
+    for (const instance of Object.values(this.instances)) {
+      instance.destroy()
+    }
+
+    this.instances = {}
+
+    this.sortedCoords.clear()
+
+    this.#selected = null
   }
 }

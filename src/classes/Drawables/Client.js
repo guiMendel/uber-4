@@ -213,7 +213,7 @@ export default class Client extends Drawable {
   // Caso o cliente estava no estado hovered na ultima iteracao
   wasHovered = false
 
-  constructor(id, location, destination, image, rotation) {
+  constructor(id, location, destination, image, rotation, raiseEvent) {
     // Invoca construtor pai
     super(id, Client.nameProperties(location, destination))
 
@@ -258,7 +258,7 @@ export default class Client extends Drawable {
     // Levanta quando for destruido
     this.onDestroy.push(() => Client.raiseEvent('delete', this))
 
-    Client.raiseEvent('new', this)
+    if (raiseEvent) Client.raiseEvent('new', this)
   }
 
   draw(drawer) {
@@ -416,7 +416,8 @@ export default class Client extends Drawable {
     this.#selectedRoute = newRoute
     this.#selectedRouteCompatibility = Map.version
 
-    Client.raiseEvent('routeselect', { client: this, route: newRoute })
+    if (Drawable.isErasing == false)
+      Client.raiseEvent('routeselect', { client: this, route: newRoute })
 
     // Marca o carro como ocupado
     if (newRoute != null && newRoute != 'walk')
@@ -425,5 +426,19 @@ export default class Client extends Drawable {
 
   static nameProperties(location, destination) {
     return { ...location, destination }
+  }
+
+  static resetMap() {
+    for (const instance of Object.values(this.instances)) {
+      instance.destroy()
+    }
+
+    this.instances = {}
+
+    this.sortedCoords.clear()
+
+    this.#selected = null
+
+    this.hovered = null
   }
 }

@@ -25,7 +25,7 @@ export default class SortProperties {
   remove(instance) {
     // Pra cada propriedade
     for (const propertyHeap of Object.values(this.properties)) {
-      // Adiciona essa propriedade
+      // Remove essa propriedade
       propertyHeap.remove(instance)
     }
   }
@@ -42,5 +42,12 @@ export default class SortProperties {
   // Retorna a lista ordenada desta propriedade
   get(property) {
     return this.properties[property].array
+  }
+
+  // Apaga tudo
+  clear() {
+    for (const heap of Object.values(this.properties)) {
+      heap.clear()
+    }
   }
 }

@@ -21,6 +21,7 @@ import ClientCreator from './Drawables/Creators/ClientCreator'
 import StreetCreator from './Drawables/Creators/StreetCreator'
 import Car from './Drawables/Car'
 import CarCreator from './Drawables/Creators/CarCreator'
+import Drawable from './Drawables/Drawable'
 
 // Extrai valores uteis
 const { carWidth, clientWidth } = theme
@@ -97,6 +98,12 @@ export default class Map {
 
       // Armazena o wrapper de contexto para desenhar
       this.drawer = new Drawer(canvasContext)
+
+      // Prepara para resetar o mapa
+      Drawable.addEventListener(
+        'resetMap',
+        () => (Map.activeInteractionClass = null)
+      )
 
       while (true) {
         Map.#raiseEvent('newframe')

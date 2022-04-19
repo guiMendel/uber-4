@@ -51,10 +51,9 @@ export default class Edge extends Drawable {
     destination.destinationOf[this.id] = this
 
     this.onDestroy.push(() => {
-      console.log(this)
-
-      delete source.sourceOf[this.id]
-      delete destination.destinationOf[this.id]
+      if (source?.sourceOf != null) delete source.sourceOf[this.id]
+      if (destination?.destinationOf != null)
+        delete destination.destinationOf[this.id]
     })
 
     // Atualiza as ruas mais rapida e lenta
@@ -238,5 +237,18 @@ export default class Edge extends Drawable {
     )
 
     return { source, destination, mapSpeed, realDistance }
+  }
+
+  static resetMap() {
+    for (const instance of Object.values(this.instances)) {
+      instance.destroy()
+    }
+    
+    this.instances = {}
+
+    this.sortedCoords.clear()
+
+    this.slowestEdge = null
+    this.fastestEdge = null
   }
 }

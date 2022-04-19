@@ -18,9 +18,6 @@ export default function seedGraph(
   mapHeight = window.innerHeight * 2,
   minDistanceBetweenVertices = 400
 ) {
-  // Destroi os anteriormente definidos
-  Drawable.drawableInstances = {}
-
   if (numberOfVertices <= 1)
     throw new Error('Necessita de pelo menos 2 vertices')
 
@@ -46,6 +43,8 @@ export default function seedGraph(
   for (let vertexId = 0; vertexId < numberOfVertices; vertexId++) {
     const newCoords = randomCoords()
     new Vertex(vertexId, newCoords.x, newCoords.y, true)
+
+    // console.log(Object.values(Vertex.instances).length, 'vertices')
   }
 
   // Helpers para pegar vertice aleatorio
@@ -79,6 +78,8 @@ export default function seedGraph(
         mapSpeed: randomSpeed(),
       }
     )
+
+    // console.log(Object.values(Edge.instances).length, 'arestas')
   }
 
   // Gerar arestas para cada vertice
@@ -91,6 +92,8 @@ export default function seedGraph(
         mapSpeed: randomSpeed(),
       }
     )
+
+    // console.log(Object.values(Edge.instances).length, 'arestas')
   }
 
   // Pega uma aresta aleatoria
@@ -111,12 +114,24 @@ export default function seedGraph(
       carId,
       edge,
       edge.source.x + sin(edge.angle + 90) * displacement,
-      edge.source.y + cos(edge.angle + 90) * displacement
+      edge.source.y + cos(edge.angle + 90) * displacement,
+      false
     )
+
+    // console.log(Object.values(Car.instances).length, 'carros')
   }
 
   // Gerar clientes
   for (let clientId = 0; clientId < numberOfClients; clientId++) {
-    new Client(clientId, randomCoords(false), randomCoords(false))
+    new Client(
+      clientId,
+      randomCoords(false),
+      randomCoords(false),
+      undefined,
+      undefined,
+      false
+    )
+
+    // console.log(Object.values(Client.instances).length, 'clientes')
   }
 }

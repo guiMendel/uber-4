@@ -59,10 +59,11 @@ export default class Drawer {
         Drawable.drawableInstances[drawableClassName]
       )) {
         // Trigger the drawable animations
-        for (const animation of instance.animations) animation()
+        if (instance.animations != undefined)
+          for (const animation of instance.animations) animation()
 
         // Draw it
-        instance.draw(this)
+        instance?.draw(this)
       }
     }
   }
