@@ -15,8 +15,8 @@ const SideMenu = () => {
   }
 
   return (
-    <section className="menu">
-      <div className={`show-menu-${showMenu}`}>
+    <section className={`menu show-menu-${showMenu}`}>
+      <div>
         <Button
           name={'toggle-menu'}
           help={'Fechar/Abrir Menu'}
@@ -30,7 +30,7 @@ const SideMenu = () => {
             <RiMapLine />
             Em branco
           </span>
-          <span onClick={() => {}}>
+          <span onClick={() => Drawable.generateNewMap()}>
             <RiRoadMapFill />
             Gerar aleatóriamente
           </span>
