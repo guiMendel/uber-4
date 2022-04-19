@@ -293,4 +293,10 @@ export default class Car extends Drawable {
 
     return { x, y, edge }
   }
+
+  static eraseAllInstances() {
+    this.sortedCoords.clear()
+
+    this.#selected = null
+  }
 }

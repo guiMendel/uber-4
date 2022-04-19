@@ -120,6 +120,26 @@ export default class Drawable {
     Object.keys(this).forEach((property) => delete this[property])
   }
 
+  static eraseAllInstances() {
+    if (this.name != 'Drawable') return
+
+    // Apaga cada uma das classes
+    for (const drawableClassInstances of Object.values(
+      this.drawableInstances
+    )) {
+      const drawableClass = Object.values(drawableClassInstances)[0].constructor
+
+      drawableClass.eraseAllInstances()
+
+      for (const instance of Object.values(drawableClassInstances)) {
+        instance.destroy()
+      }
+    }
+
+    // Reseta as referencias principais
+    this.drawableInstances = {}
+  }
+
   // Permite observar eventos
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)

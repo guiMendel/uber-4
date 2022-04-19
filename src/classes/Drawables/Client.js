@@ -426,4 +426,12 @@ export default class Client extends Drawable {
   static nameProperties(location, destination) {
     return { ...location, destination }
   }
+
+  static eraseAllInstances() {
+    this.sortedCoords.clear()
+
+    this.#selected = null
+
+    this.hovered = null
+  }
 }
