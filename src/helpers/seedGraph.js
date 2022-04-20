@@ -24,7 +24,7 @@ export default function seedGraph(
   // Helper para gerar coordenadas aleatorias centralizadas em 0,0
   const randomCoords = (distantFromVertices = true) => {
     // Gera coordenadas
-    const newCoords = {
+    let newCoords = {
       x: Math.random() * mapWidth - mapWidth / 2,
       y: Math.random() * mapHeight - mapHeight / 2,
     }
@@ -32,8 +32,12 @@ export default function seedGraph(
     // Verifica se as coordenadas estao boas
     if (distantFromVertices)
       for (const vertex of Object.values(Vertex.instances)) {
-        if (getDistance(vertex, newCoords) < minDistanceBetweenVertices)
-          return randomCoords()
+        while (getDistance(vertex, newCoords) < minDistanceBetweenVertices) {
+          newCoords = {
+            x: Math.random() * mapWidth - mapWidth / 2,
+            y: Math.random() * mapHeight - mapHeight / 2,
+          }
+        }
       }
 
     return newCoords
