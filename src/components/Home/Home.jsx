@@ -4,6 +4,9 @@ import NewMap from './NewMap/NewMap'
 import Configuration from './Configuration/Configuration'
 import Credits from './Credits/Credits'
 import { IoIosArrowBack } from 'react-icons/io'
+import mapParamsConfiguration from './mapParamsConfiguration'
+import Slider from '../Slider/Slider'
+import ThirdScreen from './ThirdScreen/ThirdScreen'
 
 export default function Home({ startSimulation, setMapParams }) {
   // Closes the curtain
@@ -20,10 +23,6 @@ export default function Home({ startSimulation, setMapParams }) {
 
   // Menu to show on third screen
   const [thirdScreenComponent, setThirdScreenComponentRaw] = useState(null)
-  const thirdScreenOptions = {
-    start: StartBlankOption,
-  }
-  const ThirdScreen = thirdScreenOptions[thirdScreenComponent]
   const setThirdScreenComponent = (value) =>
     setThirdScreenComponentRaw((currentValue) =>
       value == currentValue ? null : value
@@ -127,23 +126,14 @@ export default function Home({ startSimulation, setMapParams }) {
             />
 
             {/* Show component if there is one */}
-            <ThirdScreen startSimulation={closeCurtain} />
+            <ThirdScreen
+              startSimulation={closeCurtain}
+              configuration={mapParamsConfiguration[thirdScreenComponent]}
+              owner={thirdScreenComponent}
+            />
           </div>
         )}
       </div>
     </div>
-  )
-}
-
-function StartBlankOption({ startSimulation }) {
-  return (
-    <>
-      <button
-        onClick={() => startSimulation({ method: 'blank' })}
-        className="start-simulation"
-      >
-        Start
-      </button>
-    </>
   )
 }

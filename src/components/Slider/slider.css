@@ -1,0 +1,47 @@
+.slider {
+  width: 5rem;
+
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.slider input {
+  width: 3rem;
+  font-size: inherit;
+  border: none;
+  padding: 0;
+
+  border-bottom: 2px solid var(--main);
+  padding-bottom: 0.2rem;
+  color: var(--main);
+  text-align: center;
+}
+
+.track {
+  flex: 1;
+  
+  height: 0.4em;
+  border-radius: 10px;
+
+  background-color: var(--main);
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  cursor: url(../../assets/link.cur), auto;
+}
+
+.slider .track .handle {
+  transform: translateX(-50%);
+  width: 1em;
+  aspect-ratio: 1/1;
+
+  box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.1);
+  background-color: var(--main);
+  filter: brightness(2.5);
+  border-radius: 50%;
+
+  position: absolute;
+  left: var(--position);
+}
