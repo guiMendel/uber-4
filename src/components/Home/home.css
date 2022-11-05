@@ -9,6 +9,33 @@
   padding: 2rem;
 }
 
+.home-container .upper-shadow {
+  position: fixed;
+  left: -5rem;
+  top: 0;
+
+  width: 110%;
+  box-shadow: 0 0 100px 30px black;
+  z-index: -1;
+}
+
+.home-container .upper-curtain {
+  position: fixed;
+  left: -5rem;
+  top: -130vh;
+
+  width: 110%;
+  height: 100vh;
+
+  background-color: black;
+
+  box-shadow: 0 0 100px 80px black;
+  z-index: 10;
+}
+.home-container .upper-curtain.play {
+  animation: slide-down 700ms ease-in-out;
+}
+
 .home-container div {
   display: flex;
 }
@@ -103,5 +130,15 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(130vh);
   }
 }

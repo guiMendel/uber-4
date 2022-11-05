@@ -1,19 +1,23 @@
 import './simulation.css'
 
-import Canvas from './components/Canvas/Canvas.jsx'
-import Button from './components/Button/Button.jsx'
-import InteractionControl from './components/InteractionControl/InteractionControl'
-import Coordinates from './components/Coordinates/Coordinates'
-import ErrorDisplay from './components/ErrorDisplay/ErrorDisplay'
-import SimulationControl from './components/SimulationControl/SimulationControl'
+import Canvas from '../Canvas/Canvas.jsx'
+import Button from '../Button/Button.jsx'
+import InteractionControl from '../InteractionControl/InteractionControl'
+import Coordinates from '../Coordinates/Coordinates'
+import ErrorDisplay from '../ErrorDisplay/ErrorDisplay'
+import SimulationControl from '../SimulationControl/SimulationControl'
+
 
 // Icones
 import { FaUserPlus, FaPencilAlt, FaCarSide, FaPlus } from 'react-icons/fa'
 
-export default function Simulation() {
+export default function Simulation({mapParams}) {
   return (
     <div className="simulation-view">
-      <Canvas />
+      {/* Curtain that reveals the simulation */}
+      <div className="curtain"></div>
+      
+      <Canvas mapParams={mapParams} />
 
       {/* Mostra erros conforme eles aparecem */}
       <ErrorDisplay />

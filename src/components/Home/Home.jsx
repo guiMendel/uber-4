@@ -5,7 +5,10 @@ import Configuration from './Configuration/Configuration'
 import Credits from './Credits/Credits'
 import { IoIosArrowBack } from 'react-icons/io'
 
-export default function Home() {
+export default function Home({ startSimulation, setMapParams }) {
+  // Closes the curtain
+  const [closingCurtain, setClosingCurtain] = useState(false)
+
   // Menu to show on second screen
   const [secondScreenComponent, setSecondScreenComponent] = useState(null)
   const secondScreenOptions = {
@@ -18,7 +21,7 @@ export default function Home() {
   // Menu to show on third screen
   const [thirdScreenComponent, setThirdScreenComponentRaw] = useState(null)
   const thirdScreenOptions = {
-    start: StartOption,
+    start: StartBlankOption,
   }
   const ThirdScreen = thirdScreenOptions[thirdScreenComponent]
   const setThirdScreenComponent = (value) =>
@@ -36,12 +39,25 @@ export default function Home() {
 
   const bindThirdMenu = (value) => () => setThirdScreenComponent(value)
 
+  const closeCurtain = (mapParams) => {
+    setMapParams(mapParams)
+    setClosingCurtain(true)
+  }
+
   // Returns the given string, and if the secondScreenComponent variable is equal to it, concatenates a space and the string 'active'
   const menuOptionClass = (className, compare) =>
     className + (className == compare ? ' active' : '')
 
   return (
     <div className="home-container">
+      {/* Upper curtain */}
+      <div
+        onAnimationEnd={startSimulation}
+        className={'upper-curtain' + (closingCurtain ? ' play' : '')}
+      ></div>
+      {/* Upper shadow */}
+      <div className="upper-shadow"></div>
+
       {/* Main Title */}
       <h1>Cabber</h1>
 
@@ -111,7 +127,7 @@ export default function Home() {
             />
 
             {/* Show component if there is one */}
-            <ThirdScreen />
+            <ThirdScreen startSimulation={closeCurtain} />
           </div>
         )}
       </div>
@@ -119,10 +135,15 @@ export default function Home() {
   )
 }
 
-function StartOption() {
+function StartBlankOption({ startSimulation }) {
   return (
     <>
-      <button className="start-simulation">Start</button>
+      <button
+        onClick={() => startSimulation({ method: 'blank' })}
+        className="start-simulation"
+      >
+        Start
+      </button>
     </>
   )
 }

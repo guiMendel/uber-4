@@ -6,6 +6,21 @@
   justify-content: center;
 }
 
+.simulation-view .curtain {
+  background-color: black;
+  z-index: 30;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  animation: fade-out 300ms ease-in;
+  animation-fill-mode: forwards;
+}
+
 .actions {
   position: fixed;
   display: flex;
@@ -53,4 +68,16 @@
   bottom: 0.2rem;
 
   font-size: 0.7rem;
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    display: none;
+    pointer-events: none;
+  }
 }
