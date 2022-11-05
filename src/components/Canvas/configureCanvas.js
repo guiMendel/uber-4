@@ -1,5 +1,5 @@
 // Configura o canvas: ajusta seu tamanho e o faz mudar de tamanho automaticamente conforme necessario
-export default function configurateCanvas(canvas) {
+export default function configureCanvas(canvas) {
   // Configura as dimensoes
   const adjustDimensions = () => {
     canvas.height = window.innerHeight

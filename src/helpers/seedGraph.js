@@ -16,7 +16,7 @@ export default function seedGraph(
   numberOfClients = 10,
   mapWidth = window.innerWidth * 2,
   mapHeight = window.innerHeight * 2,
-  minDistanceBetweenVertices = 400
+  minDistanceBetweenVertices = 200
 ) {
   // Destroi os anteriormente definidos
   Drawable.drawableInstances = {}
@@ -26,18 +26,35 @@ export default function seedGraph(
 
   // Helper para gerar coordenadas aleatorias centralizadas em 0,0
   const randomCoords = (distantFromVertices = true) => {
-    // Gera coordenadas
-    const newCoords = {
+    const getCoords = () => ({
       x: Math.random() * mapWidth - mapWidth / 2,
       y: Math.random() * mapHeight - mapHeight / 2,
-    }
+    })
+    
+    // Gera coordenadas
+    let newCoords = getCoords()
 
     // Verifica se as coordenadas estao boas
-    if (distantFromVertices)
-      for (const vertex of Object.values(Vertex.instances)) {
-        if (getDistance(vertex, newCoords) < minDistanceBetweenVertices)
-          return randomCoords()
+    if (distantFromVertices) {
+      let triesLeft = 30
+      while (--triesLeft > 0) {
+        let canStop = true
+
+        // For each vertex
+        for (const vertex of Object.values(Vertex.instances)) {
+          // If it's too close
+          if (getDistance(vertex, newCoords) < minDistanceBetweenVertices) {
+            // Cannot stop trying
+            canStop = false
+            break
+          }
+        }
+
+        // If is good, stop
+        if (canStop) break
+        newCoords = getCoords()
       }
+    }
 
     return newCoords
   }

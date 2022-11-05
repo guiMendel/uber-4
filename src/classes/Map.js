@@ -66,7 +66,7 @@ export default class Map {
     // Define o singleton
     Map.instance = this
 
-    // Inica as iteracoes
+    // Inicia as iteracoes
     const start = async () => {
       // Configura IO
       IO.setup()
@@ -211,7 +211,7 @@ export default class Map {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe IO nao fornece um eventListener do tipo "${type}"`
+        `A classe Map nao fornece um eventListener do tipo "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -221,7 +221,7 @@ export default class Map {
   static removeEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe IO nao fornece um eventListener do tipo "${type}"`
+        `A classe Map nao fornece um eventListener do tipo "${type}"`
       )
 
     const index = this.listeners[type].indexOf(callback)
@@ -235,7 +235,7 @@ export default class Map {
   static #raiseEvent(type, payload) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `Tentativa em IO de levantar evento de tipo inexistente "${type}"`
+        `Tentativa em Map de levantar evento de tipo inexistente "${type}"`
       )
 
     for (const listener of this.listeners[type]) listener(payload)

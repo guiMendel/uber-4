@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import configurateCanvas from './configurateCanvas'
+import configureCanvas from './configureCanvas'
 import Map from '../../classes/Map'
-
-import defaultCursor from '../../assets/arrow.cur'
 
 export default function Canvas() {
   // Pega a referencia do canvas
@@ -14,7 +12,7 @@ export default function Canvas() {
 
     // Configurate canvas
     // TODO: fazer redesenhar o canvas sempre que alterar as dimensoes
-    configurateCanvas(canvasRef.current)
+    configureCanvas(canvasRef.current)
 
     // Pegar o context
     const context = canvasRef.current.getContext('2d')
