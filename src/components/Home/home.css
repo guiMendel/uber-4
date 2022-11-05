@@ -9,23 +9,31 @@
   padding: 2rem;
 }
 
+.home-container div {
+  display: flex;
+}
+
 .home-container .menus {
   margin-top: 3rem;
 
   width: 100%;
-  display: flex;
-
-  justify-content: space-between;
 }
 
 .home-container .menus > div {
   width: 33.3%;
 }
 
-.home-container .main-menu {
-  display: flex;
+.home-container .menu {
   flex-direction: column;
   gap: 2rem;
+
+  animation: slide-in 400ms;
+}
+
+.main.menu {
+  animation-delay: 1s;
+  animation-fill-mode: backwards;
+  animation-duration: 1s;
 }
 
 .home-container h1 {
@@ -39,6 +47,7 @@
 
 .home-container button {
   width: 80%;
+
   font-size: 1.5rem;
 
   padding: 0;
@@ -49,6 +58,19 @@
   background: none;
 
   transition: all 150ms, padding 200ms ease-out;
+  cursor: url(../../assets/link.cur), auto;
+}
+
+
+.home-container .icon {
+  cursor: url(../../assets/link.cur), auto;
+  transition: all 150ms, padding 200ms ease-out;
+}
+
+.home-container .icon:hover {
+  --main: hsl(190, 80%, 60%);
+
+  color: var(--main);
 }
 
 .home-container button:hover {
@@ -56,4 +78,26 @@
 
   padding-left: 1rem;
   color: var(--main);
+}
+
+.home-container button.active {
+  padding-left: 3rem;
+}
+.back.icon {
+  font-size: 1.5rem;
+  margin-top: -3rem;
+  margin-bottom: -1rem;
+  height: 2rem;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-2rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
