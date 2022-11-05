@@ -30,6 +30,11 @@
   animation: slide-in 400ms;
 }
 
+.home-container .menu.faded {
+  --main: rgb(158, 158, 158);
+  color: var(--main);
+}
+
 .main.menu {
   animation-delay: 1s;
   animation-fill-mode: backwards;
@@ -60,7 +65,6 @@
   transition: all 150ms, padding 200ms ease-out;
   cursor: url(../../assets/link.cur), auto;
 }
-
 
 .home-container .icon {
   cursor: url(../../assets/link.cur), auto;

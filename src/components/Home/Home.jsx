@@ -50,7 +50,11 @@ export default function Home() {
 
       <div className="menus">
         {/* Main Menu */}
-        <div className="main menu">
+        <div
+          className={
+            'main menu' + (secondScreenComponent == null ? '' : ' faded')
+          }
+        >
           {/* Create new map */}
           <button
             onClick={bindSecondMenu('new-map')}
@@ -78,7 +82,11 @@ export default function Home() {
 
         {/* Second screen */}
         {secondScreenComponent != null && (
-          <div className="second menu">
+          <div
+            className={
+              'second menu' + (thirdScreenComponent == null ? '' : ' faded')
+            }
+          >
             <IoIosArrowBack
               className="back icon"
               onClick={bindSecondMenu(null)}
