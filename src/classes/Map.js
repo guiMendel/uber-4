@@ -59,7 +59,7 @@ export default class Map {
     error: [],
   }
 
-  constructor(canvasContext) {
+  constructor(canvasContext, { method, parameters }) {
     // Se ja ha uma instancia, use ela
     if (Map.instance != undefined) return Map.instance
 
@@ -74,8 +74,17 @@ export default class Map {
       // Inicializa a camera
       Camera.setup(canvasContext)
 
-      // Gera um grafo de teste
-      seedGraph()
+      // Generate map
+      if (method == 'random') {
+        seedGraph(
+          parameters.numberOfVertices,
+          parameters.numberOfCars,
+          parameters.numberOfClients,
+          parameters.mapWidth,
+          parameters.mapHeight,
+          parameters.minDistanceBetweenVertices
+        )
+      }
 
       Car.setup()
       Client.setup()
