@@ -29,6 +29,8 @@ textarea {
 
 :root {
   font-size: 18px;
+
+  --main: rgb(75, 75, 75);
 }
 
 #root {
@@ -43,7 +45,7 @@ textarea {
 
   min-height: 100vh;
 
-  color: rgb(75, 75, 75);
+  color: var(--main);
 }
 
 button,
