@@ -1,4 +1,4 @@
-import seedGraph from '../helpers/seedGraph'
+import generateRandomMap from '../helpers/mapGenerators/generateRandomMap'
 import delay from '../helpers/delay'
 import theme from '../configuration/theme'
 import appConfig from '../configuration/appConfig'
@@ -21,6 +21,8 @@ import ClientCreator from './Drawables/Creators/ClientCreator'
 import StreetCreator from './Drawables/Creators/StreetCreator'
 import Car from './Drawables/Car'
 import CarCreator from './Drawables/Creators/CarCreator'
+import Drawable from './Drawables/Drawable'
+import generateCityBlocks from '../helpers/mapGenerators/generateCityBlocks.'
 
 // Extrai valores uteis
 const { carWidth, clientWidth } = theme
@@ -59,6 +61,32 @@ export default class Map {
     error: [],
   }
 
+  // Initializes map given a method and parameters
+  generateMap(method, parameters) {
+    // Destroy previous map
+    Drawable.drawableInstances = {}
+
+    if (method == 'random') {
+      generateRandomMap(
+        parameters.numberOfVertices,
+        parameters.numberOfCars,
+        parameters.numberOfClients,
+        parameters.mapWidth,
+        parameters.mapHeight,
+        parameters.minDistanceBetweenVertices
+      )
+    }
+
+    if (method == 'city-blocks') {
+      generateCityBlocks(
+        parameters.numberOfBlocks,
+        parameters.blockSize,
+        parameters.numberOfCars,
+        parameters.numberOfClients
+      )
+    }
+  }
+
   constructor(canvasContext, { method, parameters }) {
     // Se ja ha uma instancia, use ela
     // if (Map.instance != undefined) return Map.instance
@@ -76,16 +104,7 @@ export default class Map {
       Camera.setup(canvasContext)
 
       // Generate map
-      if (method == 'random') {
-        seedGraph(
-          parameters.numberOfVertices,
-          parameters.numberOfCars,
-          parameters.numberOfClients,
-          parameters.mapWidth,
-          parameters.mapHeight,
-          parameters.minDistanceBetweenVertices
-        )
-      }
+      this.generateMap(method, parameters)
 
       Car.setup()
       Client.setup()

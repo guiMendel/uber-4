@@ -1,5 +1,5 @@
 import appConfig from '../configuration/appConfig'
-import { cos, sin } from '../helpers/trygonometry'
+import { cos, sin } from '../helpers/trigonometry'
 import { angleBetween, getDistance } from '../helpers/vectorDistance'
 import IO from './IO'
 import Map from './Map'

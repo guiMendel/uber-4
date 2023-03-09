@@ -1,16 +1,16 @@
-import Client from '../classes/Drawables/Client'
-import Car from '../classes/Drawables/Car'
-import Drawable from '../classes/Drawables/Drawable'
-import Edge from '../classes/Drawables/Edge'
-import Vertex from '../classes/Drawables/Vertex'
-import appConfig from '../configuration/appConfig'
-import { sin, cos } from './trygonometry'
-import { getDistance } from './vectorDistance'
+import Client from '../../classes/Drawables/Client'
+import Car from '../../classes/Drawables/Car'
+import Drawable from '../../classes/Drawables/Drawable'
+import Edge from '../../classes/Drawables/Edge'
+import Vertex from '../../classes/Drawables/Vertex'
+import appConfig from '../../configuration/appConfig'
+import { sin, cos } from '../trigonometry'
+import { getDistance } from '../vectorDistance'
 
 const { pixelsPerKilometer } = appConfig
 
 // Gera grafos e arestas aleatorios para fins de teste
-export default function seedGraph(
+export default function generateRandomMap(
   numberOfVertices = 20,
   numberOfCars = 4,
   numberOfClients = 10,
@@ -18,9 +18,6 @@ export default function seedGraph(
   mapHeight = window.innerHeight * 2,
   minDistanceBetweenVertices = 200
 ) {
-  // Destroi os anteriormente definidos
-  Drawable.drawableInstances = {}
-
   if (numberOfVertices <= 1)
     throw new Error('Necessita de pelo menos 2 vertices')
 

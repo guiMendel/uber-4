@@ -8,7 +8,7 @@ import {
   displacePoint,
   getDistance,
 } from '../../helpers/vectorDistance'
-import { cos, sin } from '../../helpers/trygonometry'
+import { cos, sin } from '../../helpers/trigonometry'
 import SortProperties from '../SortProperties'
 
 const { highlightColor, clientHoverGrow } = theme

@@ -1,6 +1,7 @@
 export default {
   'city-blocks': {
     numberOfBlocks: { type: 'number', min: 1, max: 30 },
+    blockSize: { type: 'number', min: 20, max: 500, unit: 'px' },
     numberOfCars: { type: 'number', min: 0, max: 15 },
     numberOfClients: { type: 'number', min: 0, max: 40 },
   },

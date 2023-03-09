@@ -1,5 +1,5 @@
 import theme from '../../configuration/theme'
-import { sin, cos } from '../../helpers/trygonometry'
+import { sin, cos } from '../../helpers/trigonometry'
 import {
   angleBetween,
   getDistance,
