@@ -32,12 +32,12 @@ export default function Coordinates() {
       <div className="coordinates">
         <section>
           {' '}
-          <span>MAPA</span>
+          <span>PIXELS</span>
           <span> {coords.map.x} </span> <span> {coords.map.y} </span>
         </section>
         <section>
           {' '}
-          <span>REAL</span>
+          <span>KMS</span>
           <span> {coords.real.x} </span> <span> {coords.real.y} </span>
         </section>
       </div>
