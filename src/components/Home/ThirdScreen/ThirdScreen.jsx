@@ -1,5 +1,5 @@
 import './thirdScreen.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Slider from '../../Slider/Slider'
 
 export default function ThirdScreen({ startSimulation, configuration, owner }) {
@@ -19,6 +19,8 @@ export default function ThirdScreen({ startSimulation, configuration, owner }) {
     const splitText = text.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()
     return splitText.charAt(0).toUpperCase() + splitText.slice(1)
   }
+
+  useEffect(() => setParameterValues(initialParameterValues), [configuration])
 
   return (
     <>

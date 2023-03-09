@@ -13,6 +13,7 @@ export default function Home({ startSimulation, setMapParams }) {
   const [closingCurtain, setClosingCurtain] = useState(false)
 
   // Menu to show on second screen
+  // A string which identifies the second screen
   const [secondScreenComponent, setSecondScreenComponent] = useState(null)
   const secondScreenOptions = {
     'new-map': NewMap,
@@ -22,6 +23,7 @@ export default function Home({ startSimulation, setMapParams }) {
   const SecondScreen = secondScreenOptions[secondScreenComponent]
 
   // Menu to show on third screen
+  // A string which identifies the third screen
   const [thirdScreenComponent, setThirdScreenComponentRaw] = useState(null)
   const setThirdScreenComponent = (value) =>
     setThirdScreenComponentRaw((currentValue) =>

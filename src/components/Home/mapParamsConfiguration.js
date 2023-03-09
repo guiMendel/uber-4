@@ -1,5 +1,9 @@
 export default {
-  'city-blocks': {},
+  'city-blocks': {
+    numberOfBlocks: { type: 'number', min: 1, max: 30 },
+    numberOfCars: { type: 'number', min: 0, max: 15 },
+    numberOfClients: { type: 'number', min: 0, max: 40 },
+  },
   random: {
     numberOfVertices: { type: 'number', min: 2, max: 30 },
     numberOfCars: { type: 'number', min: 0, max: 15 },

@@ -61,7 +61,8 @@ export default class Map {
 
   constructor(canvasContext, { method, parameters }) {
     // Se ja ha uma instancia, use ela
-    if (Map.instance != undefined) return Map.instance
+    // if (Map.instance != undefined) return Map.instance
+    if (Map.instance != undefined) throw new Error('Duplicating map instance')
 
     // Define o singleton
     Map.instance = this
@@ -152,12 +153,12 @@ export default class Map {
   // Resolve assim que um novo frame comecar
   static async endOfFrame() {
     return new Promise((resolve) => {
-      function resolveAndUnsubcribe() {
+      function resolveAndUnsubscribe() {
         resolve()
-        Map.removeEventListener('newframe', resolveAndUnsubcribe)
+        Map.removeEventListener('newframe', resolveAndUnsubscribe)
       }
 
-      this.addEventListener('newframe', resolveAndUnsubcribe)
+      this.addEventListener('newframe', resolveAndUnsubscribe)
     })
   }
 
