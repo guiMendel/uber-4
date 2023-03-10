@@ -4,6 +4,7 @@ export default {
     blockSize: { type: 'number', min: 20, max: 500, unit: 'px' },
     numberOfCars: { type: 'number', min: 0, max: 15 },
     numberOfClients: { type: 'number', min: 0, max: 40 },
+    blocksAngle: { type: 'number', min: 0, max: 90 },
   },
   random: {
     numberOfVertices: { type: 'number', min: 2, max: 30 },

@@ -4,6 +4,7 @@ import Edge from '../../classes/Drawables/Edge'
 import appConfig from '../../configuration/appConfig'
 import Random from '../../classes/Random'
 import { generateRandomCars, generateRandomClients } from './generateRandomMap'
+import { cos, sin } from '../trigonometry'
 
 const { pixelsPerKilometer } = appConfig
 
@@ -31,6 +32,9 @@ class Coordinate {
 
   // Block size to be used in coordinate calculation
   static blockSize = 50
+
+  // Rotation of blocks
+  static blocksAngle = 0
 
   static idGenerator = 0
 
@@ -71,8 +75,14 @@ class Coordinate {
   // Get map coordinates equivalent to this grid's coordinates
   asMapCoordinates() {
     return {
-      x: this.x * Coordinate.blockSize,
-      y: this.y * Coordinate.blockSize,
+      x:
+        (this.x * cos(Coordinate.blocksAngle) -
+          this.y * sin(Coordinate.blocksAngle)) *
+        Coordinate.blockSize,
+      y:
+        (this.x * sin(Coordinate.blocksAngle) +
+          this.y * cos(Coordinate.blocksAngle)) *
+        Coordinate.blockSize,
     }
   }
 
@@ -190,10 +200,12 @@ export default function generateCityBlocks(
   numberOfBlocks = 10,
   blockSize = window.innerWidth / 5,
   numberOfCars = 6,
-  numberOfClients = 15
+  numberOfClients = 15,
+  blocksAngle = 0
 ) {
   // Update config
   Coordinate.blockSize = blockSize
+  Coordinate.blocksAngle = blocksAngle
 
   // Create first block
   createCityBlock(Coordinate.at(0, 0))
