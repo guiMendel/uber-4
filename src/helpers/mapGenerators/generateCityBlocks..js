@@ -3,6 +3,7 @@ import Vertex from '../../classes/Drawables/Vertex'
 import Edge from '../../classes/Drawables/Edge'
 import appConfig from '../../configuration/appConfig'
 import Random from '../../classes/Random'
+import { generateRandomCars, generateRandomClients } from './generateRandomMap'
 
 const { pixelsPerKilometer } = appConfig
 
@@ -33,6 +34,11 @@ class Coordinate {
 
   static idGenerator = 0
 
+  static leftmost = null
+  static rightmost = null
+  static bottommost = null
+  static uppermost = null
+
   // Coordinates that might be used to create a new block
   static exploitableCoordinates = {}
 
@@ -46,6 +52,15 @@ class Coordinate {
     this.content = null
     this.vertex = null
     Coordinate.exploitableCoordinates[this.id] = this
+
+    if (Coordinate.leftmost == null || this.x < Coordinate.leftmost.x)
+      Coordinate.leftmost = this
+    if (Coordinate.rightmost == null || this.x > Coordinate.rightmost.x)
+      Coordinate.rightmost = this
+    if (Coordinate.bottommost == null || this.y > Coordinate.bottommost.y)
+      Coordinate.bottommost = this
+    if (Coordinate.uppermost == null || this.y < Coordinate.uppermost.y)
+      Coordinate.uppermost = this
   }
 
   // Whether this coordinate is available to be used
@@ -188,11 +203,6 @@ export default function generateCityBlocks(
 
   // While there are more blocks to create
   while (blocksCreated < numberOfBlocks) {
-    console.log(
-      Object.keys(Coordinate.exploitableCoordinates).length,
-      'coords left'
-    )
-
     // If no more coordinates are left to exploit, panic
     if (Object.keys(Coordinate.exploitableCoordinates).length == 0)
       throw new Error('No more coordinates were left to generate blocks from')
@@ -200,8 +210,24 @@ export default function generateCityBlocks(
     // Pick a random coordinate that might be suitable for a new block
     const mainCoordinates = Random.sample(Coordinate.exploitableCoordinates)
 
-    console.log('trying coords', mainCoordinates)
-
     if (createCityBlock(mainCoordinates)) blocksCreated++
   }
+
+  // Create cars
+  generateRandomCars(numberOfCars)
+
+  // Padding for valid client positions, in pixels
+  const padding = 30
+
+  console.log(Coordinate.leftmost.asMapCoordinates())
+  console.log(Coordinate.rightmost.asMapCoordinates())
+
+  // Create clients
+  generateRandomClients(
+    numberOfClients,
+    Coordinate.leftmost.asMapCoordinates().x - padding,
+    Coordinate.rightmost.asMapCoordinates().x + padding,
+    Coordinate.uppermost.asMapCoordinates().y - padding,
+    Coordinate.bottommost.asMapCoordinates().y + padding
+  )
 }

@@ -6,14 +6,12 @@ import Vertex from '../../classes/Drawables/Vertex'
 import appConfig from '../../configuration/appConfig'
 import { sin, cos } from '../trigonometry'
 import { getDistance } from '../vectorDistance'
+import Random from '../../classes/Random'
 
 const { pixelsPerKilometer } = appConfig
 
-// Gera grafos e arestas aleatorios para fins de teste
-export default function generateRandomMap(
+export function generateRandomStreets(
   numberOfVertices = 20,
-  numberOfCars = 4,
-  numberOfClients = 10,
   mapWidth = window.innerWidth * 2,
   mapHeight = window.innerHeight * 2,
   minDistanceBetweenVertices = 200
@@ -24,10 +22,10 @@ export default function generateRandomMap(
   // Helper para gerar coordenadas aleatorias centralizadas em 0,0
   const randomCoords = (distantFromVertices = true) => {
     const getCoords = () => ({
-      x: Math.random() * mapWidth - mapWidth / 2,
-      y: Math.random() * mapHeight - mapHeight / 2,
+      x: Random.rangeFloat(-mapWidth / 2, mapWidth / 2),
+      y: Random.rangeFloat(-mapHeight / 2, mapHeight / 2),
     })
-    
+
     // Gera coordenadas
     let newCoords = getCoords()
 
@@ -63,7 +61,7 @@ export default function generateRandomMap(
   }
 
   // Helpers para pegar vertice aleatorio
-  const randomVertexId = () => Math.floor(Math.random() * numberOfVertices)
+  const randomVertexId = () => Random.rangeInt(0, numberOfVertices)
   const randomVertexIdExcept = (exceptId = null) => {
     const vertexId = randomVertexId()
     // Se gerou o mesmo id de except, tente outra vez
@@ -73,13 +71,10 @@ export default function generateRandomMap(
   // Gera uma velocidade aleatoria
   const randomSpeed = () => {
     const realSpeedRange = [30, 100]
-    const mapSpeedRange = [
-      realSpeedRange[0] * pixelsPerKilometer,
-      realSpeedRange[1] * pixelsPerKilometer,
-    ]
 
-    return (
-      Math.random() * (mapSpeedRange[1] - mapSpeedRange[0]) + mapSpeedRange[0]
+    return Random.rangeFloat(
+      realSpeedRange[0] * pixelsPerKilometer,
+      realSpeedRange[1] * pixelsPerKilometer
     )
   }
 
@@ -106,20 +101,16 @@ export default function generateRandomMap(
       }
     )
   }
+}
 
-  // Pega uma aresta aleatoria
-  const getRandomEdge = () =>
-    Drawable.drawableInstances[Edge.name][
-      Math.floor(Math.random() * numberOfVertices)
-    ]
-
+export function generateRandomCars(numberOfCars = 4) {
   // Gerar carros
   for (let carId = 0; carId < numberOfCars; carId++) {
     // Pega uma aresta
-    const edge = getRandomEdge()
+    const edge = Random.sample(Edge.instances)
 
     // Pega um deslocamento
-    const displacement = edge.mapDistance * Math.random()
+    const displacement = Random.rangeFloat(0, edge.mapDistance)
 
     new Car(
       carId,
@@ -128,9 +119,51 @@ export default function generateRandomMap(
       edge.source.y + cos(edge.angle + 90) * displacement
     )
   }
+}
+
+export function generateRandomClients(
+  numberOfClients = 10,
+  minX = -window.innerWidth,
+  maxX = window.innerWidth,
+  minY = -window.innerHeight,
+  maxY = window.innerHeight
+) {
+  console.log(minX, maxX, minY, maxY)
+
+  const randomCoords = () => ({
+    x: Random.rangeFloat(minX, maxX),
+    y: Random.rangeFloat(minY, maxY),
+  })
 
   // Gerar clientes
   for (let clientId = 0; clientId < numberOfClients; clientId++) {
-    new Client(clientId, randomCoords(false), randomCoords(false))
+    new Client(clientId, randomCoords(), randomCoords())
   }
+}
+
+// Gera grafos e arestas aleatorios para fins de teste
+export default function generateRandomMap(
+  numberOfVertices = 20,
+  numberOfCars = 4,
+  numberOfClients = 10,
+  mapWidth = window.innerWidth * 2,
+  mapHeight = window.innerHeight * 2,
+  minDistanceBetweenVertices = 200
+) {
+  generateRandomStreets(
+    numberOfVertices,
+    mapWidth,
+    mapHeight,
+    minDistanceBetweenVertices
+  )
+
+  generateRandomCars(numberOfCars)
+
+  generateRandomClients(
+    numberOfClients,
+    -mapWidth / 2,
+    mapWidth / 2,
+    -mapHeight / 2,
+    mapHeight / 2
+  )
 }
