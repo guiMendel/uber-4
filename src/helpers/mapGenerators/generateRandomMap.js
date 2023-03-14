@@ -128,8 +128,6 @@ export function generateRandomClients(
   minY = -window.innerHeight,
   maxY = window.innerHeight
 ) {
-  console.log(minX, maxX, minY, maxY)
-
   const randomCoords = () => ({
     x: Random.rangeFloat(minX, maxX),
     y: Random.rangeFloat(minY, maxY),

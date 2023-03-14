@@ -27,8 +27,12 @@ function createStreetBetween(vertex1, vertex2) {
 const vertexContent = 'vertex'
 const extendedEdgeContent = 'extended-edge'
 
+function stringify(x, y) {
+  return `${x},${y}`
+}
+
 class Coordinate {
-  static #instances = {}
+  static instances = {}
 
   // Block size to be used in coordinate calculation
   static blockSize = 50
@@ -57,13 +61,25 @@ class Coordinate {
     this.vertex = null
     Coordinate.exploitableCoordinates[this.id] = this
 
-    if (Coordinate.leftmost == null || this.x < Coordinate.leftmost.x)
+    if (
+      Coordinate.leftmost == null ||
+      this.asMapCoordinates().x < Coordinate.leftmost.asMapCoordinates().x
+    )
       Coordinate.leftmost = this
-    if (Coordinate.rightmost == null || this.x > Coordinate.rightmost.x)
+    if (
+      Coordinate.rightmost == null ||
+      this.asMapCoordinates().x > Coordinate.rightmost.asMapCoordinates().x
+    )
       Coordinate.rightmost = this
-    if (Coordinate.bottommost == null || this.y > Coordinate.bottommost.y)
+    if (
+      Coordinate.bottommost == null ||
+      this.asMapCoordinates().y > Coordinate.bottommost.asMapCoordinates().y
+    )
       Coordinate.bottommost = this
-    if (Coordinate.uppermost == null || this.y < Coordinate.uppermost.y)
+    if (
+      Coordinate.uppermost == null ||
+      this.asMapCoordinates().y < Coordinate.uppermost.asMapCoordinates().y
+    )
       Coordinate.uppermost = this
   }
 
@@ -108,89 +124,111 @@ class Coordinate {
   }
 
   static at(x, y) {
-    if (this.#instances[this.stringify(x, y)] == undefined) {
-      this.#instances[this.stringify(x, y)] = new Coordinate(x, y)
+    if (this.instances[stringify(x, y)] == undefined) {
+      this.instances[stringify(x, y)] = new Coordinate(x, y)
     }
 
-    return this.#instances[this.stringify(x, y)]
+    return this.instances[stringify(x, y)]
   }
 
-  static stringify(x, y) {
-    return `${x},${y}`
+  asString() {
+    return stringify(this.x, this.y)
   }
 }
 
-// Gets coordinates for a block given it's main vertex and where to place it
-// 0 places it bottom left, 1 top left, 2 top right, 3 bottom right
-function getBlockFor(mainCoordinates, index) {
-  const horizontalOffset = { 0: 1, 1: 1, 2: -1, 3: -1 }
-  const verticalOffset = { 0: -1, 1: 1, 2: -1, 3: 1 }
+class Block {
+  static instances = {}
 
-  return [
-    mainCoordinates,
-    mainCoordinates.displace(horizontalOffset[index], 0),
-    mainCoordinates.displace(horizontalOffset[index], verticalOffset[index]),
-    mainCoordinates.displace(0, verticalOffset[index]),
-  ]
+  // Blocks that may still have empty neighbors
+  static availableBlocks = {}
+
+  // Coordinate of top-left vertex of block 0,0
+  static originCoordinate = { x: 0, y: 0 }
+
+  constructor(x, y) {
+    if (isNaN(x) || isNaN(y))
+      throw new Error(`Invalid coordinates x: ${x}, y: ${y}`)
+
+    this.x = x
+    this.y = y
+    Block.availableBlocks[this.id] = this
+    Block.instances[this.id] = this
+  }
+
+  // Get top-left, top-right, bottom-right, bottom-left vertices of this block as coordinates
+  getCoordinates() {
+    return [
+      Coordinate.at(
+        this.x + Block.originCoordinate.x,
+        this.y + Block.originCoordinate.y
+      ),
+      Coordinate.at(
+        this.x + Block.originCoordinate.x + 1,
+        this.y + Block.originCoordinate.y
+      ),
+      Coordinate.at(
+        this.x + Block.originCoordinate.x + 1,
+        this.y + Block.originCoordinate.y + 1
+      ),
+      Coordinate.at(
+        this.x + Block.originCoordinate.x,
+        this.y + Block.originCoordinate.y + 1
+      ),
+    ]
+  }
+
+  // Checks whether there is a block at this position
+  static hasBlock(x, y) {
+    return this.instances[stringify(x, y)] != undefined
+  }
+
+  static at(x, y) {
+    if (this.hasBlock(x, y) == false) {
+      this.instances[stringify(x, y)] = new Block(x, y)
+    }
+
+    return this.instances[stringify(x, y)]
+  }
+
+  get id() {
+    return stringify(this.x, this.y)
+  }
 }
 
 // Creates a city block with the given coordinate as one of it's vertices
 // If the given coordinate is not free, does nothing
 // If no block is possible, sets the coordinate as dead
 // Returns true if a block was created, false otherwise
-function createCityBlock(mainCoordinates) {
+function createNeighbor(block) {
   // Get random block position index
   const initialBlockPositionIndex = Math.floor(Math.random() * 4)
   let blockPositionOffset = 0
 
-  // Detect which streets will need to be added
-  const streetsToAdd = {}
+  // Maps neighbor index to it's position
+  const getNeighbor = (index) => ({
+    x: block.x + (index == 1 || index == 2 ? 1 : 0),
+    y: block.y + (index == 2 || index == 3 ? 1 : 0),
+  })
 
-  const registerStreetAdd = (coord1, coord2) => {
-    const [a, b] = [coord1.id, coord2.id].sort()
-
-    if (coord1.id === coord2.id) {
-      console.log(' oh shit')
-      console.log(coord1)
-      console.log(coord2)
-      throw new Error(
-        'Trying to register a street between the same coordinates'
-      )
-    }
-
-    streetsToAdd[JSON.stringify([a, b])] = [coord1, coord2]
-  }
-
-  while (Object.keys(streetsToAdd).length == 0) {
+  while (
+    Block.hasBlock(
+      getNeighbor(mod(initialBlockPositionIndex + blockPositionOffset, 4))
+    )
+  ) {
     // Detect case where all possible block positions were checked and none of them were possible
-    if (blockPositionOffset >= 4) {
-      // Remove this coordinates from the possible coordinates object
-      delete Coordinate.exploitableCoordinates[mainCoordinates.id]
+    if (++blockPositionOffset >= 4) {
+      // Remove this block from the possible block object
+      delete Block.availableBlocks[block.id]
 
       return false
     }
-
-    // Get coordinates for this block position
-    const coordinates = getBlockFor(
-      mainCoordinates,
-      mod(initialBlockPositionIndex + blockPositionOffset++, 4)
-    )
-
-    for (let i = 0; i < coordinates.length; i++) {
-      const coordinate = coordinates[i]
-
-      // If it's not free, skip it
-      if (coordinate.isFree() == false) continue
-
-      // Set up street add between it and it's neighbors
-      registerStreetAdd(coordinate, coordinates[mod(i + 1, 4)])
-      registerStreetAdd(coordinate, coordinates[mod(i - 1, 4)])
-    }
   }
 
-  // Add streets marked to be added
-  for (const [coord1, coord2] of Object.values(streetsToAdd))
-    createStreetBetween(coord1.getVertex(), coord2.getVertex())
+  // Add block
+  const blockPosition = getNeighbor(
+    mod(initialBlockPositionIndex + blockPositionOffset, 4)
+  )
+  new Block(blockPosition.x, blockPosition.y)
 
   return true
 }
@@ -204,35 +242,47 @@ export default function generateCityBlocks(
   blocksAngle = 0
 ) {
   // Update config
+  Block.originCoordinate = {
+    x: Random.rangeInt(0, 2),
+    y: Random.rangeInt(0, 2),
+  }
+
+  console.log('Block.originCoordinate', Block.originCoordinate)
+
   Coordinate.blockSize = blockSize
   Coordinate.blocksAngle = blocksAngle
 
   // Create first block
-  createCityBlock(Coordinate.at(0, 0))
+  // createNeighbor(Coordinate.at(0, 0))
+  new Block(0, 0)
 
   // Count of blocks created
   let blocksCreated = 1
 
   // While there are more blocks to create
   while (blocksCreated < numberOfBlocks) {
-    // If no more coordinates are left to exploit, panic
-    if (Object.keys(Coordinate.exploitableCoordinates).length == 0)
-      throw new Error('No more coordinates were left to generate blocks from')
+    // If no more blocks are left to exploit, panic
+    if (Object.keys(Block.availableBlocks).length == 0)
+      throw new Error(
+        'No more blocks were left to generate neighbor blocks from'
+      )
+    // if (Object.keys(Coordinate.exploitableCoordinates).length == 0)
+    //   throw new Error('No more coordinates were left to generate blocks from')
 
-    // Pick a random coordinate that might be suitable for a new block
-    const mainCoordinates = Random.sample(Coordinate.exploitableCoordinates)
+    // Pick a random block that might be suitable
+    const block = Random.sample(Block.availableBlocks)
 
-    if (createCityBlock(mainCoordinates)) blocksCreated++
+    if (createNeighbor(block)) blocksCreated++
   }
+
+  // Generate vertices and streets for these blocks
+  generateStreetsForBlocks()
 
   // Create cars
   generateRandomCars(numberOfCars)
 
   // Padding for valid client positions, in pixels
   const padding = 30
-
-  console.log(Coordinate.leftmost.asMapCoordinates())
-  console.log(Coordinate.rightmost.asMapCoordinates())
 
   // Create clients
   generateRandomClients(
@@ -242,4 +292,48 @@ export default function generateCityBlocks(
     Coordinate.uppermost.asMapCoordinates().y - padding,
     Coordinate.bottommost.asMapCoordinates().y + padding
   )
+}
+
+function generateStreetsForBlocks() {
+  // A graph to simulate the streets
+  const streetGraph = {}
+  const streetVertices = []
+  const streets = []
+
+  // Create street between 2 coordinates
+  function addStreet(coordinateA, coordinateB) {
+    streets.push({ origin: coordinateA, target: coordinateB })
+
+    if (streetGraph[coordinateA.asString()] != undefined)
+      streetGraph[coordinateA.asString()].push(coordinateB)
+    else streetGraph[coordinateA.asString()] = [coordinateB]
+  }
+
+  for (const block of Object.values(Block.instances)) {
+    const blockCoordinates = block.getCoordinates()
+
+    for (let i = 0; i < 4; i++) {
+      streetVertices.push(blockCoordinates[i].asString())
+      addStreet(blockCoordinates[i], blockCoordinates[mod(i + 1, 4)])
+      addStreet(blockCoordinates[i], blockCoordinates[mod(i - 1, 4)])
+    }
+  }
+
+  // Shuffle lists
+  Random.shuffle(streetVertices)
+  Random.shuffle(streets)
+
+  // Randomly remove vertices
+  // Ensure graph always stays connected for each vertex
+
+  // Randomly remove streets
+  // Ensure graph always stays connected for each vertex
+
+  // Effectively create streets
+  let streetId = 0
+
+  for (const street of streets)
+    new Edge(streetId++, street.origin.getVertex(), street.target.getVertex(), {
+      mapSpeed: 60 * pixelsPerKilometer,
+    })
 }
