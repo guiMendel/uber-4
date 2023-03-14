@@ -201,22 +201,33 @@ class Block {
 // Returns true if a block was created, false otherwise
 function createNeighbor(block) {
   // Get random block position index
-  const initialBlockPositionIndex = Math.floor(Math.random() * 4)
+  const initialBlockPositionIndex = Random.rangeInt(0, 8)
   let blockPositionOffset = 0
 
   // Maps neighbor index to it's position
-  const getNeighbor = (index) => ({
-    x: block.x + (index == 1 || index == 2 ? 1 : 0),
-    y: block.y + (index == 2 || index == 3 ? 1 : 0),
-  })
+  const getNeighbor = (index) => {
+    let x = 0
+    let y = 0
+
+    if (index == 0 || index >= 6) x = -1
+    else if (index != 1 && index != 5) x = 1
+
+    if (index <= 2) y = -1
+    else if (index != 3 && index != 7) y = 1
+
+    return {
+      x: block.x + x,
+      y: block.y + y,
+    }
+  }
 
   while (
     Block.hasBlock(
-      getNeighbor(mod(initialBlockPositionIndex + blockPositionOffset, 4))
+      getNeighbor(mod(initialBlockPositionIndex + blockPositionOffset, 8))
     )
   ) {
     // Detect case where all possible block positions were checked and none of them were possible
-    if (++blockPositionOffset >= 4) {
+    if (++blockPositionOffset >= 8) {
       // Remove this block from the possible block object
       delete Block.availableBlocks[block.id]
 
@@ -226,7 +237,7 @@ function createNeighbor(block) {
 
   // Add block
   const blockPosition = getNeighbor(
-    mod(initialBlockPositionIndex + blockPositionOffset, 4)
+    mod(initialBlockPositionIndex + blockPositionOffset, 8)
   )
   new Block(blockPosition.x, blockPosition.y)
 

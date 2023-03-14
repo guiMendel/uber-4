@@ -1,15 +1,15 @@
 export default {
   'city-blocks': {
     numberOfBlocks: { type: 'number', min: 1, max: 30 },
-    blockSize: { type: 'number', min: 20, max: 500, unit: 'px' },
+    blockSize: { type: 'number', min: 90, max: 400, unit: 'px' },
     numberOfCars: { type: 'number', min: 0, max: 15 },
-    numberOfClients: { type: 'number', min: 0, max: 40 },
+    numberOfClients: { type: 'number', min: 0, max: 20 },
     blocksAngle: { type: 'number', min: 0, max: 90 },
   },
   random: {
     numberOfVertices: { type: 'number', min: 2, max: 30 },
     numberOfCars: { type: 'number', min: 0, max: 15 },
-    numberOfClients: { type: 'number', min: 0, max: 40 },
+    numberOfClients: { type: 'number', min: 0, max: 20 },
     mapWidth: {
       type: 'number',
       min: 500,
