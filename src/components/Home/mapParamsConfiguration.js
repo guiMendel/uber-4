@@ -3,9 +3,9 @@ export default {
     numberOfBlocks: {
       type: 'number',
       min: 1,
-      max: 30,
+      max: 120,
       randMin: 3,
-      randMax: 25,
+      randMax: 45,
     },
     blockSize: {
       type: 'number',
@@ -32,6 +32,8 @@ export default {
       randMax: 80,
     },
     edgeOmitChance: { type: 'number', min: 0, max: 95, randMin: 15 },
+    lowSpeedLaneProportion: { type: 'number', min: 0, max: 50, randMax: 25 },
+    highSpeedLaneProportion: { type: 'number', min: 0, max: 50, randMax: 25 },
   },
   random: {
     numberOfVertices: { type: 'number', min: 2, max: 30 },

@@ -86,6 +86,8 @@ export default class Map {
         parameters.blocksAngle,
         parameters.vertexOmitChance,
         parameters.edgeOmitChance,
+        parameters.lowSpeedLaneProportion,
+        parameters.highSpeedLaneProportion,
       )
     }
   }

@@ -8,6 +8,10 @@ import { cos, sin } from '../trigonometry'
 
 const { pixelsPerKilometer } = appConfig
 
+const defaultLaneSpeed = 60 * pixelsPerKilometer
+const slowLaneSpeed = 40 * pixelsPerKilometer
+const fastLaneSpeed = 80 * pixelsPerKilometer
+
 // True mod
 function mod(number, modBase) {
   return ((number % modBase) + modBase) % modBase
@@ -145,6 +149,71 @@ class Coordinate {
 
     return blocks
   }
+
+  // Sets speed for lane that passes along this coordinate
+  setLaneSpeed(
+    newSpeed,
+    lanesLeft,
+    direction = Random.sample(['horizontal', 'vertical'])
+  ) {
+    // If no vertex or no more lanes left, stop
+    if (this.vertex == null || lanesLeft.value <= 0) return
+
+    // Get neighbors along this direction
+    const neighbors = {
+      horizontal: [
+        Coordinate.at(this.x - 1, this.y),
+        Coordinate.at(this.x + 1, this.y),
+      ],
+      vertical: [
+        Coordinate.at(this.x, this.y - 1),
+        Coordinate.at(this.x, this.y + 1),
+      ],
+    }[direction]
+
+    // For each of these neighbors
+    // Discard those without a vertex
+    for (const neighbor of neighbors.filter(
+      (neighbor) => neighbor.vertex != null
+    )) {
+      const lanes = []
+
+      // Find lanes between this coord and this neighbor
+      for (const lane of Object.values(neighbor.getVertex().sourceOf)) {
+        // Check if this coord is this lane's target and if it's speed is not yet the target speed
+        if (
+          lane.destination.id == this.getVertex().id &&
+          lane.mapSpeed != newSpeed
+        )
+          lanes.push(lane)
+      }
+
+      for (const lane of Object.values(neighbor.getVertex().destinationOf)) {
+        // Check if this coord is this lane's origin and if it's speed is still the default value
+        if (
+          lane.source.id == this.getVertex().id &&
+          lane.mapSpeed == defaultLaneSpeed
+        )
+          lanes.push(lane)
+      }
+
+      // If no lanes between this coord and the neighbor, ignore it
+      if (lanes.length == 0) continue
+
+      // Set the lanes' speed
+      for (const lane of lanes) {
+        // Check for lane run out
+        if (lanesLeft.value-- <= 0) return
+
+        lane.mapSpeed = newSpeed
+      }
+
+      // Propagate
+      neighbor.setLaneSpeed(newSpeed, lanesLeft, direction)
+
+      if (lanesLeft.value <= 0) return
+    }
+  }
 }
 
 class Block {
@@ -263,7 +332,9 @@ export default function generateCityBlocks(
   numberOfClients = 15,
   blocksAngle = 0,
   vertexOmitChance = 20,
-  edgeOmitChance = 25
+  edgeOmitChance = 25,
+  lowSpeedLaneProportion = 5,
+  highSpeedLaneProportion = 5
 ) {
   // Update config
   Block.originCoordinate = {
@@ -299,6 +370,9 @@ export default function generateCityBlocks(
 
   // Generate vertices and streets for these blocks
   generateStreetsForBlocks(vertexOmitChance, edgeOmitChance)
+
+  // Alter lanes' speeds
+  alterLanesSpeeds(lowSpeedLaneProportion, highSpeedLaneProportion)
 
   // Create cars
   generateRandomCars(numberOfCars)
@@ -470,7 +544,7 @@ function generateStreetsForBlocks(vertexOmitChance, edgeOmitChance) {
     const target = Coordinate.instances[street.target]
 
     new Edge(streetId++, origin.getVertex(), target.getVertex(), {
-      mapSpeed: 60 * pixelsPerKilometer,
+      mapSpeed: defaultLaneSpeed,
     })
   }
 }
@@ -552,4 +626,44 @@ function depthFirstSearch(
   }
 
   return childrenSum + 1
+}
+
+function alterLanesSpeeds(lowSpeedLaneProportion, highSpeedLaneProportion) {
+  // How many lanes to set low speed
+  const lowSpeedLaneCount = {
+    value: Math.floor(
+      (Object.keys(Edge.instances).length * lowSpeedLaneProportion) / 100
+    ),
+  }
+
+  // How many lanes to set high speed
+  const highSpeedLaneCount = {
+    value: Math.floor(
+      (Object.keys(Edge.instances).length * highSpeedLaneProportion) / 100
+    ),
+  }
+
+  // Get array of shuffled coord ids
+  const shuffledCoordIds = Random.shuffle(Object.keys(Coordinate.instances))
+
+  // Iterator of ids
+  let idIterator = 0
+
+  // Set low speeds
+  while (lowSpeedLaneCount.value > 0 && idIterator < shuffledCoordIds.length) {
+    const coordinate = Coordinate.instances[shuffledCoordIds[idIterator++]]
+    coordinate.setLaneSpeed(slowLaneSpeed, lowSpeedLaneCount)
+  }
+
+  // Reset iterator
+  idIterator = 0
+
+  // Re-shuffle ids
+  Random.shuffle(shuffledCoordIds)
+
+  // Set high speeds
+  while (highSpeedLaneCount.value > 0 && idIterator < shuffledCoordIds.length) {
+    const coordinate = Coordinate.instances[shuffledCoordIds[idIterator++]]
+    coordinate.setLaneSpeed(fastLaneSpeed, highSpeedLaneCount)
+  }
 }
