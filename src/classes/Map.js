@@ -84,6 +84,8 @@ export default class Map {
         parameters.numberOfCars,
         parameters.numberOfClients,
         parameters.blocksAngle,
+        parameters.vertexOmitChance,
+        parameters.edgeOmitChance,
       )
     }
   }

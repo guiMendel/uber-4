@@ -1,14 +1,19 @@
 import './thirdScreen.css'
 import { useEffect, useState } from 'react'
 import Slider from '../../Slider/Slider'
+import Random from '../../../classes/Random'
 
 export default function ThirdScreen({ startSimulation, configuration, owner }) {
   // Initializes the parameterValues object
   const initialParameterValues = {}
 
-  for (const [parameter, { min, max }] of Object.entries(configuration)) {
-    initialParameterValues[parameter] =
-      Math.round(Math.random() * (max - min)) + min
+  for (const [parameter, values] of Object.entries(configuration)) {
+    const { min, max } = values
+
+    initialParameterValues[parameter] = Random.rangeInt(
+      values.randMin ?? min,
+      values.randMax ?? max
+    )
   }
 
   // The value assigned to each parameter

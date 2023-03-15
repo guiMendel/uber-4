@@ -13,19 +13,8 @@ function mod(number, modBase) {
   return ((number % modBase) + modBase) % modBase
 }
 
-// Create edge between both vertices on both directions
-function createStreetBetween(vertex1, vertex2) {
-  const id = Object.entries(Drawable.drawableInstances[Edge.name] ?? {}).length
-
-  // console.log('Creating street with id ' + id)
-
-  new Edge(id, vertex1, vertex2, { mapSpeed: 60 * pixelsPerKilometer })
-  new Edge(id + 1, vertex2, vertex1, { mapSpeed: 60 * pixelsPerKilometer })
-}
-
 // Coordinate content types
 const vertexContent = 'vertex'
-const extendedEdgeContent = 'extended-edge'
 
 function stringify(x, y) {
   return `${x},${y}`
@@ -60,6 +49,7 @@ class Coordinate {
     this.content = null
     this.vertex = null
     Coordinate.exploitableCoordinates[this.id] = this
+    Coordinate.instances[this.id] = this
 
     if (
       Coordinate.leftmost == null ||
@@ -114,13 +104,7 @@ class Coordinate {
   }
 
   displace(x, y) {
-    // try {
     return Coordinate.at(this.x + x, this.y + y)
-    // } catch {
-    //   console.log('shit')
-    //   console.log(this.x, this.y)
-    //   console.log(x, y)
-    // }
   }
 
   static at(x, y) {
@@ -133,6 +117,33 @@ class Coordinate {
 
   asString() {
     return stringify(this.x, this.y)
+  }
+
+  // Gets all blocks which were already instantiated that share this coordinate as one of it's vertices
+  getBlocks() {
+    const blocks = []
+
+    const maybeAdd = (x, y) => {
+      if (
+        Block.hasBlock(
+          this.x + x - Block.originCoordinate.x,
+          this.y + y - Block.originCoordinate.y
+        )
+      )
+        blocks.push(
+          Block.at(
+            this.x + x - Block.originCoordinate.x,
+            this.y + y - Block.originCoordinate.y
+          )
+        )
+    }
+
+    maybeAdd(0, 0)
+    maybeAdd(0, -1)
+    maybeAdd(-1, 0)
+    maybeAdd(-1, -1)
+
+    return blocks
   }
 }
 
@@ -250,15 +261,15 @@ export default function generateCityBlocks(
   blockSize = window.innerWidth / 5,
   numberOfCars = 6,
   numberOfClients = 15,
-  blocksAngle = 0
+  blocksAngle = 0,
+  vertexOmitChance = 20,
+  edgeOmitChance = 25
 ) {
   // Update config
   Block.originCoordinate = {
     x: Random.rangeInt(0, 2),
     y: Random.rangeInt(0, 2),
   }
-
-  console.log('Block.originCoordinate', Block.originCoordinate)
 
   Coordinate.blockSize = blockSize
   Coordinate.blocksAngle = blocksAngle
@@ -287,7 +298,7 @@ export default function generateCityBlocks(
   }
 
   // Generate vertices and streets for these blocks
-  generateStreetsForBlocks()
+  generateStreetsForBlocks(vertexOmitChance, edgeOmitChance)
 
   // Create cars
   generateRandomCars(numberOfCars)
@@ -305,7 +316,11 @@ export default function generateCityBlocks(
   )
 }
 
-function generateStreetsForBlocks() {
+function streetToken(originId, targetId) {
+  return { origin: originId, target: targetId }
+}
+
+function generateStreetsForBlocks(vertexOmitChance, edgeOmitChance) {
   // A graph to simulate the streets
   const streetGraph = {}
   const streetVertices = []
@@ -313,21 +328,27 @@ function generateStreetsForBlocks() {
 
   // Create street between 2 coordinates
   function addStreet(coordinateA, coordinateB) {
-    streets.push({ origin: coordinateA, target: coordinateB })
+    streets.push(streetToken(coordinateA.id, coordinateB.id))
 
-    if (streetGraph[coordinateA.asString()] != undefined)
-      streetGraph[coordinateA.asString()].push(coordinateB)
-    else streetGraph[coordinateA.asString()] = [coordinateB]
+    if (streetGraph[coordinateA.id] != undefined)
+      streetGraph[coordinateA.id].push(coordinateB)
+    else streetGraph[coordinateA.id] = [coordinateB]
   }
 
   for (const block of Object.values(Block.instances)) {
     const blockCoordinates = block.getCoordinates()
 
     for (let i = 0; i < 4; i++) {
-      streetVertices.push(blockCoordinates[i].asString())
+      streetVertices.push(blockCoordinates[i])
       addStreet(blockCoordinates[i], blockCoordinates[mod(i + 1, 4)])
       addStreet(blockCoordinates[i], blockCoordinates[mod(i - 1, 4)])
     }
+  }
+
+  // Ensure graph is valid
+  if (streetGraphValid(streetGraph) == false) {
+    console.log('Street graph:', streetGraph)
+    throw new Error('Error generating initial street graph')
   }
 
   // Shuffle lists
@@ -336,15 +357,199 @@ function generateStreetsForBlocks() {
 
   // Randomly remove vertices
   // Ensure graph always stays connected for each vertex
+  const skipVertices = new Set()
+
+  // Initialize vertex iterator
+  let iterator = 0
+
+  // Coin tosses
+  let coinTosses = 0
+
+  // Checks if removing this coordinate results in a whole block being removed
+  function sustainsWholeBlock(coordinate) {
+    // For each of this coordinate's blocks
+    for (const block of coordinate.getBlocks()) {
+      // Count the amount of coordinates this block has that are already skipped
+      let skippedCoords = 0
+
+      for (const coord of block.getCoordinates())
+        if (skipVertices.has(coord.id)) skippedCoords++
+
+      // If 3 vertices are already skipped, then this vertex must be it's last
+      if (skippedCoords >= 3) return true
+    }
+
+    return false
+  }
+
+  // Toss a coin for each vertex
+  // Stop if only 2 vertices are left
+  while (
+    coinTosses++ < streetVertices.length &&
+    skipVertices.size + 2 < streetVertices.length
+  ) {
+    // Toss the coin
+    if (Random.coinToss(vertexOmitChance / 100) == false) continue
+
+    // Remove a vertex
+    while (true) {
+      // Next vertex to remove
+      const targetVertex = streetVertices[iterator++]
+
+      // If removing this coordinate results in the removal of a whole block, skip it
+      if (sustainsWholeBlock(targetVertex) == false) {
+        // Remove it
+        skipVertices.add(targetVertex.id)
+
+        // Ensure graph remains connected
+        if (streetGraphValid(streetGraph, skipVertices)) break
+
+        // Cannot remove this vertex
+        skipVertices.delete(targetVertex.id)
+      }
+
+      // Validate iterator
+      if (iterator >= streetVertices.length) break
+    }
+
+    // Validate iterator
+    if (iterator >= streetVertices.length) break
+  }
 
   // Randomly remove streets
   // Ensure graph always stays connected for each vertex
+  const skipStreets = new Set()
 
   // Effectively create streets
   let streetId = 0
 
-  for (const street of streets)
-    new Edge(streetId++, street.origin.getVertex(), street.target.getVertex(), {
+  // Initialize vertex iterator
+  iterator = 0
+
+  // Coin tosses
+  coinTosses = 0
+
+  // Toss a coin for each street
+  while (coinTosses++ < streets.length) {
+    // Toss the coin
+    if (Random.coinToss(edgeOmitChance / 100) == false) continue
+
+    // Remove a street
+    while (true) {
+      // Next street to remove
+      const targetStreet = streets[iterator++]
+      const streetToken = JSON.stringify(targetStreet)
+
+      // Remove it
+      skipStreets.add(streetToken)
+
+      // Ensure graph remains connected
+      if (streetGraphValid(streetGraph, skipVertices, skipStreets)) break
+
+      // Cannot remove this street
+      skipStreets.delete(streetToken)
+
+      // Validate iterator
+      if (iterator >= streets.length) break
+    }
+
+    // Validate iterator
+    if (iterator >= streets.length) break
+  }
+
+  for (const street of streets) {
+    // Ensure none of it's components are skipped
+    if (
+      skipStreets.has(JSON.stringify(street)) ||
+      skipVertices.has(street.origin) ||
+      skipVertices.has(street.target)
+    )
+      continue
+
+    const origin = Coordinate.instances[street.origin]
+    const target = Coordinate.instances[street.target]
+
+    new Edge(streetId++, origin.getVertex(), target.getVertex(), {
       mapSpeed: 60 * pixelsPerKilometer,
     })
+  }
+}
+
+// Returns true if, for any given vertex, all other vertices can be reached via some route
+// Returns false otherwise
+function streetGraphValid(
+  streetGraph,
+  skipVertices = new Set(),
+  skipStreets = new Set()
+) {
+  // How many vertices need to be counted each time
+  const targetVertexCount = Object.keys(streetGraph).length - skipVertices.size
+
+  // Nodes that we know are connected
+  // Whenever a node in this set is encountered, we know there is a path to all other nodes, so we don't have to check any other nodes
+  // DFS will return -1 when it encounters a golden node
+  const goldenNodes = new Set()
+
+  // For each vertex
+  for (let nodeId of Object.keys(streetGraph)) {
+    nodeId = JSON.parse(nodeId)
+
+    // Check skip
+    if (skipVertices.has(nodeId)) continue
+
+    const foundNodes = depthFirstSearch(
+      JSON.parse(nodeId),
+      goldenNodes,
+      streetGraph,
+      skipVertices,
+      skipStreets
+    )
+
+    if (foundNodes != targetVertexCount && foundNodes != -1) return false
+
+    goldenNodes.add(nodeId)
+  }
+
+  return true
+}
+
+function depthFirstSearch(
+  nodeId,
+  goldenNodes,
+  graph,
+  skipNodes,
+  skipEdges,
+  visitedNodes = new Set()
+) {
+  // Check golden node
+  if (goldenNodes.has(nodeId)) return -1
+
+  // Check node skip
+  if (skipNodes.has(nodeId) || visitedNodes.has(nodeId)) return 0
+
+  visitedNodes.add(nodeId)
+
+  let childrenSum = 0
+
+  for (const childNode of graph[nodeId]) {
+    // Check edge skip
+    if (skipEdges.has(JSON.stringify(streetToken(nodeId, childNode.id))))
+      continue
+
+    const childResult = depthFirstSearch(
+      childNode.id,
+      goldenNodes,
+      graph,
+      skipNodes,
+      skipEdges,
+      visitedNodes
+    )
+
+    // Detect golden result
+    if (childResult == -1) return -1
+
+    childrenSum += childResult
+  }
+
+  return childrenSum + 1
 }

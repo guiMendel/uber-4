@@ -4,6 +4,11 @@ export default class Random {
     return Math.random()
   }
 
+  // Toss a coin with probability in range [0,1]
+  static coinToss(probability = 0.5) {
+    return Random.get() <= probability
+  }
+
   // Returns an int in range [start, end[
   static rangeInt(start, end) {
     return Math.floor(Math.random() * (end - start)) + start
