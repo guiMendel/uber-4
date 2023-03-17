@@ -58,13 +58,13 @@ export default class Creator extends Drawable {
   // Abstract
   handleClick(position) {
     throw new Error(
-      'O metodo "handleClick" deve ser implementado por uma classe filho'
+      'The "handleClick" method must be implemented by a child class'
     )
   }
 
   onDraw(position) {
     throw new Error(
-      'O metodo "onDraw" deve ser implementado por uma classe filho'
+      'The "onDraw" method must be implemented by a child class'
     )
   }
 

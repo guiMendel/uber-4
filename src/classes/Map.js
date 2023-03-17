@@ -245,7 +245,7 @@ export default class Map {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe Map nao fornece um eventListener do tipo "${type}"`
+        `The Map class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -255,7 +255,7 @@ export default class Map {
   static removeEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe Map nao fornece um eventListener do tipo "${type}"`
+        `The Map class doesn't provide an eventListener of type "${type}"`
       )
 
     const index = this.listeners[type].indexOf(callback)

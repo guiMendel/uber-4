@@ -42,7 +42,7 @@ export function findFittest(array, evaluate, limit) {
   // Mas antes, vamos garantir que os 2 bounds sao iguais
   if (lowerBound != upperBound)
     throw new Error(
-      'Comportamento inesperado da funcao findSmallestValues: lowerBound e upperBound possuem valores diferentes ao final d euma busca inconclusiva'
+      'Unexpected behavior inside findSmallestValues function: lowerBound and upperBound contain different values after an inconclusive search'
     )
 
   // Se lowerBound ainda for 0, nao existem valores negativos, e por isso o positivo eh o mais proxcimo
@@ -53,14 +53,14 @@ export function findFittest(array, evaluate, limit) {
 
   if (evaluate(array[lowerBound - 1]) >= 0)
     throw new Error(
-      `Comportamento inesperado da funcao findSmallestValues: indice final menos 1 resulta em valor nao negativo (${evaluate(
+      `Unexpected behavior inside findSmallestValues function: final index minus one results in non negative value (${evaluate(
         array[lowerBound - 1]
       )})`
     )
 
   if (evaluate(array[lowerBound]) <= 0)
     throw new Error(
-      `Comportamento inesperado da funcao findSmallestValues: indice final resulta em valor nao positivo (${evaluate(
+      `Unexpected behavior inside findSmallestValues function: final index results in non negative value (${evaluate(
         array[lowerBound]
       )})`
     )

@@ -13,17 +13,17 @@ export default function ClientCreatorButtons() {
       <Button
         name={'upload-clients'}
         onClick={() => setShowUploadPanel(!showUploadPanel)}
-        help={'Ler clientes de arquivo'}
-        rigthTooltip
+        help={'Read clients from file'}
+        rightTooltip
       >
         <FaFileExport />
       </Button>
 
       <Button
         name={'delete-clients'}
-        help={'Apagar clientes'}
+        help={'Erase clients'}
         isSwitch
-        rigthTooltip
+        rightTooltip
       >
         <FaEraser />
       </Button>

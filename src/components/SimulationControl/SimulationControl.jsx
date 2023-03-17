@@ -28,7 +28,7 @@ export default function SimulationControl() {
 
   return (
     <div className="simulation-toggle-container">
-      <Button name="auto-assign" help="Auto-atribuir carros" isSwitch startOn>
+      <Button name="auto-assign" help="Auto-assign cars" isSwitch startOn>
         <FaSync />
       </Button>
 

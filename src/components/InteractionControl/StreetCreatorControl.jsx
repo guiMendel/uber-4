@@ -83,7 +83,7 @@ export default function StreetCreatorControl() {
   return (
     <div className="interaction-control">
       {/* Titulo */}
-      <h1>Velocidade</h1>
+      <h1>Speed</h1>
 
       {/* Area de controle */}
       <div className="speed-input-container">
@@ -94,7 +94,7 @@ export default function StreetCreatorControl() {
             className={`toggle-random ${!isRandom && 'off'}`}
             onClick={() => setIsRandom(!isRandom)}
           >
-            <label>Aleatoria</label>
+            <label>Random</label>
             <div className="toggler"></div>
           </span>
         )}

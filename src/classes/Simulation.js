@@ -76,7 +76,7 @@ export default class Simulation {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe IO nao fornece um eventListener do tipo "${type}"`
+        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)

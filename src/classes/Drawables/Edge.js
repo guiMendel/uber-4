@@ -227,7 +227,7 @@ export default class Edge extends Drawable {
     // Erro se source e destination forem iguais
     if (source.id == destination.id)
       throw new Error(
-        `Tentativa de criar aresta saindo e chegando no mesmo vertice de id ${source.id}`
+        `Attempt to create edge from and to same vertex ${source.id}`
       )
 
     // Encontra a velocidade de mapa, se ja nao estiver definida

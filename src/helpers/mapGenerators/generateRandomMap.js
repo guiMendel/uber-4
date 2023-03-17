@@ -17,7 +17,7 @@ export function generateRandomStreets(
   minDistanceBetweenVertices = 200
 ) {
   if (numberOfVertices <= 1)
-    throw new Error('Necessita de pelo menos 2 vertices')
+    throw new Error('Requires at least 2 vertices')
 
   // Helper para gerar coordenadas aleatorias centralizadas em 0,0
   const randomCoords = (distantFromVertices = true) => {

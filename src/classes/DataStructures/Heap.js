@@ -162,7 +162,7 @@ export default class Heap {
   // Retorna o no pai do filho indicado pelo indice
   #getParent(index) {
     if (index == 0)
-      throw new Error('Impossível realizar swimUp a partir do índice 0')
+      throw new Error('Impossible to swimUp from index 0')
 
     return Math.floor((index - 1) / 2)
   }

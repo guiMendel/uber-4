@@ -7,7 +7,7 @@ export default function Button({
   children,
   name,
   help,
-  rigthTooltip,
+  rightTooltip,
   isSwitch,
   switchOnChildren,
   startOn = false,
@@ -20,8 +20,7 @@ export default function Button({
 
   useEffect(() => {
     // Garante ter um nome
-    if (name == undefined)
-      throw new Error('Faltou passar o nome para um dos botoes')
+    if (name == undefined) throw new Error("Some buttons don't have a name")
 
     if (startOn) activate()
   }, [])
@@ -46,7 +45,7 @@ export default function Button({
       {isSwitch && value ? switchOnChildren : children}
 
       {help != undefined && (
-        <p className={'tooltip' + (rigthTooltip ? ' right' : '')}>{help}</p>
+        <p className={'tooltip' + (rightTooltip ? ' right' : '')}>{help}</p>
       )}
     </button>
   )

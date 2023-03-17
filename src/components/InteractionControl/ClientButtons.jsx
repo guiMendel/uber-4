@@ -7,25 +7,25 @@ export default function ClientButtons() {
     <div className="client actions">
       <Button
         name={'change-destination'}
-        help={'Alterar destino'}
+        help={'Alter destination'}
         isSwitch
-        rigthTooltip
+        rightTooltip
       >
         <MdEditLocationAlt />
       </Button>
 
       <Button
         name={'center-destination'}
-        help={'Centralizar tela no destino'}
-        rigthTooltip
+        help={'Center screen on destination'}
+        rightTooltip
       >
         <FaSearchLocation />
       </Button>
 
       <Button
         name={'center-client'}
-        help={'Centralizar tela no cliente'}
-        rigthTooltip
+        help={'Center screen on client'}
+        rightTooltip
       >
         <div className="search-client">
           <FaSearchLocation className="glass" />
@@ -33,7 +33,7 @@ export default function ClientButtons() {
         </div>
       </Button>
 
-      <Button name={'select-route'} help={'Encontrar uma rota'} rigthTooltip>
+      <Button name={'select-route'} help={'Find a route'} rightTooltip>
         <FaCar />
       </Button>
     </div>

@@ -76,7 +76,7 @@ export default class AStarStepper {
     // Garante consistencia
     if (node.closed)
       throw new Error(
-        'Erro no A*: Por alguma razao, o no a ser expandido ja havia sido expandido antes'
+        'Error in A*: The node to be expanded had already been expanded before'
       )
 
     this.closedNodes.insert(node)

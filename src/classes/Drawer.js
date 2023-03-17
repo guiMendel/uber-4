@@ -26,7 +26,7 @@ export default class Drawer {
 
     if (missingClass != undefined)
       throw new Error(
-        `Voce esqueceu de definir o drawOrder para a seguinte classe Drawable: ${missingClass}`
+        `You forgot to define the drawOrder for the Drawable class: ${missingClass}`
       )
 
     // Garante que todas definicoes em drawOrder sejam subclasses de Drawable

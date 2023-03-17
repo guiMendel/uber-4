@@ -13,13 +13,13 @@ export default function CarCreatorButtons() {
       <Button
         name={'upload-cars'}
         onClick={() => setShowUploadPanel(!showUploadPanel)}
-        help={'Ler carros de arquivo'}
-        rigthTooltip
+        help={'Read cars from file'}
+        rightTooltip
       >
         <FaFileExport />
       </Button>
 
-      <Button name={'delete-cars'} help={'Apagar carros'} isSwitch rigthTooltip>
+      <Button name={'delete-cars'} help={'Erase cars'} isSwitch rightTooltip>
         <FaEraser />
       </Button>
 

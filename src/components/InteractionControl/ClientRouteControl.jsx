@@ -82,43 +82,6 @@ export default function ClientRouteControl() {
     }
   }, [])
 
-  // const getClientToDestinationKm = useCallback((route) => {
-  //   // Ja soma os km do fim da rota
-  //   let totalKm = getDistance(route.edge.source, route.projectionCoords)
-
-  //   // Se tem uma distancia real, usa a proporcao dela
-  //   if (route.edge.realDistance != null)
-  //     totalKm = (totalKm / route.edge.mapDistance) * route.edge.realDistance
-
-  //   route = route.parent
-
-  //   while (route != null) {
-  //     // Se tem um source
-  //     if (route.source != null) {
-  //       const mapSectionDistance = getDistance(
-  //         route.source,
-  //         route.edge.destination
-  //       )
-
-  //       // Se tiver uma distancia real, usa a proporcao
-  //       if (route.edge.realDistance)
-  //         totalKm +=
-  //           (mapSectionDistance / route.edge.mapDistance) *
-  //           route.edge.realDistance
-  //       else totalKm += mapSectionDistance / pixelsPerKilometer
-  //     }
-
-  //     // Preferencia para a distancia real
-  //     else if (route.edge.realDistance) totalKm += route.edge.realDistance
-  //     else totalKm += route.edge.mapDistance / pixelsPerKilometer
-
-  //     // Avanca o node
-  //     route = route.parent
-  //   }
-
-  //   return totalKm / pixelsPerKilometer
-  // })
-
   const getTotalDistance = (route) => {
     if (route == 'walk')
       return (
@@ -213,7 +176,7 @@ export default function ClientRouteControl() {
       }}
     >
       {/* Titulo */}
-      <h1>Rota Selecionada</h1>
+      <h1>Selected Route</h1>
 
       <div className="route-info-container">
         {/* Seta para esquerda */}
@@ -260,7 +223,7 @@ export default function ClientRouteControl() {
             </span>
           </div>
         ) : (
-          <p>Usando Rota Automática</p>
+          <p>Using Automatic Routes</p>
         )}
 
         {/* Seta para direita */}

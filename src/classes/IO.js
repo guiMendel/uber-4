@@ -152,7 +152,7 @@ export default class IO {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe IO nao fornece um eventListener do tipo "${type}"`
+        `The IO class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -162,7 +162,7 @@ export default class IO {
   static removeEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe IO nao fornece um eventListener do tipo "${type}"`
+        `The IO class doesn't provide an eventListener of type "${type}"`
       )
 
     const index = this.listeners[type].indexOf(callback)
@@ -176,7 +176,7 @@ export default class IO {
   static #raiseEvent(type, payload) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `Tentativa em IO de levantar evento de tipo inexistente "${type}"`
+        `Attempt to raise event of unknown type "${type}"`
       )
 
     for (const listener of this.listeners[type]) listener(payload)

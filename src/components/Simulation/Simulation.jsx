@@ -33,15 +33,15 @@ export default function Simulation({mapParams}) {
 
       {/* Contem os botoes de acoes do mapa */}
       <div className="map actions">
-        <Button name={'new-street'} help={'Alterar ruas'}>
+        <Button name={'new-street'} help={'Alter streets'}>
           <FaPencilAlt />
         </Button>
 
-        <Button name={'new-client'} help={'Adicionar novos clientes'}>
+        <Button name={'new-client'} help={'Add new clients'}>
           <FaUserPlus />
         </Button>
 
-        <Button name={'new-car'} help={'Adicionar novos carros'}>
+        <Button name={'new-car'} help={'Add new cars'}>
           <div className="new-car-icons">
             <FaCarSide className="car-icon" />
             <FaPlus className="plus-icon" />

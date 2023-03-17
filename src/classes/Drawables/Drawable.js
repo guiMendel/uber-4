@@ -32,11 +32,11 @@ export default class Drawable {
       if (result === true) return existingDrawable
 
       throw new Error(
-        `Tentativa de inserir nova instancia de "${
+        `Attempt to insert new instance of "${
           this.name
-        }" com id repetido, mas o campo "${result}" difere.\nValor preexistente: ${JSON.stringify(
+        }" with repeated id, but the field "${result}" differs.\nPrevious value: ${JSON.stringify(
           existingDrawable[result]
-        )}. Valor novo ${JSON.stringify(properties[result])}`
+        )}. New value: ${JSON.stringify(properties[result])}`
       )
     }
 
@@ -65,7 +65,7 @@ export default class Drawable {
     // Deve possuir coordenadas x e y
     if (this.x == undefined || this.y == undefined)
       throw new Error(
-        `Impossivel determinar distancia do cursor para Drawable de classe "${this.constructor.name}", que nao possui coordenadas x e y`
+        `Impossible to determine distance between cursor and Drawable class "${this.constructor.name}", that has no x & y coordinates`
       )
 
     return getDistance(this, IO.mouse.mapCoords)
@@ -103,7 +103,7 @@ export default class Drawable {
   // Abstract
   // Permite desenhar na tela
   draw(drawer) {
-    throw new Error('Este método deve ser implementado por uma classe filho')
+    throw new Error('This method must be implemented by a child class')
   }
 
   // Permite agir dentro da simulacao
@@ -124,7 +124,7 @@ export default class Drawable {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe ${this.name} nao fornece um eventListener do tipo "${type}"`
+        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -144,7 +144,7 @@ export default class Drawable {
   static removeEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe ${this.name} nao fornece um eventListener do tipo "${type}"`
+        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
       )
 
     const index = this.listeners[type].indexOf(callback)
