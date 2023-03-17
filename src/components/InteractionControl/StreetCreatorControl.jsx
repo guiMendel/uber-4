@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import StreetCreator from '../../classes/Drawables/Creators/StreetCreator'
 import Edge from '../../classes/Drawables/Edge'
+import Random from '../../classes/Random'
 import appConfig from '../../configuration/appConfig'
 
 const { pixelsPerKilometer } = appConfig
 
 // Gera uma velocidade aleatoria
-const randomSpeed = () => Math.round(Math.random() * (100 - 30) + 30)
+const randomSpeed = () => Random.rangeInt(30, 100)
 
 // Um componente com a interface para configurar a criacao de nvoas ruas
 export default function StreetCreatorControl() {

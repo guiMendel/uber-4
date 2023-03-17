@@ -32,8 +32,8 @@ export default {
       randMax: 80,
     },
     edgeOmitChance: { type: 'number', min: 0, max: 95, randMin: 15 },
-    lowSpeedLaneProportion: { type: 'number', min: 0, max: 50, randMax: 25 },
-    highSpeedLaneProportion: { type: 'number', min: 0, max: 50, randMax: 25 },
+    lowSpeedLaneProportion: { type: 'number', min: 0, max: 50, randMax: 13 },
+    highSpeedLaneProportion: { type: 'number', min: 0, max: 50, randMax: 20 },
   },
   random: {
     numberOfVertices: { type: 'number', min: 2, max: 30 },

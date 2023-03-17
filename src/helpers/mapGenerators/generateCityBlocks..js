@@ -666,4 +666,7 @@ function alterLanesSpeeds(lowSpeedLaneProportion, highSpeedLaneProportion) {
     const coordinate = Coordinate.instances[shuffledCoordIds[idIterator++]]
     coordinate.setLaneSpeed(fastLaneSpeed, highSpeedLaneCount)
   }
+
+  // Recalculate record speeds
+  Edge.updateRecordEdges()
 }
