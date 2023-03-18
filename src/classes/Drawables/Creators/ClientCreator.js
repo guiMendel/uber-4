@@ -1,7 +1,10 @@
 import theme from '../../../configuration/theme'
 import IO from '../../IO'
 import Map from '../../Map'
+import Random from '../../Random'
+import Simulation from '../../Simulation'
 import Client from '../Client'
+import Vertex from '../Vertex'
 import Creator from './Creator'
 
 const { highlightColor, clientDestinationRadius } = theme
@@ -16,6 +19,12 @@ export default class ClientCreator extends Creator {
 
   // Reflete o estado do botao de apagar clientes
   eraseClients = { isActive: false, set: null }
+
+  // Whether auto generation is on
+  autoGeneration = true
+
+  // Cooldown of client auto generation, in seconds
+  clientAutoGenerateCooldown = { min: 1, max: 3 }
 
   constructor() {
     super()
@@ -48,6 +57,15 @@ export default class ClientCreator extends Creator {
         setValue(newValue)
       }
     })
+
+    // Listen to auto generation toggle
+    IO.addButtonListener(
+      'auto-generate-clients',
+      ({ value }) => (this.autoGeneration = value)
+    )
+
+    // Start client generation
+    this.scheduleClientGeneration()
   }
 
   onDraw(drawer) {
@@ -113,6 +131,45 @@ export default class ClientCreator extends Creator {
 
     // Reinicia criacao
     this.#nextCreateClient = null
+  }
+
+  // Wait a cooldown and generate a client
+  scheduleClientGeneration() {
+    setTimeout(
+      () => this.generateClient(),
+      Random.rangeFloat(
+        this.clientAutoGenerateCooldown.min,
+        this.clientAutoGenerateCooldown.max
+      ) * 1000
+    )
+  }
+
+  // Generate a client automatically
+  generateClient() {
+    // If simulation is not running or auto generation is off, skip client creation
+    if (this.autoGeneration && Simulation.isRunning) {
+      // Get the vertices sorted by position
+      const sortedX = Vertex.sortedCoords.get('x')
+      const sortedY = Vertex.sortedCoords.get('y')
+
+      // Get a random coordinate
+      const randomCoords = () => ({
+        x:
+          sortedX.length > 0
+            ? Random.rangeFloat(sortedX[0].x, sortedX[sortedX.length - 1].x)
+            : Random.rangeFloat(-100, 100),
+        y:
+          sortedY.length > 0
+            ? Random.rangeFloat(sortedY[0].y, sortedY[sortedY.length - 1].y)
+            : Random.rangeFloat(-100, 100),
+      })
+
+      // Gen the client
+      new Client((Client.highestId ?? 0) + 1, randomCoords(), randomCoords())
+    }
+
+    // Start timeout for next generation
+    this.scheduleClientGeneration()
   }
 
   get nextClient() {

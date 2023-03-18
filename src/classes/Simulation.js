@@ -29,28 +29,33 @@ export default class Simulation {
     )
   }
 
+  static cancelToken = { cancelled: true }
+
+  static get isRunning() {
+    return this.cancelToken.cancelled == false
+  }
+
   static start() {
     // Inicializa a contagem de tempo
     this.#lastStepRealTime = Date.now()
 
     // Inicaliza um cancel token
-    const cancelToken = { cancelled: false }
+    this.cancelToken.cancelled = false
 
     // Levanta
     this.#raiseEvent('start')
 
     // Inicializa a simulacao
-    this.simulation(cancelToken)
-
-    // Fornece um meio de interromper a simulacao
-    this.stop = () => (cancelToken.cancelled = true)
+    this.simulation()
   }
 
-  static stop() {}
+  static stop() {
+    this.cancelToken.cancelled = true
+  }
 
   static async simulation(cancelToken) {
     // Roda indefinidamente
-    while (cancelToken.cancelled == false) {
+    while (this.isRunning) {
       // Conta a passagem de tempo. Convertemos de segundos reais para horas simuladas
       const deltaTime = Date.now() - this.#lastStepRealTime
 

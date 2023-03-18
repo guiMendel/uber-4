@@ -41,6 +41,8 @@ export default class Client extends Drawable {
   // Armazena referencia d equal cliente esta selecionado
   static #selected = null
 
+  static highestId = undefined
+
   // Listeners
   static listeners = { select: [], routeselect: [], delete: [], new: [] }
 
@@ -259,6 +261,9 @@ export default class Client extends Drawable {
     this.onDestroy.push(() => Client.raiseEvent('delete', this))
 
     Client.raiseEvent('new', this)
+
+    if (Client.highestId == undefined || Client.highestId < this.id)
+      Client.highestId = this.id
   }
 
   draw(drawer) {

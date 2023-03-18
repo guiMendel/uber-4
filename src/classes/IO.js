@@ -116,6 +116,19 @@ export default class IO {
     } else this.buttonListeners[buttonName].push(listener)
   }
 
+  static removeButtonListener(buttonName, listener) {
+    if (this.buttonListeners[buttonName] == undefined)
+      throw new Error(
+        `The IO class doesn't provide a buttonListener of name "${buttonName}"`
+      )
+
+    const index = this.buttonListeners[buttonName].indexOf(listener)
+
+    if (index == -1) return
+
+    this.buttonListeners[buttonName].splice(index, 1)
+  }
+
   static triggerButton(buttonName, payload) {
     if (this.buttonListeners[buttonName] == undefined) return
 
@@ -175,9 +188,7 @@ export default class IO {
   // Permite levantar eventos
   static #raiseEvent(type, payload) {
     if (this.listeners[type] == undefined)
-      throw new Error(
-        `Attempt to raise event of unknown type "${type}"`
-      )
+      throw new Error(`Attempt to raise event of unknown type "${type}"`)
 
     for (const listener of this.listeners[type]) listener(payload)
   }

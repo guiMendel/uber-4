@@ -1,5 +1,5 @@
 import './SimulationControl.css'
-import { FaPause, FaPlay, FaSync } from 'react-icons/fa'
+import { FaPause, FaPlay, FaSync, FaUserClock } from 'react-icons/fa'
 import Button from '../Button/Button'
 import { useEffect, useState } from 'react'
 import Simulation from '../../classes/Simulation'
@@ -30,6 +30,10 @@ export default function SimulationControl() {
     <div className="simulation-toggle-container">
       <Button name="auto-assign" help="Auto-assign cars" isSwitch startOn>
         <FaSync />
+      </Button>
+
+      <Button name="auto-generate-clients" help="Auto-generate clients" isSwitch startOn>
+        <FaUserClock />
       </Button>
 
       <div className="toggle-container">
