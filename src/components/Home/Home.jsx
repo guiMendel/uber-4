@@ -5,7 +5,6 @@ import Configuration from './Configuration/Configuration'
 import Credits from './Credits/Credits'
 import { IoIosArrowBack } from 'react-icons/io'
 import mapParamsConfiguration from './mapParamsConfiguration'
-import Slider from '../Slider/Slider'
 import ThirdScreen from './ThirdScreen/ThirdScreen'
 
 export default function Home({ startSimulation, setMapParams }) {

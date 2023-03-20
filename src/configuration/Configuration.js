@@ -20,8 +20,8 @@ export default class Configuration {
 
       timescale: {
         default: 0.04,
-        min: 0.01,
-        max: 1,
+        min: 1 / (60 * 60),
+        max: 0.3,
         description:
           'How many hours of simulation take one second of real time',
       },
