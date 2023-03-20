@@ -138,10 +138,13 @@ export default class ClientCreator extends Creator {
   scheduleClientGeneration() {
     setTimeout(
       () => this.generateClient(),
-      Random.rangeFloat(
-        this.clientAutoGenerateCooldown.min,
-        this.clientAutoGenerateCooldown.max
-      ) * 1000
+      Math.max(
+        1000,
+        Random.rangeFloat(
+          this.clientAutoGenerateCooldown.min,
+          this.clientAutoGenerateCooldown.max
+        ) * 1000
+      )
     )
   }
 

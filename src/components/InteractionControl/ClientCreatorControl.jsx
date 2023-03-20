@@ -15,21 +15,28 @@ export default function ClientCreatorControl() {
   )
 
   const setMin = ({ target }) => {
-    if (target.value.toString().length > 3) return
+    let value = parseFloat(target.value)
 
-    if (target.value < 0.5) target.value = 0.5
+    if (value.toString().length > 3) return
 
-    ClientCreator.getInstance().clientAutoGenerateCooldown.min = target.value
-    setGenMin(target.value)
+    if (!value || isNaN(value) || value < 0.5) value = 0.5
+
+    console.log(value)
+    ClientCreator.getInstance().clientAutoGenerateCooldown.min = value
+    setGenMin(value)
+
+    if (genMax < value) setMax({ target: { value } })
   }
 
   const setMax = ({ target }) => {
-    if (target.value.toString().length > 3) return
+    let value = parseFloat(target.value)
 
-    if (target.value < genMin) target.value = genMin
+    if (value.toString().length > 3) return
 
-    ClientCreator.getInstance().clientAutoGenerateCooldown.max = target.value
-    setGenMax(target.value)
+    if (!value || isNaN(value) || value < genMin) value = genMin
+
+    ClientCreator.getInstance().clientAutoGenerateCooldown.max = value
+    setGenMax(value)
   }
 
   useEffect(() => {
