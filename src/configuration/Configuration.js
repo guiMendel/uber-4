@@ -57,6 +57,7 @@ export default class Configuration {
 
       // O tempo (segundos) que as mensagens de erro ficam em tela
       errorMessageDuration: { constant: 11 },
+      
       // Quantas iteracoes, no minimo, realizar a expansao do A* de cada carro analizado
       pathExpansionIterations: { constant: 20 },
 
@@ -78,148 +79,185 @@ export default class Configuration {
 
     theme: {
       //=== GERAL
-      general: {
-        mapBackground: {
-          default: '#cccccc',
-          description: "Color of the map's background",
-        },
+      general: { isTitle: true },
 
-        // Velocidade geral de animacoes simples, em segundos
-        generalAnimationSpeed: { constant: 0.05 },
-
-        highlightColor: {
-          default: '#0287f4',
-          description: 'Color of highlight markers',
-        },
-
-        eraseColor: {
-          default: '#f74a33',
-          description: 'Color of elements highlighted for erasing',
-        },
+      mapBackground: {
+        default: '#cccccc',
+        description: "Color of the map's background",
       },
 
-      streets: {
-        // A cor das ruas
-        // Slowest sera quando a rua tiver a menor velocidade possivel
-        slowestStreetColor: {
-          default: '#efefef',
-          description: 'Color of the slowest street in the map',
-        },
+      // Velocidade geral de animacoes simples, em segundos
+      generalAnimationSpeed: { constant: 0.05 },
 
-        // Highest sera quando a rua tiver a maior velocidade possivel
-        fastestStreetColor: {
-          default: '#b3c7fc',
-          description: 'Color of the fastest street in the map',
-        },
-
-        // A largura das ruas, em pixels
-        streetWidth: {
-          default: defaultStreetWidth,
-          min: 3,
-          max: 150,
-          description: 'Width of street in pixels',
-        },
+      highlightColor: {
+        default: '#0287f4',
+        description: 'Color of highlight markers',
       },
 
-      streetArrows: {
-        streetArrowColor: {
-          default: '#ffffff',
-          description: 'Color of street arrows',
-        },
-
-        streetArrowHeight: {
-          default: 10,
-          min: 2,
-          max: 50,
-          description: 'Height of the street arrows triangles',
-        },
-
-        streetArrowWidth: {
-          default: defaultStreetWidth / 5,
-          min: 2,
-          max: 50,
-          description: 'Width of the street arrows',
-        },
-
-        streetArrowInterval: {
-          default: 60,
-          min: 0,
-          max: 200,
-          description: 'Space between each of the street arrows',
-        },
+      eraseColor: {
+        default: '#f74a33',
+        description: 'Color of elements highlighted for erasing',
       },
 
-      routesAndClients: {
-        clientHoverGrow: {
-          default: 1.3,
-          min: 1,
-          max: 3,
-          description: 'How much the client picture grows when hovered',
-        },
+      streets: { isTitle: true },
 
-        selectedClientRadius: {
-          default: 0.8 * defaultStreetWidth,
-          min: 5,
-          max: 50,
-          description: 'Radius of highlight of selected client',
-        },
+      // A cor das ruas
+      // Slowest sera quando a rua tiver a menor velocidade possivel
+      slowestStreetColor: {
+        default: '#efefef',
+        description: 'Color of the slowest street in the map',
+      },
 
-        clientDestinationRadius: {
-          default: 0.5 * defaultStreetWidth,
-          min: 5,
-          max: 50,
-          description: 'Radius of route destination',
-        },
+      // Highest sera quando a rua tiver a maior velocidade possivel
+      fastestStreetColor: {
+        default: '#b3c7fc',
+        description: 'Color of the fastest street in the map',
+      },
 
-        clientWidth: {
-          default: defaultStreetWidth,
-          min: 5,
-          max: 50,
-          description: 'Width of client pictures',
-        },
+      // A largura das ruas, em pixels
+      streetWidth: {
+        default: defaultStreetWidth,
+        min: 3,
+        max: 150,
+        description: 'Width of street in pixels',
+      },
 
-        carWidth: {
-          default: 1.1 * defaultStreetWidth,
-          min: 5,
-          max: 50,
-          description: 'Width of car pictures',
-        },
+      streetArrows: { isTitle: true },
 
-        selectedRouteHighlight: {
-          default: '#b4fca9',
-          description:
-            'Color of route visualization from the rendez-vous point to the destination',
-        },
+      streetArrowColor: {
+        default: '#ffffff',
+        description: 'Color of street arrows',
+      },
 
-        selectedRouteHighlightBeforeRdv: {
-          default: '#f1f783',
-          description:
-            'Color of route visualization from the car position to the rendez-vous point',
-        },
+      streetArrowHeight: {
+        default: 10,
+        min: 2,
+        max: 50,
+        description: 'Height of the street arrows triangles',
+      },
 
-        clientWalkPathWidth: {
-          default: streetWidth / 3,
-          min: 0.2,
-          max: 5,
-          description: 'Width of the client walk route fretted lines',
-        },
+      streetArrowWidth: {
+        default: defaultStreetWidth / 5,
+        min: 2,
+        max: 50,
+        description: 'Width of the street arrows',
+      },
 
-        clientWalkPathLineSize: {
-          default: 15,
-          min: 0.2,
-          max: 100,
-          description: 'Length of the client walk route fretted lines',
-        },
+      streetArrowInterval: {
+        default: 60,
+        min: 0,
+        max: 200,
+        description: 'Space between each of the street arrows',
+      },
 
-        // O espaco entre as linhas do trastejado
-        clientWalkPathLineGap: {
-          default: 15,
-          min: 0.2,
-          max: 100,
-          description:
-            'Length of the gap between client walk path route fretted lines',
-        },
+      routesAndClients: { isTitle: true },
+      
+      clientHoverGrow: {
+        default: 1.3,
+        min: 1,
+        max: 3,
+        description: 'How much the client picture grows when hovered',
+      },
+
+      selectedClientRadius: {
+        default: 0.8 * defaultStreetWidth,
+        min: 5,
+        max: 50,
+        description: 'Radius of highlight of selected client',
+      },
+
+      clientDestinationRadius: {
+        default: 0.5 * defaultStreetWidth,
+        min: 5,
+        max: 50,
+        description: 'Radius of route destination',
+      },
+
+      clientWidth: {
+        default: defaultStreetWidth,
+        min: 5,
+        max: 50,
+        description: 'Width of client pictures',
+      },
+
+      carWidth: {
+        default: 1.1 * defaultStreetWidth,
+        min: 5,
+        max: 50,
+        description: 'Width of car pictures',
+      },
+
+      selectedRouteHighlight: {
+        default: '#b4fca9',
+        description:
+          'Color of route visualization from the rendez-vous point to the destination',
+      },
+
+      selectedRouteHighlightBeforeRdv: {
+        default: '#f1f783',
+        description:
+          'Color of route visualization from the car position to the rendez-vous point',
+      },
+
+      clientWalkPathWidth: {
+        default: streetWidth / 3,
+        min: 0.2,
+        max: 5,
+        description: 'Width of the client walk route fretted lines',
+      },
+
+      clientWalkPathLineSize: {
+        default: 15,
+        min: 0.2,
+        max: 100,
+        description: 'Length of the client walk route fretted lines',
+      },
+
+      // O espaco entre as linhas do trastejado
+      clientWalkPathLineGap: {
+        default: 15,
+        min: 0.2,
+        max: 100,
+        description:
+          'Length of the gap between client walk path route fretted lines',
       },
     },
+  }
+
+  constructor() {
+    for (const [configurationType, configurationParams] of Object.entries(
+      Configuration.configurationParams
+    )) {
+      // Add this config
+      this[configurationType] = {}
+
+      // For each of it's params
+      for (const [paramName, paramValue] of Object.entries(
+        configurationParams
+      )) {
+        // Ignore titles
+        if (paramValue.isTitle) continue
+
+        // Store if constant
+        if (paramValue.constant != undefined) {
+          this[paramName] = paramValue.constant
+          continue
+        }
+
+        // Read from memory if stored
+
+        // Use default value
+        if (paramValue.default == undefined)
+          throw new Error(
+            'A default or constant value is required, but ' +
+              paramName +
+              " didn't have one"
+          )
+
+        this[paramName] = paramValue.default
+      }
+    }
+
+    console.log('configs:', this)
   }
 }

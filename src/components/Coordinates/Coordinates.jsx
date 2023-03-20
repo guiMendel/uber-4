@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
 import IO from '../../classes/IO'
-import appConfig from '../../configuration/appConfig'
+import Configuration from '../../configuration/Configuration'
 import './Coordinates.css'
-
-const { pixelsPerKilometer } = appConfig
 
 export default function Coordinates() {
   // Guarda as coordenadas
@@ -13,6 +11,8 @@ export default function Coordinates() {
   useEffect(
     () =>
       IO.addEventListener('mousemove', ({ mapPosition }) => {
+        const { pixelsPerKilometer } = Configuration.getInstance().general
+
         setCoords({
           map: {
             x: Math.round(mapPosition.x * 100) / 100,

@@ -1,5 +1,4 @@
-import appConfig from '../../../configuration/appConfig'
-import theme from '../../../configuration/theme'
+import Configuration from '../../../configuration/Configuration'
 import { findFittest, unorderedFindFittest } from '../../../helpers/search'
 import { angleBetween, getDistance } from '../../../helpers/vectorDistance'
 import IO from '../../IO'
@@ -9,10 +8,6 @@ import Drawable from '../Drawable'
 import Edge from '../Edge'
 import Vertex from '../Vertex'
 import Creator from './Creator'
-
-const { streetColorSlowest, streetWidth, highlightColor, eraseColor } = theme
-
-const { newStreetVertexSnapRange } = appConfig
 
 const streetSourceCancelToken = 'create-street-source-cancel'
 const eraseStreetsToken = 'erase-streets'
@@ -116,6 +111,9 @@ export default class StreetCreator extends Creator {
   }
 
   onDraw(drawer) {
+    const { highlightColor, eraseColor, slowestStreetColor, streetWidth } =
+      Configuration.getInstance().theme
+
     // Detecta se o mouse esta sobre um vertice
     this.detectVertexHover()
 
@@ -165,7 +163,7 @@ export default class StreetCreator extends Creator {
     }
 
     const { fillArc, strokePath } = drawer.drawWith({
-      style: streetColorSlowest,
+      style: slowestStreetColor,
       opacity: 0.5,
       lineWidth: streetWidth,
     })
@@ -214,6 +212,8 @@ export default class StreetCreator extends Creator {
   }
 
   highlightEdge(edge, drawer, color) {
+    const { highlightColor, streetWidth } = Configuration.getInstance().theme
+
     const { strokePath, fillArc } = drawer.drawWith({
       style: color ?? highlightColor,
       lineWidth: streetWidth * 1.5,
@@ -409,7 +409,9 @@ export default class StreetCreator extends Creator {
     const { mapCoords: mouse } = IO.mouse
 
     // Distancia maxima ate o cursor
-    const maxDistance = streetWidth / 2 + newStreetVertexSnapRange
+    const maxDistance =
+      Configuration.getInstance().theme.streetWidth / 2 +
+      Configuration.getInstance().general.newStreetVertexSnapRange
 
     const xSortedVertices = Vertex.sortedCoords.get('x')
 
@@ -435,7 +437,7 @@ export default class StreetCreator extends Creator {
     const { mapCoords: mouse } = IO.mouse
 
     // Distancia maxima ate o cursor
-    const maxDistance = streetWidth / 2
+    const maxDistance = Configuration.getInstance().theme.streetWidth / 2
 
     // Pega as 4 listas ordenadas
     const leftSorted = Edge.sortedCoords.get('leftVertexX')

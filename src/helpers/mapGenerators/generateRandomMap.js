@@ -3,12 +3,10 @@ import Car from '../../classes/Drawables/Car'
 import Drawable from '../../classes/Drawables/Drawable'
 import Edge from '../../classes/Drawables/Edge'
 import Vertex from '../../classes/Drawables/Vertex'
-import appConfig from '../../configuration/appConfig'
+import Configuration from '../../configuration/Configuration'
 import { sin, cos } from '../trigonometry'
 import { getDistance } from '../vectorDistance'
 import Random from '../../classes/Random'
-
-const { pixelsPerKilometer } = appConfig
 
 export function generateRandomStreets(
   numberOfVertices = 20,
@@ -16,8 +14,7 @@ export function generateRandomStreets(
   mapHeight = window.innerHeight * 2,
   minDistanceBetweenVertices = 200
 ) {
-  if (numberOfVertices <= 1)
-    throw new Error('Requires at least 2 vertices')
+  if (numberOfVertices <= 1) throw new Error('Requires at least 2 vertices')
 
   // Helper para gerar coordenadas aleatorias centralizadas em 0,0
   const randomCoords = (distantFromVertices = true) => {
@@ -71,6 +68,8 @@ export function generateRandomStreets(
   // Gera uma velocidade aleatoria
   const randomSpeed = () => {
     const realSpeedRange = [30, 100]
+
+    const { pixelsPerKilometer } = Configuration.getInstance().general
 
     return Random.rangeFloat(
       realSpeedRange[0] * pixelsPerKilometer,

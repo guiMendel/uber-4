@@ -1,27 +1,18 @@
 import Drawable from './Drawable'
 import Map from '../Map'
-import theme from '../../configuration/theme'
+import Configuration from '../../configuration/Configuration'
 import IO from '../IO'
 import RouteHighlighter from './RouteHighlighter'
 import Camera from '../Camera'
 import SortProperties from '../SortProperties'
 import { findFittest, unorderedFindFittest } from '../../helpers/search'
 import ClientCreator from './Creators/ClientCreator'
-import appConfig from '../../configuration/appConfig'
+import Configuration from '../../configuration/Configuration'
 import {
   angleBetween,
   displacePoint,
   getDistance,
 } from '../../helpers/vectorDistance'
-
-const {
-  clientHoverGrow,
-  highlightColor,
-  selectedClientRadius,
-  clientDestinationRadius,
-} = theme
-
-const { clientWalkSpeed, pixelsPerKilometer } = appConfig
 
 const alterDestinationKey = 'client-alter-destination'
 
@@ -237,7 +228,7 @@ export default class Client extends Drawable {
     this.animate({
       property: 'scale',
       min: 1,
-      max: clientHoverGrow,
+      max: Configuration.getInstance().theme.clientHoverGrow,
       condition: () => this.isHovered,
     })
 
@@ -267,6 +258,9 @@ export default class Client extends Drawable {
   }
 
   draw(drawer) {
+    const { highlightColor, selectedClientRadius, clientDestinationRadius } =
+      Configuration.getInstance().theme
+
     // Antes de mais nada, desataca sua rota
     if (this.isSelected && this.selectedRoute != null) {
       if (this.selectedRoute != 'walk')
@@ -316,6 +310,9 @@ export default class Client extends Drawable {
 
     // Helper para andar ate a posicao
     const walkTo = (position, finishCallback) => {
+      const { clientWalkSpeed, pixelsPerKilometer } =
+        Configuration.getInstance().general
+
       const walkDistance = clientWalkSpeed * deltaTime * pixelsPerKilometer
 
       if (getDistance(this, position) <= walkDistance) {
@@ -357,6 +354,9 @@ export default class Client extends Drawable {
       },
 
       [waitingCar]: () => {
+        const { clientWalkSpeed, pixelsPerKilometer } =
+          Configuration.getInstance().general
+
         // Verifica se o carro esta a alcance
         const walkDistance = clientWalkSpeed * deltaTime * pixelsPerKilometer
 

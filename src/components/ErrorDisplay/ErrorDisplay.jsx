@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react'
 import Map from '../../classes/Map'
-import appConfig from '../../configuration/appConfig'
+import Configuration from '../../configuration/Configuration'
 import { BiMessageSquareError } from 'react-icons/bi'
 import './ErrorDisplay.css'
-
-const { errorMessageDuration } = appConfig
 
 // Vai guardar o id de cada erro
 let errorIdCounter = 0
@@ -25,7 +23,10 @@ export default function ErrorDisplay() {
     })
 
     // Prepara um callback para apagar esse erro
-    setTimeout(() => removeError(errorId), errorMessageDuration * 1000)
+    setTimeout(
+      () => removeError(errorId),
+      Configuration.getInstance().general.errorMessageDuration * 1000
+    )
   }
 
   function removeError(id) {

@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react'
 import ClientCreator from '../../classes/Drawables/Creators/ClientCreator'
 import IO from '../../classes/IO'
-import Random from '../../classes/Random'
-import appConfig from '../../configuration/appConfig'
-
-const { pixelsPerKilometer } = appConfig
 
 // Um componente com a interface para configurar a criacao automatica de novos clientes
 export default function ClientCreatorControl() {

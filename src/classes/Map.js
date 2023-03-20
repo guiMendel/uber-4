@@ -1,7 +1,6 @@
 import generateRandomMap from '../helpers/mapGenerators/generateRandomMap'
 import delay from '../helpers/delay'
-import theme from '../configuration/theme'
-import appConfig from '../configuration/appConfig'
+import Configuration from '../configuration/Configuration'
 import ArrowIndicators from './Drawables/ArrowIndicators'
 
 import redCar from '../assets/red-car.png'
@@ -23,9 +22,6 @@ import Car from './Drawables/Car'
 import CarCreator from './Drawables/Creators/CarCreator'
 import Drawable from './Drawables/Drawable'
 import generateCityBlocks from '../helpers/mapGenerators/generateCityBlocks.'
-
-// Extrai valores uteis
-const { carWidth, clientWidth } = theme
 
 // Classe singleton que governa o mapa, os desenhos do mapa e suas atualizacoes
 export default class Map {
@@ -87,7 +83,7 @@ export default class Map {
         parameters.vertexOmitChance,
         parameters.edgeOmitChance,
         parameters.lowSpeedLaneProportion,
-        parameters.highSpeedLaneProportion,
+        parameters.highSpeedLaneProportion
       )
     }
   }
@@ -139,7 +135,7 @@ export default class Map {
         this.drawer.drawFrame()
 
         // Espera o tempo de fps
-        await delay(1 / appConfig.maxFramesPerSecond)
+        await delay(1 / Configuration.getInstance().general.maxFramesPerSecond)
       }
     }
 
@@ -188,6 +184,8 @@ export default class Map {
 
   async loadAssets() {
     return new Promise((resolve, reject) => {
+      const { carWidth, clientWidth } = Configuration.getInstance().theme
+
       // Prepara um array para armazenar as imagens de clientes
       this.clientImage = []
 

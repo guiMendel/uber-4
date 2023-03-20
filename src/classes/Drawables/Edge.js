@@ -1,4 +1,4 @@
-import theme from '../../configuration/theme'
+import Configuration from '../../configuration/Configuration'
 import { sin, cos } from '../../helpers/trigonometry'
 import {
   angleBetween,
@@ -8,9 +8,6 @@ import {
 import SortProperties from '../SortProperties'
 
 import Drawable from './Drawable'
-
-// Extrai valores uteis
-const { streetColorSlowest, streetWidth, streetColorHighest } = theme
 
 // Define uma aresta
 export default class Edge extends Drawable {
@@ -80,7 +77,7 @@ export default class Edge extends Drawable {
     // Desenha uma linha do vertice origem para o vertice destino
     const { strokePath } = drawer.drawWith({
       style: color ?? this.streetColor,
-      lineWidth: streetWidth,
+      lineWidth: Configuration.getInstance().theme.streetWidth,
     })
 
     strokePath(this.source, this.destination)
@@ -118,8 +115,11 @@ export default class Edge extends Drawable {
 
   // Calcula a cor desta rua
   get streetColor() {
+    const { slowestStreetColor, fastestStreetColor } =
+      Configuration.getInstance().theme
+
     if (Edge.slowestEdge.mapSpeed == Edge.fastestEdge.mapSpeed)
-      return streetColorHighest
+      return fastestStreetColor
 
     // Descobre qual a posicao desta rua no ranking de velocidade (de 0 a 1)
     const edgeRanking =
@@ -128,15 +128,15 @@ export default class Edge extends Drawable {
 
     // Get the 2 colors as an rgb 3 color array
     const slowColor = [
-      parseInt(streetColorSlowest.slice(1, 3), 16),
-      parseInt(streetColorSlowest.slice(3, 5), 16),
-      parseInt(streetColorSlowest.slice(5, 7), 16),
+      parseInt(slowestStreetColor.slice(1, 3), 16),
+      parseInt(slowestStreetColor.slice(3, 5), 16),
+      parseInt(slowestStreetColor.slice(5, 7), 16),
     ]
 
     const fastColor = [
-      parseInt(streetColorHighest.slice(1, 3), 16),
-      parseInt(streetColorHighest.slice(3, 5), 16),
-      parseInt(streetColorHighest.slice(5, 7), 16),
+      parseInt(fastestStreetColor.slice(1, 3), 16),
+      parseInt(fastestStreetColor.slice(3, 5), 16),
+      parseInt(fastestStreetColor.slice(5, 7), 16),
     ]
 
     // Retorna uma interpolacao (graduacao) entre 3 numeros baseada no ranking obtido anteriormente

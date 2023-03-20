@@ -1,14 +1,10 @@
-import appConfig from '../../../configuration/appConfig'
-import theme from '../../../configuration/theme'
+import Configuration from '../../../configuration/Configuration'
 import { findFittest, unorderedFindFittest } from '../../../helpers/search'
 import IO from '../../IO'
 import Map from '../../Map'
 import Car from '../Car'
 import Edge from '../Edge'
 import Creator from './Creator'
-
-const { highlightColor, streetWidth } = theme
-const { maxCarSnapDistance } = appConfig
 
 const eraseCarsToken = 'erase-cars'
 
@@ -57,7 +53,10 @@ export default class CarCreator extends Creator {
   setCarPosition({ mapPosition: mouse }) {
     if (!this.constructor.isActive) return
 
-    const maxDistance = maxCarSnapDistance + streetWidth / 2
+    const { streetWidth } = Configuration.getInstance().theme
+
+    const maxDistance =
+      Configuration.getInstance().general.maxCarSnapDistance + streetWidth / 2
 
     // Pega as 4 listas ordenadas
     const leftSorted = Edge.sortedCoords.get('leftVertexX')
@@ -129,6 +128,8 @@ export default class CarCreator extends Creator {
 
   onDraw(drawer) {
     if (this.carPosition.edge == null) return
+
+    const { highlightColor } = Configuration.getInstance().theme
 
     const { drawImage, frettedPath } = drawer.drawWith({
       opacity: 0.5,

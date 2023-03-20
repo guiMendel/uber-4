@@ -11,12 +11,8 @@ import {
 import Client from '../../classes/Drawables/Client'
 import Map from '../../classes/Map'
 import RouteCalculator from '../../classes/RouteCalculator'
-import appConfig from '../../configuration/appConfig'
-import theme from '../../configuration/theme'
+import Configuration from '../../configuration/Configuration'
 import { getDistance } from '../../helpers/vectorDistance'
-
-const { selectedRouteHighlight, selectedRouteHighlightBeforeRdv } = theme
-const { pixelsPerKilometer, clientWalkSpeed } = appConfig
 
 // Um componente com a interface para configurar a criacao de nvoas ruas
 export default function ClientRouteControl() {
@@ -86,7 +82,7 @@ export default function ClientRouteControl() {
     if (route == 'walk')
       return (
         getDistance(selectedClient, selectedClient.destination) /
-        pixelsPerKilometer
+        Configuration.getInstance().general.pixelsPerKilometer
       )
 
     return getCarToClientKm(route) + getClientToDestinationKm(route)
@@ -107,7 +103,7 @@ export default function ClientRouteControl() {
       route = route.parent
     }
 
-    return totalKm / pixelsPerKilometer
+    return totalKm / Configuration.getInstance().general.pixelsPerKilometer
   })
 
   const getCarToClientKm = useCallback((route) => {
@@ -121,11 +117,15 @@ export default function ClientRouteControl() {
     let totalCost = selectedClient.selectedRoute.totalCost
 
     // Se for caminhando, considera o custo de caminhar
-    if (totalCost == null)
+    if (totalCost == null) {
+      const { clientWalkSpeed, pixelsPerKilometer } =
+        Configuration.getInstance().general
+
       totalCost =
         getDistance(selectedClient, selectedClient.destination) /
         pixelsPerKilometer /
         clientWalkSpeed
+    }
 
     const hours = Math.floor(totalCost)
 
@@ -171,8 +171,9 @@ export default function ClientRouteControl() {
     <div
       className="interaction-control"
       style={{
-        '--section1': selectedRouteHighlightBeforeRdv,
-        '--section2': selectedRouteHighlight,
+        '--section1':
+          Configuration.getInstance().theme.selectedRouteHighlightBeforeRdv,
+        '--section2': Configuration.getInstance().theme.selectedRouteHighlight,
       }}
     >
       {/* Titulo */}

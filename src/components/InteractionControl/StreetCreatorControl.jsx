@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react'
 import StreetCreator from '../../classes/Drawables/Creators/StreetCreator'
 import Edge from '../../classes/Drawables/Edge'
 import Random from '../../classes/Random'
-import appConfig from '../../configuration/appConfig'
-
-const { pixelsPerKilometer } = appConfig
+import Configuration from '../../configuration/Configuration'
 
 // Gera uma velocidade aleatoria
 const randomSpeed = () => Random.rangeInt(30, 100)
@@ -30,7 +28,7 @@ export default function StreetCreatorControl() {
     // Se tiver uma rua selecionada, altera a velocidade da rua
     if (isStreetSelected) {
       StreetCreator.getInstance().selectedEdge.mapSpeed =
-        target.value * pixelsPerKilometer
+        target.value * Configuration.getInstance().general.pixelsPerKilometer
 
       // Atualiza os valores recorde
       Edge.updateRecordEdges()
@@ -39,7 +37,10 @@ export default function StreetCreatorControl() {
 
   // Avisa a classe de criar ruas da velocidade
   function applySpeed(overrideSpeed) {
-    StreetCreator.setStreetSpeed((overrideSpeed ?? speed) * pixelsPerKilometer)
+    StreetCreator.setStreetSpeed(
+      (overrideSpeed ?? speed) *
+        Configuration.getInstance().general.pixelsPerKilometer
+    )
   }
 
   function randomizeSpeed(forceRandomize) {
@@ -57,7 +58,12 @@ export default function StreetCreatorControl() {
 
     // Atualiza o indicador de velocidade
     if (selectedEdge != null) {
-      setSpeed(Math.round(selectedEdge.mapSpeed / pixelsPerKilometer))
+      setSpeed(
+        Math.round(
+          selectedEdge.mapSpeed /
+            Configuration.getInstance().general.pixelsPerKilometer
+        )
+      )
     } else {
       randomizeSpeed(true)
     }

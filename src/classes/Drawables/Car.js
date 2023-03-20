@@ -1,6 +1,6 @@
 import Drawable from './Drawable'
 import Map from '../Map'
-import theme from '../../configuration/theme'
+import Configuration from '../../configuration/Configuration'
 import Client from './Client'
 import IO from '../IO'
 import {
@@ -10,8 +10,6 @@ import {
 } from '../../helpers/vectorDistance'
 import { cos, sin } from '../../helpers/trigonometry'
 import SortProperties from '../SortProperties'
-
-const { highlightColor, clientHoverGrow } = theme
 
 const cancelCarSelect = 'car-select-cancel'
 
@@ -117,7 +115,7 @@ export default class Car extends Drawable {
     this.animate({
       property: 'scale',
       min: 1,
-      max: clientHoverGrow,
+      max: Configuration.getInstance().theme.clientHoverGrow,
       condition: () => Client.selected != null && this.isHovered,
     })
 
@@ -147,7 +145,7 @@ export default class Car extends Drawable {
 
   draw(drawer) {
     const { drawImage, strokeArc } = drawer.drawWith({
-      style: highlightColor,
+      style: Configuration.getInstance().theme.highlightColor,
       lineWidth: 5,
     })
 

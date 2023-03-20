@@ -1,10 +1,8 @@
-import appConfig from '../configuration/appConfig'
+import Configuration from '../configuration/Configuration'
 import { cos, sin } from '../helpers/trigonometry'
 import { angleBetween, getDistance } from '../helpers/vectorDistance'
 import IO from './IO'
 import Map from './Map'
-
-const { cameraPanSpeed } = appConfig
 
 // Define uma classe que permite deslocar a visao do canvas
 export default class Camera {
@@ -106,6 +104,8 @@ export default class Camera {
   // Se ha um destino, se desloca ate ele
   static pan() {
     if (this.panDestination.x == null) return
+
+    const { cameraPanSpeed } = Configuration.getInstance().general
 
     // Descobre se ja esta perto o suficiente
     if (getDistance(this.position, this.panDestination) <= cameraPanSpeed) {

@@ -1,16 +1,17 @@
 import Drawable from '../../classes/Drawables/Drawable'
 import Vertex from '../../classes/Drawables/Vertex'
 import Edge from '../../classes/Drawables/Edge'
-import appConfig from '../../configuration/appConfig'
+import Configuration from '../../configuration/Configuration'
 import Random from '../../classes/Random'
 import { generateRandomCars, generateRandomClients } from './generateRandomMap'
 import { cos, sin } from '../trigonometry'
 
-const { pixelsPerKilometer } = appConfig
-
-const defaultLaneSpeed = 60 * pixelsPerKilometer
-const slowLaneSpeed = 40 * pixelsPerKilometer
-const fastLaneSpeed = 80 * pixelsPerKilometer
+const defaultLaneSpeed = () =>
+  60 * Configuration.getInstance().general.pixelsPerKilometer
+const slowLaneSpeed = () =>
+  40 * Configuration.getInstance().general.pixelsPerKilometer
+const fastLaneSpeed = () =>
+  80 * Configuration.getInstance().general.pixelsPerKilometer
 
 // True mod
 function mod(number, modBase) {
@@ -192,7 +193,7 @@ class Coordinate {
         // Check if this coord is this lane's origin and if it's speed is still the default value
         if (
           lane.source.id == this.getVertex().id &&
-          lane.mapSpeed == defaultLaneSpeed
+          lane.mapSpeed == defaultLaneSpeed()
         )
           lanes.push(lane)
       }
@@ -544,7 +545,7 @@ function generateStreetsForBlocks(vertexOmitChance, edgeOmitChance) {
     const target = Coordinate.instances[street.target]
 
     new Edge(streetId++, origin.getVertex(), target.getVertex(), {
-      mapSpeed: defaultLaneSpeed,
+      mapSpeed: defaultLaneSpeed(),
     })
   }
 }
@@ -652,7 +653,7 @@ function alterLanesSpeeds(lowSpeedLaneProportion, highSpeedLaneProportion) {
   // Set low speeds
   while (lowSpeedLaneCount.value > 0 && idIterator < shuffledCoordIds.length) {
     const coordinate = Coordinate.instances[shuffledCoordIds[idIterator++]]
-    coordinate.setLaneSpeed(slowLaneSpeed, lowSpeedLaneCount)
+    coordinate.setLaneSpeed(slowLaneSpeed(), lowSpeedLaneCount)
   }
 
   // Reset iterator
@@ -664,7 +665,7 @@ function alterLanesSpeeds(lowSpeedLaneProportion, highSpeedLaneProportion) {
   // Set high speeds
   while (highSpeedLaneCount.value > 0 && idIterator < shuffledCoordIds.length) {
     const coordinate = Coordinate.instances[shuffledCoordIds[idIterator++]]
-    coordinate.setLaneSpeed(fastLaneSpeed, highSpeedLaneCount)
+    coordinate.setLaneSpeed(fastLaneSpeed(), highSpeedLaneCount)
   }
 
   // Recalculate record speeds

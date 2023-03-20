@@ -1,10 +1,6 @@
 import { getDistance } from '../../helpers/vectorDistance'
 import IO from '../IO'
-import theme from '../../configuration/theme'
-import appConfig from '../../configuration/appConfig'
-
-const { generalAnimationSpeed } = theme
-const { maxFramesPerSecond } = appConfig
+import Configuration from '../../configuration/Configuration'
 
 // Classe que define uma entidade capaz de ser desenhada em tela
 export default class Drawable {
@@ -72,9 +68,18 @@ export default class Drawable {
   }
 
   // Permite alterar o valor de uma propriedade do drawable ao longo de multiplos frames, dada uma condicao
-  animate({ property, min, max, condition, speed = generalAnimationSpeed }) {
+  animate({
+    property,
+    min,
+    max,
+    condition,
+    speed = Configuration.getInstance().theme.generalAnimationSpeed,
+  }) {
     // Descobre o quato alterar a cada frame
-    const frameAlteration = (max - min) / speed / maxFramesPerSecond
+    const frameAlteration =
+      (max - min) /
+      speed /
+      Configuration.getInstance().general.maxFramesPerSecond
 
     this.animations.push(() => {
       if (condition()) {

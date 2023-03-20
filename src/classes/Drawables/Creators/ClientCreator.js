@@ -1,4 +1,4 @@
-import theme from '../../../configuration/theme'
+import Configuration from '../../../configuration/Configuration'
 import IO from '../../IO'
 import Map from '../../Map'
 import Random from '../../Random'
@@ -6,8 +6,6 @@ import Simulation from '../../Simulation'
 import Client from '../Client'
 import Vertex from '../Vertex'
 import Creator from './Creator'
-
-const { highlightColor, clientDestinationRadius } = theme
 
 const eraseClientsToken = 'erase-clients'
 const clientPositionToken = 'client-position'
@@ -69,6 +67,9 @@ export default class ClientCreator extends Creator {
   }
 
   onDraw(drawer) {
+    const { highlightColor, clientDestinationRadius } =
+      Configuration.getInstance().theme
+
     const { drawImage, fillArc } = drawer.drawWith({
       opacity: 0.5,
       style: highlightColor,
