@@ -7,7 +7,6 @@ import Camera from '../Camera'
 import SortProperties from '../SortProperties'
 import { findFittest, unorderedFindFittest } from '../../helpers/search'
 import ClientCreator from './Creators/ClientCreator'
-import Configuration from '../../configuration/Configuration'
 import {
   angleBetween,
   displacePoint,

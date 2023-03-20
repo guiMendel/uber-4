@@ -54,19 +54,19 @@ export default class Simulation {
   static async simulation(cancelToken) {
     // Roda indefinidamente
     while (this.isRunning) {
-      const { timeScale } = Configuration.getInstance().general
+      const { timescale } = Configuration.getInstance().general
 
       // Conta a passagem de tempo. Convertemos de segundos reais para horas simuladas
       const deltaTime = Date.now() - this.#lastStepRealTime
 
-      this.time += (deltaTime / 1000) * timeScale
+      this.time += (deltaTime / 1000) * timescale
       this.#lastStepRealTime += deltaTime
 
       // Passa por cada entidade
       for (const drawableClass of Object.values(Drawable.drawableInstances)) {
         for (const drawable of Object.values(drawableClass)) {
           // Executa um step da simulacao
-          drawable.simulationStep((deltaTime / 1000) * timeScale)
+          drawable.simulationStep((deltaTime / 1000) * timescale)
         }
       }
 

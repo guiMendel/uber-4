@@ -4,8 +4,8 @@ export default class Configuration {
   static instance = null
 
   static getInstance() {
-    if (instance == null) instance = new Configuration()
-    return instance
+    if (this.instance == null) this.instance = new Configuration()
+    return this.instance
   }
 
   // Configuration parameters
@@ -57,7 +57,7 @@ export default class Configuration {
 
       // O tempo (segundos) que as mensagens de erro ficam em tela
       errorMessageDuration: { constant: 11 },
-      
+
       // Quantas iteracoes, no minimo, realizar a expansao do A* de cada carro analizado
       pathExpansionIterations: { constant: 20 },
 
@@ -151,7 +151,7 @@ export default class Configuration {
       },
 
       routesAndClients: { isTitle: true },
-      
+
       clientHoverGrow: {
         default: 1.3,
         min: 1,
@@ -200,7 +200,7 @@ export default class Configuration {
       },
 
       clientWalkPathWidth: {
-        default: streetWidth / 3,
+        default: defaultStreetWidth / 3,
         min: 0.2,
         max: 5,
         description: 'Width of the client walk route fretted lines',
@@ -240,7 +240,7 @@ export default class Configuration {
 
         // Store if constant
         if (paramValue.constant != undefined) {
-          this[paramName] = paramValue.constant
+          this[configurationType][paramName] = paramValue.constant
           continue
         }
 
@@ -254,7 +254,7 @@ export default class Configuration {
               " didn't have one"
           )
 
-        this[paramName] = paramValue.default
+        this[configurationType][paramName] = paramValue.default
       }
     }
 

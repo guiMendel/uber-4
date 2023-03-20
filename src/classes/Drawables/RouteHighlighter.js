@@ -1,4 +1,4 @@
-import theme from '../../configuration/theme'
+import Configuration from '../../configuration/Configuration'
 import ArrowIndicators from './ArrowIndicators'
 import Drawable from './Drawable'
 
