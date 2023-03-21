@@ -202,7 +202,7 @@ export default class Configuration {
       clientWalkPathWidth: {
         default: defaultStreetWidth / 3,
         min: 0.2,
-        max: 5,
+        max: 20,
         description: 'Width of the client walk route fretted lines',
       },
 

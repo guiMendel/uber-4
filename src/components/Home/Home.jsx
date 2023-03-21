@@ -5,7 +5,8 @@ import Configuration from './Configuration/Configuration'
 import Credits from './Credits/Credits'
 import { IoIosArrowBack } from 'react-icons/io'
 import mapParamsConfiguration from './mapParamsConfiguration'
-import ThirdScreen from './ThirdScreen/ThirdScreen'
+import MapThirdScreen from './MapThirdScreen/MapThirdScreen'
+import ConfigurationThirdScreen from './ConfigurationThirdScreen/ConfigurationThirdScreen'
 
 export default function Home({ startSimulation, setMapParams }) {
   // Closes the curtain
@@ -20,6 +21,12 @@ export default function Home({ startSimulation, setMapParams }) {
     credits: Credits,
   }
   const SecondScreen = secondScreenOptions[secondScreenComponent]
+
+  const thirdScreenOptions = {
+    'new-map': MapThirdScreen,
+    configuration: ConfigurationThirdScreen,
+  }
+  const ThirdScreen = thirdScreenOptions[secondScreenComponent]
 
   // Menu to show on third screen
   // A string which identifies the third screen

@@ -1,7 +1,8 @@
-import './thirdScreen.css'
+import './mapThirdScreen.css'
 import { useEffect, useState } from 'react'
 import Slider from '../../Slider/Slider'
 import Random from '../../../classes/Random'
+import convertCase from '../../../helpers/convertCase'
 
 export default function ThirdScreen({ startSimulation, configuration, owner }) {
   // Initializes the parameterValues object
@@ -18,12 +19,6 @@ export default function ThirdScreen({ startSimulation, configuration, owner }) {
 
   // The value assigned to each parameter
   const [parameterValues, setParameterValues] = useState(initialParameterValues)
-
-  // Converts camelCase to separate case
-  const convertCase = (text) => {
-    const splitText = text.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()
-    return splitText.charAt(0).toUpperCase() + splitText.slice(1)
-  }
 
   useEffect(() => setParameterValues(initialParameterValues), [configuration])
 
