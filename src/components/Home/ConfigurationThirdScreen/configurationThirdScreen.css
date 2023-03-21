@@ -48,6 +48,18 @@
   pointer-events: none;
   transform: translateY(-20px);
   opacity: 0;
-  
+
   margin-bottom: -10%;
+}
+
+.title-description {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  overflow: visible;
+}
+
+.description-icon {
+  color: rgb(184, 184, 184);
 }

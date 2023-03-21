@@ -1,4 +1,4 @@
-import { FaPalette } from 'react-icons/fa'
+import { FaInfoCircle, FaPalette } from 'react-icons/fa'
 import './configurationThirdScreen.css'
 import Slider from '../../Slider/Slider'
 import convertCase from '../../../helpers/convertCase'
@@ -76,11 +76,20 @@ export default function ThirdScreen({ owner }) {
                 </h2>
               )
 
-            // Numbers
-            if (typeof configurationParams.default == 'number')
-              return (
-                <div className="configuration" key={configurationName}>
+            return (
+              <div className="configuration" key={configurationName}>
+                <span
+                  className="title-description"
+                  title={configurationParams.description}
+                >
                   <p>{convertCase(configurationName)}</p>
+                  {configurationParams.description != undefined && (
+                    <FaInfoCircle className="description-icon" />
+                  )}
+                </span>
+
+                {typeof configurationParams.default == 'number' ? (
+                  // Numbers
                   <Slider
                     className="slider"
                     value={values[configurationName]}
@@ -88,35 +97,32 @@ export default function ThirdScreen({ owner }) {
                     min={configurationParams.min}
                     max={configurationParams.max}
                   />
-                </div>
-              )
-
-            // Colors
-            if (typeof configurationParams.default == 'string')
-              return (
-                <div className="configuration" key={configurationName}>
-                  <p>{convertCase(configurationName)}</p>
-                  <label
-                    className="color-picker"
-                    htmlFor={`color-picker-input-${configurationName}`}
-                  >
-                    <FaPalette className="color-icon" />
-                    <div
-                      className="color-preview"
-                      style={{ background: values[configurationName] }}
-                    ></div>
-                  </label>
-                  <input
-                    type="color"
-                    id={`color-picker-input-${configurationName}`}
-                    className="hidden-input"
-                    value={values[configurationName]}
-                    onChange={({ target }) =>
-                      setValueFor(configurationName, target.value)
-                    }
-                  />
-                </div>
-              )
+                ) : (
+                  // Colors
+                  <>
+                    <label
+                      className="color-picker"
+                      htmlFor={`color-picker-input-${configurationName}`}
+                    >
+                      <FaPalette className="color-icon" />
+                      <div
+                        className="color-preview"
+                        style={{ background: values[configurationName] }}
+                      ></div>
+                    </label>
+                    <input
+                      type="color"
+                      id={`color-picker-input-${configurationName}`}
+                      className="hidden-input"
+                      value={values[configurationName]}
+                      onChange={({ target }) =>
+                        setValueFor(configurationName, target.value)
+                      }
+                    />
+                  </>
+                )}
+              </div>
+            )
           }
         )}
       </div>
