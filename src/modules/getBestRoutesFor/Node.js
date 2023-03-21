@@ -78,8 +78,6 @@ export default class Node {
       car: distances.projection / this.edge.mapSpeed,
     }
 
-    // console.log('Calculado h:', h)
-
     this.projectionCoords = displacePoint(
       this.edge.source,
       distances.projection,
@@ -174,8 +172,6 @@ export default class Node {
 
       this.debugLines.push(Debug.drawLine(this.stepper.destination, source))
     }
-
-    // console.log('Calculado h excepcional:', this.#exceptionalH)
   }
 
   // Verifica se o novo pai resultaria num custo menor

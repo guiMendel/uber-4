@@ -48,8 +48,6 @@ export default class Edge extends Drawable {
     destination.destinationOf[this.id] = this
 
     this.onDestroy.push(() => {
-      console.log(this)
-
       delete source.sourceOf[this.id]
       delete destination.destinationOf[this.id]
     })
@@ -61,8 +59,6 @@ export default class Edge extends Drawable {
       if (Edge.slowestEdge == this) Edge.updateRecordEdges(this)
       else if (Edge.fastestEdge == this) Edge.updateRecordEdges(this)
     })
-
-    // console.log(`from ${source.id} to ${destination.id}`)
 
     this.setBoundVertices()
 

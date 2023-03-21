@@ -287,8 +287,6 @@ export default class Car extends Drawable {
     // Dada a posicao inicial e aresta, descobrimos em que parte da rua o carro esta, e com isso qual a real posicao inicial dele
     const { x, y } = edge.getProjectionCoordinates({ x: realX, y: realY })
 
-    // console.log(`Original: ${realX}, ${realY}\nNew: ${x}, ${y}\n\n`)
-
     return { x, y, edge }
   }
 }

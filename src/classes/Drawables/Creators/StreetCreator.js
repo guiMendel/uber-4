@@ -477,13 +477,6 @@ export default class StreetCreator extends Creator {
       maxDistance
     )
 
-    // console.log(`
-    // left: [${leftBounded}]
-    // right: [${rightBounded}]
-    // upper: [${upperBounded}]
-    // lower: [${lowerBounded}]
-    // `)
-
     const boundArray = [leftBounded, rightBounded, upperBounded, lowerBounded]
     const sortedArrays = [leftSorted, rightSorted, upperSorted, lowerSorted]
 
@@ -497,16 +490,6 @@ export default class StreetCreator extends Creator {
       // Esse parametro solicite que retorne o indice
       true
     )
-
-    // for (
-    //   let i = boundArray[shortestIntervalIndex][0];
-    //   i < boundArray[shortestIntervalIndex][1];
-    //   i++
-    // ) {
-    //   this.highlightEdge(sortedArrays[shortestIntervalIndex][i], drawer, 'red')
-    // }
-
-    // console.log(['left', 'right', 'upper', 'lower'][shortestIntervalIndex])
 
     // Buscando dentro deste intervalo somente, encontramos qual aresta esta mais proxima do mouse
     this.hoveredEdge = unorderedFindFittest(

@@ -79,7 +79,7 @@ export default class Configuration {
 
     theme: {
       //=== GERAL
-      general: { isTitle: true },
+      overall: { isTitle: true },
 
       mapBackground: {
         default: '#cccccc',
@@ -231,20 +231,31 @@ export default class Configuration {
       // Add this config
       this[configurationType] = {}
 
+      // Read from memory if stored
+      const storedValues = localStorage.getItem(
+        `configuration-${configurationType}`
+      )
+
+      if (storedValues != null && storedValues != 'undefined')
+        this[configurationType] = JSON.parse(storedValues)
+
       // For each of it's params
       for (const [paramName, paramValue] of Object.entries(
         configurationParams
       )) {
+        // Ignore if already loaded from memory
         // Ignore titles
-        if (paramValue.isTitle) continue
+        if (
+          paramValue.isTitle ||
+          this[configurationType][paramName] != undefined
+        )
+          continue
 
         // Store if constant
         if (paramValue.constant != undefined) {
           this[configurationType][paramName] = paramValue.constant
           continue
         }
-
-        // Read from memory if stored
 
         // Use default value
         if (paramValue.default == undefined)

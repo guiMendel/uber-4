@@ -103,7 +103,6 @@ function addRoutes(routes, wrappedRoutes, config, parent = null) {
       // Se tiver um pai, filtra as rotas cujo segundo recurso eh igual ao do pai (o primeiro ja vem filtrado)
 
       if (parent != null) {
-        // console.log(routeSet, routeId, routeSet[routeId])
         if (
           route.stepper[config.secondResource].id ==
           parent.route.stepper[config.secondResource].id

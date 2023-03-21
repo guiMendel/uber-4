@@ -21,7 +21,6 @@ export default function ClientCreatorControl() {
 
     if (!value || isNaN(value) || value < 0.5) value = 0.5
 
-    console.log(value)
     ClientCreator.getInstance().clientAutoGenerateCooldown.min = value
     setGenMin(value)
 
