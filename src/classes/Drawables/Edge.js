@@ -235,4 +235,11 @@ export default class Edge extends Drawable {
 
     return { source, destination, mapSpeed, realDistance }
   }
+
+  static resetAll() {
+    super.resetAll()
+    this.sortedCoords.clear()
+    this.slowestEdge = undefined
+    this.fastestEdge = undefined
+  }
 }

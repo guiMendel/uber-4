@@ -430,4 +430,12 @@ export default class Client extends Drawable {
   static nameProperties(location, destination) {
     return { ...location, destination }
   }
+
+  static resetAll() {
+    super.resetAll()
+    this.sortedCoords.clear()
+    this.#selected = null
+    this.changeDestination = { isActive: false, set: null }
+    this.hovered = null
+  }
 }

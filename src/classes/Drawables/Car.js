@@ -289,4 +289,10 @@ export default class Car extends Drawable {
 
     return { x, y, edge }
   }
+
+  static resetAll() {
+    super.resetAll()
+    this.sortedCoords.clear()
+    this.#selected = null
+  }
 }

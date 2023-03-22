@@ -43,4 +43,9 @@ export default class SortProperties {
   get(property) {
     return this.properties[property].array
   }
+
+  clear() {
+    for (const propertyHeap of Object.values(this.properties))
+      propertyHeap.clear()
+  }
 }

@@ -116,6 +116,10 @@ export default class Heap {
     return true
   }
 
+  clear() {
+    this.setRawData([])
+  }
+
   // Define como o elemento faz swim up no array que armazena os dados do heap
   #swimUp(index) {
     if (index == 0) return
@@ -161,8 +165,7 @@ export default class Heap {
 
   // Retorna o no pai do filho indicado pelo indice
   #getParent(index) {
-    if (index == 0)
-      throw new Error('Impossible to swimUp from index 0')
+    if (index == 0) throw new Error('Impossible to swimUp from index 0')
 
     return Math.floor((index - 1) / 2)
   }

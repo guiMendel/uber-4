@@ -44,6 +44,14 @@ class Coordinate {
   // Coordinates that might be used to create a new block
   static exploitableCoordinates = {}
 
+  static reset() {
+    this.instances = {}
+    this.leftmost = null
+    this.rightmost = null
+    this.bottommost = null
+    this.uppermost = null
+  }
+
   constructor(x, y) {
     if (isNaN(x) || isNaN(y))
       throw new Error(`Invalid coordinates x: ${x}, y: ${y}`)
@@ -226,6 +234,11 @@ class Block {
   // Coordinate of top-left vertex of block 0,0
   static originCoordinate = { x: 0, y: 0 }
 
+  static reset() {
+    this.instances = {}
+    this.availableBlocks = {}
+  }
+
   constructor(x, y) {
     if (isNaN(x) || isNaN(y))
       throw new Error(`Invalid coordinates x: ${x}, y: ${y}`)
@@ -330,13 +343,17 @@ export default function generateCityBlocks(
   numberOfBlocks = 10,
   blockSize = window.innerWidth / 5,
   numberOfCars = 6,
-  numberOfClients = 15,
+  initialClients = 15,
   blocksAngle = 0,
   vertexOmitChance = 20,
   edgeOmitChance = 25,
   lowSpeedLaneProportion = 5,
   highSpeedLaneProportion = 5
 ) {
+  // Reset everything
+  Coordinate.reset()
+  Block.reset()
+
   // Update config
   Block.originCoordinate = {
     x: Random.rangeInt(0, 2),
@@ -383,7 +400,7 @@ export default function generateCityBlocks(
 
   // Create clients
   generateRandomClients(
-    numberOfClients,
+    initialClients,
     Coordinate.leftmost.asMapCoordinates().x - padding,
     Coordinate.rightmost.asMapCoordinates().x + padding,
     Coordinate.uppermost.asMapCoordinates().y - padding,

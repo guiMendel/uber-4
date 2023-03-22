@@ -121,7 +121,7 @@ export function generateRandomCars(numberOfCars = 4) {
 }
 
 export function generateRandomClients(
-  numberOfClients = 10,
+  initialClients = 10,
   minX = -window.innerWidth,
   maxX = window.innerWidth,
   minY = -window.innerHeight,
@@ -133,7 +133,7 @@ export function generateRandomClients(
   })
 
   // Gerar clientes
-  for (let clientId = 0; clientId < numberOfClients; clientId++) {
+  for (let clientId = 0; clientId < initialClients; clientId++) {
     new Client(clientId, randomCoords(), randomCoords())
   }
 }
@@ -142,7 +142,7 @@ export function generateRandomClients(
 export default function generateRandomMap(
   numberOfVertices = 20,
   numberOfCars = 4,
-  numberOfClients = 10,
+  initialClients = 10,
   mapWidth = window.innerWidth * 2,
   mapHeight = window.innerHeight * 2,
   minDistanceBetweenVertices = 200
@@ -157,7 +157,7 @@ export default function generateRandomMap(
   generateRandomCars(numberOfCars)
 
   generateRandomClients(
-    numberOfClients,
+    initialClients,
     -mapWidth / 2,
     mapWidth / 2,
     -mapHeight / 2,

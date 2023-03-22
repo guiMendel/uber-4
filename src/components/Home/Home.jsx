@@ -8,7 +8,14 @@ import mapParamsConfiguration from './mapParamsConfiguration'
 import MapThirdScreen from './MapThirdScreen/MapThirdScreen'
 import ConfigurationThirdScreen from './ConfigurationThirdScreen/ConfigurationThirdScreen'
 
-export default function Home({ startSimulation, setMapParams }) {
+import Camera from '../../classes/Camera'
+import IO from '../../classes/IO'
+import Map from '../../classes/Map'
+import Simulation from '../../classes/Simulation'
+
+export default function Home({ hideHomeScreen }) {
+  const [mapParams, setMapParams] = useState({ method: null, parameters: {} })
+
   // Closes the curtain
   const [closingCurtain, setClosingCurtain] = useState(false)
 
@@ -46,14 +53,30 @@ export default function Home({ startSimulation, setMapParams }) {
 
   const bindThirdMenu = (value) => () => setThirdScreenComponent(value)
 
-  const closeCurtain = (mapParams) => {
-    setMapParams(mapParams)
+  const closeCurtain = (newParams) => {
+    setMapParams(newParams)
     setClosingCurtain(true)
   }
 
   // Returns the given string, and if the secondScreenComponent variable is equal to it, concatenates a space and the string 'active'
   const menuOptionClass = (className, compare) =>
     className + (className == compare ? ' active' : '')
+
+  const startSimulation = () => {
+    hideHomeScreen()
+
+    IO.active = true
+
+    Camera.wander = false
+
+    Simulation.reset()
+
+    Map.instance.generateMap(mapParams.method, mapParams.parameters)
+
+    Simulation.centerCamera()
+
+    console.log('starting sim')
+  }
 
   return (
     <div className="home-container">

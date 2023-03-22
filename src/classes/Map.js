@@ -81,13 +81,11 @@ export default class Map {
   // Initializes map given a method and parameters
   generateMap(method, parameters) {
     // Destroy previous map
-    Drawable.drawableInstances = {}
-
     if (method == 'random') {
       generateRandomMap(
         parameters.numberOfVertices,
         parameters.numberOfCars,
-        parameters.numberOfClients,
+        parameters.initialClients,
         parameters.mapWidth,
         parameters.mapHeight,
         parameters.minDistanceBetweenVertices
@@ -99,7 +97,7 @@ export default class Map {
         parameters.numberOfBlocks,
         parameters.blockSize,
         parameters.numberOfCars,
-        parameters.numberOfClients,
+        parameters.initialClients,
         parameters.blocksAngle,
         parameters.vertexOmitChance,
         parameters.edgeOmitChance,
@@ -150,13 +148,16 @@ export default class Map {
       this.drawer = new Drawer(canvasContext)
 
       while (true) {
+        console.log('frame start')
         Map.#raiseEvent('newframe')
 
         // Renderiza uma frame
         this.drawer.drawFrame()
 
         // Espera o tempo de fps
+        console.log('wait frame')
         await delay(1 / Configuration.getInstance().general.maxFramesPerSecond)
+        console.log('frame end')
       }
     }
 

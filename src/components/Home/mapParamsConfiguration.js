@@ -16,12 +16,12 @@ export default {
       randMax: 200,
     },
     numberOfCars: { type: 'number', min: 0, max: 15, randMin: 3, randMax: 10 },
-    numberOfClients: {
+    initialClients: {
       type: 'number',
       min: 0,
-      max: 20,
-      randMin: 3,
-      randMax: 12,
+      max: 5,
+      randMin: 1,
+      randMax: 3,
     },
     blocksAngle: { type: 'number', min: 0, max: 90 },
     vertexOmitChance: {
@@ -49,7 +49,7 @@ export default {
   random: {
     numberOfVertices: { type: 'number', min: 2, max: 30 },
     numberOfCars: { type: 'number', min: 0, max: 15 },
-    numberOfClients: { type: 'number', min: 0, max: 20 },
+    initialClients: { type: 'number', min: 0, max: 5 },
     mapWidth: {
       type: 'number',
       min: 500,

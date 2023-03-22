@@ -173,4 +173,8 @@ export default class Drawable {
 
     return newId
   }
+
+  static resetAll() {
+    this.drawableInstances = {}
+  }
 }

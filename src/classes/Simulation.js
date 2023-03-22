@@ -1,6 +1,10 @@
 import Configuration from '../configuration/Configuration'
 import Camera from './Camera'
+import ArrowIndicators from './Drawables/ArrowIndicators'
+import Car from './Drawables/Car'
+import Client from './Drawables/Client'
 import Drawable from './Drawables/Drawable'
+import Edge from './Drawables/Edge'
 import Vertex from './Drawables/Vertex'
 import IO from './IO'
 import Map from './Map'
@@ -36,20 +40,6 @@ export default class Simulation {
   static centerCamera() {
     const xSorted = Vertex.sortedCoords.get('x')
     const ySorted = Vertex.sortedCoords.get('y')
-
-    console.log(
-      'xSorted',
-      xSorted[0].x,
-      xSorted[xSorted.length - 1].x,
-      (xSorted[0].x + xSorted[xSorted.length - 1].x) / 2
-    )
-
-    console.log(
-      'ySorted',
-      ySorted[0].y,
-      ySorted[ySorted.length - 1].y,
-      (ySorted[0].y + ySorted[ySorted.length - 1].y) / 2
-    )
 
     // Coloca o deslocamento no centro de massa dos vertices
     Camera.translation = {
@@ -88,6 +78,19 @@ export default class Simulation {
 
   static stop() {
     this.cancelToken.cancelled = true
+  }
+
+  static reset() {
+    this.stop()
+
+    this.#time = 0
+
+    Drawable.resetAll()
+    Edge.resetAll()
+    Vertex.resetAll()
+    Car.resetAll()
+    Client.resetAll()
+    new ArrowIndicators()
   }
 
   static async simulation(cancelToken) {
