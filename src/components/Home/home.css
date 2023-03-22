@@ -142,3 +142,19 @@
     transform: translateY(130vh);
   }
 }
+
+.header-link {
+  color: rgb(0, 98, 140);
+  text-decoration: underline;
+
+  transition: filter 100ms;
+}
+
+.header-link:hover {
+  filter: brightness(1.5);
+}
+
+.credits-text {
+  text-align: justify;
+  line-height: 1.3rem;
+}
