@@ -40,7 +40,7 @@
   height: 1.1rem;
   /* width: 5rem; */
   border-radius: 15px;
-  box-shadow: 0 0 5px 1px rgba(128, 128, 128, 0.15);
+  box-shadow: 0 0 5px 1px rgba(128, 128, 128, 0.35);
 }
 
 .hidden-input {

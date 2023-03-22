@@ -23,7 +23,7 @@ const initialParameters = {
 
 export default function App() {
   // Whether to show map or title screen
-  const [showTitleScreen, setShowTitleScreen] = useState(false)
+  const [showTitleScreen, setShowTitleScreen] = useState(true)
 
   return (
     <>

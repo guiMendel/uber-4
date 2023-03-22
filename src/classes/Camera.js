@@ -6,7 +6,7 @@ import Map from './Map'
 import Random from './Random'
 
 const initialWanderSpeed = 1
-const wanderMirrorVariation = 1.5
+const wanderMirrorVariation = 0.8
 const wanderSlack = 100
 
 // Define uma classe que permite deslocar a visao do canvas
@@ -27,8 +27,6 @@ export default class Camera {
   }
 
   static set translation(value) {
-    console.log('new translation', value)
-
     this.#translation = value
 
     // Desloca a camera
