@@ -48,6 +48,8 @@
   margin-top: 3rem;
 
   width: 100%;
+
+  flex: 1;
 }
 
 .home-container .menus > div {
@@ -161,4 +163,24 @@
 .credits-text {
   text-align: justify;
   line-height: 1.3rem;
+}
+
+.mobile-alert {
+  margin-top: 3rem;
+
+  font-weight: 500;
+  font-style: italic;
+  text-shadow: 1px, 1px, 2px, black;
+
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .home-container .menus {
+    display: none;
+  }
+
+  .mobile-alert {
+    display: unset;
+  }
 }

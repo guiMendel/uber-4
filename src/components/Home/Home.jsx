@@ -142,6 +142,10 @@ export default function Home({ startSimulation, setMapParams }) {
           </div>
         )}
       </div>
+
+      <p className="mobile-alert">
+        Please, open the app in a desktop to enable interactivity
+      </p>
     </div>
   )
 }
