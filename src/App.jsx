@@ -11,7 +11,7 @@ const initialParameters = {
   parameters: {
     numberOfBlocks: Random.rangeInt(80, 100),
     blockSize: Random.rangeInt(150, 170),
-    numberOfCars: Random.rangeInt(4, 8),
+    numberOfCars: Random.rangeInt(5, 11),
     numberOfClients: Random.rangeInt(2, 5),
     blocksAngle: Random.rangeFloat(0, 90),
     vertexOmitChance: 7,

@@ -31,10 +31,23 @@ export default class IO {
     rightup: [],
     cancel: [],
     mousemove: [],
+    setactive: [],
   }
 
   // Guarda um callback que deve ser executado em vez de emitir um cancel no proximo comando de cancel
   static overrideCancelCallbacks = {}
+
+  // Caso o IO com a simulacao esta ativo
+  static #active = false
+
+  static get active() {
+    return this.#active
+  }
+
+  static set active(value) {
+    this.#active = value
+    this.#raiseEvent('setactive', value)
+  }
 
   // Inicia as funcoes do IO
   static setup() {
@@ -130,7 +143,8 @@ export default class IO {
   }
 
   static triggerButton(buttonName, payload) {
-    if (this.buttonListeners[buttonName] == undefined) return
+    if (this.buttonListeners[buttonName] == undefined || this.active == false)
+      return
 
     for (const listener of this.buttonListeners[buttonName]) listener(payload)
   }
@@ -144,6 +158,8 @@ export default class IO {
   }
 
   static triggerCancel() {
+    if (this.active == false) return
+
     // Se houver override
     const cancelCallbacks = Object.entries(this.overrideCancelCallbacks)
 
@@ -187,6 +203,8 @@ export default class IO {
 
   // Permite levantar eventos
   static #raiseEvent(type, payload) {
+    if (this.active == false) return
+
     if (this.listeners[type] == undefined)
       throw new Error(`Attempt to raise event of unknown type "${type}"`)
 

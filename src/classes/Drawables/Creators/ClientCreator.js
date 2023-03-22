@@ -22,7 +22,7 @@ export default class ClientCreator extends Creator {
   autoGeneration = true
 
   // Cooldown of client auto generation, in seconds
-  clientAutoGenerateCooldown = { min: 1, max: 3 }
+  clientAutoGenerateCooldown = { min: 0.5, max: 1 }
 
   constructor() {
     super()

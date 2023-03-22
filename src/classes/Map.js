@@ -22,6 +22,7 @@ import Car from './Drawables/Car'
 import CarCreator from './Drawables/Creators/CarCreator'
 import Drawable from './Drawables/Drawable'
 import generateCityBlocks from '../helpers/mapGenerators/generateCityBlocks.'
+import Vertex from './Drawables/Vertex'
 
 // Classe singleton que governa o mapa, os desenhos do mapa e suas atualizacoes
 export default class Map {
@@ -55,6 +56,26 @@ export default class Map {
     activateinteractionclass: [],
     newframe: [],
     error: [],
+  }
+
+  static get lowestX() {
+    return Vertex.sortedCoords.get('x')[0].x
+  }
+
+  static get lowestY() {
+    return Vertex.sortedCoords.get('y')[0].y
+  }
+
+  static get highestX() {
+    const sorted = Vertex.sortedCoords.get('x')
+
+    return sorted[sorted.length - 1].x
+  }
+
+  static get highestY() {
+    const sorted = Vertex.sortedCoords.get('y')
+
+    return sorted[sorted.length - 1].y
   }
 
   // Initializes map given a method and parameters
