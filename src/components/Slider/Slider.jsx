@@ -18,7 +18,7 @@ export default function Slider({
   // Sets the value but clamps it beforehand
   const setValueStable = (newValue) => {
     const value = floatingPoint
-      ? parseFloat(newValue)
+      ? Math.round(parseFloat(newValue) * 100) / 100
       : Math.round(parseFloat(newValue))
 
     setValue(Math.max(Math.min(max, value), min))

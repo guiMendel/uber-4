@@ -96,6 +96,7 @@ export default function ThirdScreen({ owner }) {
                     setValue={(value) => setValueFor(configurationName, value)}
                     min={configurationParams.min}
                     max={configurationParams.max}
+                    floatingPoint={Number.isInteger(configurationParams.default) == false}
                   />
                 ) : (
                   // Colors
