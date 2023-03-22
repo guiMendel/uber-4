@@ -137,7 +137,7 @@ export default class RouteHighlighter {
     const { streetWidth, selectedRouteHighlight } =
       Configuration.getInstance().theme
 
-    const instance = this.#getInstance()
+    const instance = this.getInstance()
 
     instance.drawClientWalkLine(
       client,
@@ -157,12 +157,12 @@ export default class RouteHighlighter {
 
   // Dado um node, destaca a rota correspondente
   static highlightRoute(node, drawer) {
-    const instance = this.#getInstance()
+    const instance = this.getInstance()
 
     instance.draw(drawer, node)
   }
 
-  static #getInstance() {
+  static getInstance() {
     if (this.#instance == undefined) return new RouteHighlighter()
     else return this.#instance
   }

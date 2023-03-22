@@ -3,6 +3,10 @@ import Camera from './Camera'
 import ArrowIndicators from './Drawables/ArrowIndicators'
 import Car from './Drawables/Car'
 import Client from './Drawables/Client'
+import CarCreator from './Drawables/Creators/CarCreator'
+import ClientCreator from './Drawables/Creators/ClientCreator'
+import StreetCreator from './Drawables/Creators/StreetCreator'
+import Debug from './Drawables/Debug'
 import Drawable from './Drawables/Drawable'
 import Edge from './Drawables/Edge'
 import Vertex from './Drawables/Vertex'
@@ -85,12 +89,23 @@ export default class Simulation {
 
     this.#time = 0
 
+    console.log(Drawable.drawableInstances)
+
+    CarCreator.getInstance().reset()
+    ClientCreator.getInstance().reset()
+    StreetCreator.getInstance().reset()
     Drawable.resetAll()
     Edge.resetAll()
     Vertex.resetAll()
     Car.resetAll()
     Client.resetAll()
     new ArrowIndicators()
+    new CarCreator()
+    new ClientCreator()
+    new StreetCreator()
+
+    const debug = Debug.getInstance()
+    Debug.instances[debug.id] = debug
   }
 
   static async simulation(cancelToken) {

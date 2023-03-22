@@ -69,6 +69,13 @@ export default class StreetCreator extends Creator {
   // Reflete o estado do botao de apagar ruas
   eraseStreets = { isActive: false, set: null }
 
+  streetResetter = null
+
+  reset() {
+    this.streetResetter()
+    super.reset()
+  }
+
   constructor() {
     super()
 
@@ -76,12 +83,13 @@ export default class StreetCreator extends Creator {
     this.arrowDrawable = Drawable.drawableInstances[ArrowIndicators.name][0]
 
     // Cancela qualquer vertex move quando soltar o botao
-    IO.addEventListener('leftup', () => {
+    const releaseCallback = () => {
       StreetCreator.moveVertexCancelToken.cancelled = true
-    })
+    }
+    IO.addEventListener('leftup', releaseCallback)
 
     // Ouve botao de apagar ruas
-    IO.addButtonListener('delete-streets', ({ value, setValue }) => {
+    const eraseCallback = ({ value, setValue }) => {
       // Inicia o modo apagar ruas
 
       // Se ja possui um set
@@ -107,7 +115,13 @@ export default class StreetCreator extends Creator {
         this.eraseStreets.isActive = newValue
         setValue(newValue)
       }
-    })
+    }
+    IO.addButtonListener('delete-streets', eraseCallback)
+
+    this.streetResetter = () => {
+      IO.removeEventListener('leftup', releaseCallback)
+      IO.removeButtonListener('delete-streets', eraseCallback)
+    }
   }
 
   onDraw(drawer) {

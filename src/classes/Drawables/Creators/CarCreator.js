@@ -16,16 +16,22 @@ export default class CarCreator extends Creator {
   // Posicao na qual criar o carro
   carPosition = { x: null, y: null, edge: null }
 
+  carResetter = null
+
+  reset() {
+    this.carResetter()
+    super.reset()
+  }
+
   constructor() {
     super()
 
     // Quando o mouse mover, atualiza a posicao do carro
-    IO.addEventListener('mousemove', (movement) =>
-      this.setCarPosition(movement)
-    )
+    const mouseMoveCallback = (movement) => this.setCarPosition(movement)
+    IO.addEventListener('mousemove', mouseMoveCallback)
 
     // Ouve botao de apagar carros
-    IO.addButtonListener('delete-cars', ({ value, setValue }) => {
+    const eraseCallback = ({ value, setValue }) => {
       // Inicia o modo apagar carros
 
       // Se ja possui um set
@@ -47,7 +53,13 @@ export default class CarCreator extends Creator {
         this.eraseCars.isActive = newValue
         setValue(newValue)
       }
-    })
+    }
+    IO.addButtonListener('delete-cars', eraseCallback)
+
+    this.carResetter = () => {
+      IO.removeEventListener('mousemove', mouseMoveCallback)
+      IO.removeButtonListener('delete-cars', eraseCallback)
+    }
   }
 
   setCarPosition({ mapPosition: mouse }) {

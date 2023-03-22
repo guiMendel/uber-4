@@ -24,11 +24,18 @@ export default class ClientCreator extends Creator {
   // Cooldown of client auto generation, in seconds
   clientAutoGenerateCooldown = { min: 0.5, max: 1 }
 
+  clientResetter = null
+
+  reset() {
+    this.clientResetter()
+    super.reset()
+  }
+
   constructor() {
     super()
 
     // Ouve botao de apagar clientes
-    IO.addButtonListener('delete-clients', ({ value, setValue }) => {
+    const eraseCallback = ({ value, setValue }) => {
       // Inicia o modo apagar clientes
 
       // Se ja possui um set
@@ -54,16 +61,20 @@ export default class ClientCreator extends Creator {
         this.eraseClients.isActive = newValue
         setValue(newValue)
       }
-    })
+    }
+    IO.addButtonListener('delete-clients', eraseCallback)
 
     // Listen to auto generation toggle
-    IO.addButtonListener(
-      'auto-generate-clients',
-      ({ value }) => (this.autoGeneration = value)
-    )
+    const autoGenCallback = ({ value }) => (this.autoGeneration = value)
+    IO.addButtonListener('auto-generate-clients', autoGenCallback)
 
     // Start client generation
     this.scheduleClientGeneration()
+
+    this.clientResetter = () => {
+      IO.removeButtonListener('delete-clients', eraseCallback)
+      IO.removeButtonListener('auto-generate-clients', autoGenCallback)
+    }
   }
 
   onDraw(drawer) {

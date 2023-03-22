@@ -148,16 +148,13 @@ export default class Map {
       this.drawer = new Drawer(canvasContext)
 
       while (true) {
-        console.log('frame start')
         Map.#raiseEvent('newframe')
 
         // Renderiza uma frame
         this.drawer.drawFrame()
 
         // Espera o tempo de fps
-        console.log('wait frame')
         await delay(1 / Configuration.getInstance().general.maxFramesPerSecond)
-        console.log('frame end')
       }
     }
 

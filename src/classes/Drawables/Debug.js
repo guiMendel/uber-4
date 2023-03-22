@@ -28,7 +28,7 @@ export default class Debug extends Drawable {
   // Passa a desenhar uma linha entre os 2 pontos
   // Retorna um metodo para apagar o desenho
   static drawLine(pointA, pointB) {
-    const instance = this.#getInstance()
+    const instance = this.getInstance()
 
     const lineId = instance.nextLineId++
 
@@ -37,7 +37,7 @@ export default class Debug extends Drawable {
     return () => delete instance.drawLines[lineId]
   }
 
-  static #getInstance() {
+  static getInstance() {
     if (this.#instance == undefined) return new Debug()
     else return this.#instance
   }

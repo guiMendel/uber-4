@@ -4,8 +4,14 @@ import Drawable from '../Drawable'
 
 // Define um tipo especial de drawable: um singleton que permite criar novos elementos no mapa
 export default class Creator extends Drawable {
+  reset() {
+    this.resetter()
+  }
+
   // Sera verdadeiro uma vez que a instancia for inicializada
   #isInitialized = false
+
+  resetter = null
 
   constructor() {
     super(1, {})
@@ -16,9 +22,10 @@ export default class Creator extends Drawable {
     this.#isInitialized = true
 
     // Para de criar no cancel
-    IO.addEventListener('cancel', () => {
+    const cancelCallback = () => {
       this.constructor.isActive = false
-    })
+    }
+    IO.addEventListener('cancel', cancelCallback)
 
     // Pega o nome do botao de acordo com o nome da classe
     const nameEnd = this.constructor.name.indexOf('Creator')
@@ -27,20 +34,31 @@ export default class Creator extends Drawable {
       .slice(0, nameEnd)
       .toLowerCase()}`
 
-    IO.addButtonListener(buttonName, () => {
+    const buttonCallback = () => {
+      console.log('Button hit for ' + this.constructor.name)
       this.constructor.isActive = true
-    })
+    }
+    IO.addButtonListener(buttonName, buttonCallback)
 
     // Mantem o cursor atualizado
-    Map.addEventListener('activateinteractionclass', ({ value, oldValue }) => {
+    const cursorCallback = ({ value, oldValue }) => {
       if (value == this.constructor) Map.setCursor('pencil')
       else if (oldValue == this.constructor) this.cancel()
-    })
+    }
+    Map.addEventListener('activateinteractionclass', cursorCallback)
 
     // Ouve cliques
-    IO.addEventListener('leftclick', (value) => {
+    const clickCallback = (value) => {
       if (this.constructor.isActive) this.handleClick(value)
-    })
+    }
+    IO.addEventListener('leftclick', clickCallback)
+
+    this.resetter = () => {
+      IO.removeEventListener('cancel', cancelCallback)
+      IO.removeButtonListener(buttonName, buttonCallback)
+      Map.removeEventListener('activateinteractionclass', cursorCallback)
+      IO.removeEventListener('leftclick', clickCallback)
+    }
   }
 
   cancel() {
@@ -63,9 +81,7 @@ export default class Creator extends Drawable {
   }
 
   onDraw(position) {
-    throw new Error(
-      'The "onDraw" method must be implemented by a child class'
-    )
+    throw new Error('The "onDraw" method must be implemented by a child class')
   }
 
   // Retorna a instancia do singleton

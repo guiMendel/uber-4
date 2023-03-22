@@ -74,8 +74,6 @@ export default function Home({ hideHomeScreen }) {
     Map.instance.generateMap(mapParams.method, mapParams.parameters)
 
     Simulation.centerCamera()
-
-    console.log('starting sim')
   }
 
   return (
