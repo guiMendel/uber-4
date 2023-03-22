@@ -20,6 +20,8 @@ export default class Camera {
   }
 
   static set translation(value) {
+    console.log('new translation', value)
+
     this.#translation = value
 
     // Desloca a camera
@@ -52,7 +54,7 @@ export default class Camera {
     this.#context = context
 
     // Desloca a visao para a origem
-    this.reset()
+    // this.reset()
 
     // Sempre que usuario arrastar com botao direito, desloque a camera
     IO.addEventListener('mouserightdrag', this.translate)

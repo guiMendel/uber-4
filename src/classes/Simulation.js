@@ -1,5 +1,7 @@
 import Configuration from '../configuration/Configuration'
+import Camera from './Camera'
 import Drawable from './Drawables/Drawable'
+import Vertex from './Drawables/Vertex'
 import IO from './IO'
 import Map from './Map'
 import RouteCalculator from './RouteCalculator'
@@ -25,6 +27,43 @@ export default class Simulation {
     IO.addButtonListener('toggle-simulation', ({ value }) =>
       value ? this.start() : this.stop()
     )
+
+    this.start()
+    this.centerCamera()
+    // Camera.reset()
+  }
+
+  static centerCamera() {
+    const xSorted = Vertex.sortedCoords.get('x')
+    const ySorted = Vertex.sortedCoords.get('y')
+
+    console.log(
+      'xSorted',
+      xSorted[0].x,
+      xSorted[xSorted.length - 1].x,
+      (xSorted[0].x + xSorted[xSorted.length - 1].x) / 2
+    )
+
+    console.log(
+      'ySorted',
+      ySorted[0].y,
+      ySorted[ySorted.length - 1].y,
+      (ySorted[0].y + ySorted[ySorted.length - 1].y) / 2
+    )
+
+    // Coloca o deslocamento no centro de massa dos vertices
+    Camera.translation = {
+      x:
+        xSorted.length == 0
+          ? window.innerWidth / 2
+          : window.innerWidth / 2 -
+            (xSorted[0].x + xSorted[xSorted.length - 1].x) / 2,
+      y:
+        ySorted.length == 0
+          ? window.innerHeight / 2
+          : window.innerHeight / 2 -
+            (ySorted[0].y + ySorted[ySorted.length - 1].y) / 2,
+    }
   }
 
   static cancelToken = { cancelled: true }
