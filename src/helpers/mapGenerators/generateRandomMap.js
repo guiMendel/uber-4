@@ -103,6 +103,8 @@ export function generateRandomStreets(
 }
 
 export function generateRandomCars(numberOfCars = 4) {
+  console.log('total edges:', Edge.instances)
+
   // Gerar carros
   for (let carId = 0; carId < numberOfCars; carId++) {
     // Pega uma aresta
