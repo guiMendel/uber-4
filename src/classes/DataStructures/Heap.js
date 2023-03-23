@@ -1,5 +1,7 @@
 // Define uma estrutura de dados do tipo Heap
 export default class Heap {
+  static className = 'Heap'
+
   // Vai armazenar os dados
   #data = []
 

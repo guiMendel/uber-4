@@ -4,6 +4,8 @@ import Drawable from './Drawable'
 
 // Este singleton permite destacar as arestas que compoem uma rota
 export default class RouteHighlighter {
+  static className = 'RouteHighlighter'
+
   static #instance
 
   constructor() {
@@ -13,7 +15,7 @@ export default class RouteHighlighter {
     RouteHighlighter.#instance = this
 
     // Guarda uma referencia ao arrow drawable
-    this.arrowDrawable = Drawable.drawableInstances[ArrowIndicators.name][0]
+    this.arrowDrawable = Drawable.drawableInstances[ArrowIndicators.className][0]
   }
 
   draw(drawer, highlightedNode) {

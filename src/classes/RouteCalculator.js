@@ -9,6 +9,8 @@ import Simulation from './Simulation'
 
 // Fornece a classe responsavel por saber quando e como calcular as rotas dos clientes, e o que fazer depois
 export default class RouteCalculator {
+  static className = 'RouteCalculator'
+
   // Listeners
   static listeners = { calculateroutes: [] }
 
@@ -140,7 +142,7 @@ export default class RouteCalculator {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
+        `The ${this.className} class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -150,7 +152,7 @@ export default class RouteCalculator {
   static removeEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe ${this.name} nao fornece um eventListener do tipo "${type}"`
+        `A classe ${this.className} nao fornece um eventListener do tipo "${type}"`
       )
 
     const index = this.listeners[type].indexOf(callback)

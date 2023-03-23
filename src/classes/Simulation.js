@@ -16,6 +16,8 @@ import RouteCalculator from './RouteCalculator'
 
 // Essa classe eh responsavel por acionar o modo simulacao e fazer os objetos se moverem e interagirem no tempo
 export default class Simulation {
+  static className = "Simulation"
+
   // Guarda o tempo atual passado na simulacao, em horas simuladas
   static #time = 0
 
@@ -136,7 +138,7 @@ export default class Simulation {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
+        `The ${this.className} class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)

@@ -26,6 +26,8 @@ const inCar = 2
 
 // Define um cliente
 export default class Client extends Drawable {
+  static className = 'Client'
+
   // Guarda os clientes ordenados pelas coordenada
   static sortedCoords = new SortProperties({
     x: (c1, c2) => c1.x < c2.x,

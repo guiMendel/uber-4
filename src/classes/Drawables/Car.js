@@ -18,6 +18,8 @@ const cancelCarSelect = 'car-select-cancel'
 
 // Define os carros
 export default class Car extends Drawable {
+  static className = 'Car'
+
   // Guarda os carros ordenados pelas coordenada
   static sortedCoords = new SortProperties({
     x: (c1, c2) => c1.x < c2.x,

@@ -4,6 +4,8 @@ import Drawable from './Drawable'
 
 // Define um vertice
 export default class Vertex extends Drawable {
+  static className = 'Vertex'
+
   // Guarda os vertices ordenados pelas coordenada
   static sortedCoords = new SortProperties({
     x: (v1, v2) => v1.x < v2.x,

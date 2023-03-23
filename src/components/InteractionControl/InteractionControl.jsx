@@ -17,16 +17,16 @@ import ClientCreatorControl from './ClientCreatorControl'
 
 // Mapeia as interaction keys com componentes
 const interactionKeyMap = {
-  [StreetCreator.name]: StreetCreatorControl,
-  [ClientCreator.name]: ClientCreatorControl,
-  [Client.name]: ClientRouteControl,
+  [StreetCreator.className]: StreetCreatorControl,
+  [ClientCreator.className]: ClientCreatorControl,
+  [Client.className]: ClientRouteControl,
 }
 
 const buttonPanelsKeyMap = {
-  [CarCreator.name]: CarCreatorButtons,
-  [ClientCreator.name]: ClientCreatorButtons,
-  [StreetCreator.name]: StreetCreatorButtons,
-  [Client.name]: ClientButtons,
+  [CarCreator.className]: CarCreatorButtons,
+  [ClientCreator.className]: ClientCreatorButtons,
+  [StreetCreator.className]: StreetCreatorButtons,
+  [Client.className]: ClientButtons,
 }
 
 // Este componente decide qual dos outros controls mostrar, baseado em qual classe de interacao esta ativa
@@ -37,7 +37,7 @@ export default function InteractionControl() {
   useEffect(() => {
     // Se inscreve para o evento de mudanca de classe de interacao
     Map.addEventListener('activateinteractionclass', ({ value }) =>
-      setInteractionKey(value?.name)
+      setInteractionKey(value?.className)
     )
   }, [])
 

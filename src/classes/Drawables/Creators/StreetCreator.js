@@ -15,6 +15,8 @@ const deselectEdgeToken = 'deselect-edge'
 
 // Permite criar novos vertices e arestas
 export default class StreetCreator extends Creator {
+  static className = 'StreetCreator'
+
   // A velocidade das ruas a serem criadas
   streetSpeed = null
 
@@ -80,7 +82,7 @@ export default class StreetCreator extends Creator {
     super()
 
     // Guarda uma referencia ao arrow drawable
-    this.arrowDrawable = Drawable.drawableInstances[ArrowIndicators.name][0]
+    this.arrowDrawable = Drawable.drawableInstances[ArrowIndicators.className][0]
 
     // Cancela qualquer vertex move quando soltar o botao
     const releaseCallback = () => {
@@ -534,7 +536,7 @@ export default class StreetCreator extends Creator {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
+        `The ${this.className} class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -544,7 +546,7 @@ export default class StreetCreator extends Creator {
   static removeEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
+        `The ${this.className} class doesn't provide an eventListener of type "${type}"`
       )
 
     const index = this.listeners[type].indexOf(callback)

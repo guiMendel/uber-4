@@ -11,6 +11,8 @@ const wanderSlack = 100
 
 // Define uma classe que permite deslocar a visao do canvas
 export default class Camera {
+  static className = "Camera"
+  
   // Para qual posicao deslocar a camera a cada frame
   static panDestination = { x: null, y: null }
 

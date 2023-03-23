@@ -12,7 +12,7 @@ export default {
   addEventListener(type, id, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `The ${this.constructor.name} class doesn't provide an eventListener of type "${type}"`
+        `The ${this.constructor.className} class doesn't provide an eventListener of type "${type}"`
       )
 
     if (id == undefined)
@@ -20,7 +20,7 @@ export default {
 
     if (this.listeners[type][id])
       throw new Error(
-        `Event of type ${type}, from class ${this.constructor.name}, already possesses a listener with id ${id}`
+        `Event of type ${type}, from class ${this.constructor.className}, already possesses a listener with id ${id}`
       )
 
     this.listeners[type][id] = callback
@@ -30,7 +30,7 @@ export default {
   removeEventListener(type, id) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
+        `The ${this.className} class doesn't provide an eventListener of type "${type}"`
       )
 
     if (id == undefined)
@@ -43,7 +43,7 @@ export default {
   raiseEvent(type, payload) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `Attempt inside class ${this.constructor.name} of raising event with an undeclared type "${type}"`
+        `Attempt inside class ${this.constructor.className} of raising event with an undeclared type "${type}"`
       )
 
     for (const listener of Object.values(this.listeners[type]))

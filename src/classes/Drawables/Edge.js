@@ -11,6 +11,8 @@ import Drawable from './Drawable'
 
 // Define uma aresta
 export default class Edge extends Drawable {
+  static className = 'Edge'
+
   // Guarda as arestas ordenadas pelas coordenadas
   static sortedCoords = new SortProperties({
     leftVertexX: (e1, e2) => e1.leftVertex.x < e2.leftVertex.x,

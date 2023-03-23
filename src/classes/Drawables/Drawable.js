@@ -5,6 +5,8 @@ import Camera from '../Camera'
 
 // Classe que define uma entidade capaz de ser desenhada em tela
 export default class Drawable {
+  static className = 'Drawable'
+
   // Um objeto que vai guardar referencia para todas as instancias de drawable
   // A chave eh uma string com o nome de uma subclasse de drawable (como Edge, etc), os valores sao outro objeto
   // Esse outro objeto tem como chave o id de cada instancia, e aponta para a instancia correspondente
@@ -30,7 +32,7 @@ export default class Drawable {
 
       throw new Error(
         `Attempt to insert new instance of "${
-          this.name
+          this.className
         }" with repeated id, but the field "${result}" differs.\nPrevious value: ${JSON.stringify(
           existingDrawable[result]
         )}. New value: ${JSON.stringify(properties[result])}`
@@ -51,10 +53,10 @@ export default class Drawable {
 
   // Retorna o objeto que armazena todas as instancias da classe de this
   static get instances() {
-    if (Drawable.drawableInstances[this.name] == undefined)
-      Drawable.drawableInstances[this.name] = {}
+    if (Drawable.drawableInstances[this.className] == undefined)
+      Drawable.drawableInstances[this.className] = {}
 
-    return Drawable.drawableInstances[this.name]
+    return Drawable.drawableInstances[this.className]
   }
 
   // Permite saber a distancia do cursor ate este drawable
@@ -62,7 +64,7 @@ export default class Drawable {
     // Deve possuir coordenadas x e y
     if (this.x == undefined || this.y == undefined)
       throw new Error(
-        `Impossible to determine distance between cursor and Drawable class "${this.constructor.name}", that has no x & y coordinates`
+        `Impossible to determine distance between cursor and Drawable class "${this.constructor.className}", that has no x & y coordinates`
       )
 
     return getDistance(this, IO.mouse.mapCoords)
@@ -152,7 +154,7 @@ export default class Drawable {
     this.onDestroy.forEach((callback) => callback())
 
     // Remove a referencia principal
-    delete Drawable.drawableInstances[this.constructor.name][this.id]
+    delete Drawable.drawableInstances[this.constructor.className][this.id]
 
     // Destroi as propriedades
     Object.keys(this).forEach((property) => delete this[property])
@@ -162,7 +164,7 @@ export default class Drawable {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
+        `The ${this.className} class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -172,7 +174,7 @@ export default class Drawable {
   static raiseEvent(type, payload) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `Tentativa em ${this.name} de levantar evento de tipo inexistente "${type}"`
+        `Tentativa em ${this.className} de levantar evento de tipo inexistente "${type}"`
       )
 
     for (const listener of this.listeners[type]) listener(payload)
@@ -182,7 +184,7 @@ export default class Drawable {
   static removeEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
+        `The ${this.className} class doesn't provide an eventListener of type "${type}"`
       )
 
     const index = this.listeners[type].indexOf(callback)
@@ -198,7 +200,7 @@ export default class Drawable {
 
     let newId
 
-    const instanceArray = Drawable.drawableInstances[callingClass.name]
+    const instanceArray = Drawable.drawableInstances[callingClass.className]
 
     do {
       newId = Math.round(Math.random() * 99999)

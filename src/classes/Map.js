@@ -28,6 +28,8 @@ import mainTheme from '../assets/sounds/jazz.mp3'
 
 // Classe singleton que governa o mapa, os desenhos do mapa e suas atualizacoes
 export default class Map {
+  static className = 'Map'
+
   // Guarda a unica instancia do mapa
   static instance = null
 

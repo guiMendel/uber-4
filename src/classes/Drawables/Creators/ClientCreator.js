@@ -12,6 +12,8 @@ const clientPositionToken = 'client-position'
 
 // Classe que permite criar novos clientes
 export default class ClientCreator extends Creator {
+  static className = 'ClientCreator'
+
   // The next client to be created
   #nextCreateClient = null
 

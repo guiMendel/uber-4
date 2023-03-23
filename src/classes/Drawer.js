@@ -9,6 +9,8 @@ import Drawable from './Drawables/Drawable'
 
 // Um wrapper de context que fornece metodos mais simples de utilziar e automatiza alguns processos
 export default class Drawer {
+  static className = "Drawer"
+
   constructor(context) {
     // Armazena o context
     this.context = context

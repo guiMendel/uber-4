@@ -81,8 +81,8 @@ export function generateRandomStreets(
   for (let edgeId = 0; edgeId < numberOfVertices; edgeId++) {
     new Edge(
       edgeId,
-      Drawable.drawableInstances[Vertex.name][edgeId],
-      Drawable.drawableInstances[Vertex.name][randomVertexIdExcept(edgeId)],
+      Drawable.drawableInstances[Vertex.className][edgeId],
+      Drawable.drawableInstances[Vertex.className][randomVertexIdExcept(edgeId)],
       {
         mapSpeed: randomSpeed(),
       }
@@ -93,8 +93,8 @@ export function generateRandomStreets(
   for (let edgeId = 0; edgeId < numberOfVertices; edgeId++) {
     new Edge(
       edgeId + numberOfVertices,
-      Drawable.drawableInstances[Vertex.name][edgeId],
-      Drawable.drawableInstances[Vertex.name][randomVertexIdExcept(edgeId)],
+      Drawable.drawableInstances[Vertex.className][edgeId],
+      Drawable.drawableInstances[Vertex.className][randomVertexIdExcept(edgeId)],
       {
         mapSpeed: randomSpeed(),
       }

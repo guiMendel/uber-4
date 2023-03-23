@@ -10,6 +10,8 @@ const eraseCarsToken = 'erase-cars'
 
 // Classe que permite criar novos carros
 export default class CarCreator extends Creator {
+  static className = 'CarCreator'
+
   // Reflete o estado do botao de apagar carros
   eraseCars = { isActive: false, set: null }
 

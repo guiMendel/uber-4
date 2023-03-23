@@ -1,5 +1,7 @@
 // Provides a variety of useful random related operators
 export default class Random {
+  static className = "Random"
+
   static get() {
     return Math.random()
   }

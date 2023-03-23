@@ -3,6 +3,8 @@ import click from '../assets/sounds/click.mp3'
 import projectorButton from '../assets/sounds/projectorButton.mp3'
 
 export default class MenuSFX {
+  static className = "MenuSFX"
+
   static #instance = null
 
   static getInstance() {

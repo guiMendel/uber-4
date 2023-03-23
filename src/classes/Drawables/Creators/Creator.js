@@ -4,6 +4,8 @@ import Drawable from '../Drawable'
 
 // Define um tipo especial de drawable: um singleton que permite criar novos elementos no mapa
 export default class Creator extends Drawable {
+  static className = 'Creator'
+
   reset() {
     this.resetter()
   }
@@ -28,9 +30,9 @@ export default class Creator extends Drawable {
     IO.addEventListener('cancel', cancelCallback)
 
     // Pega o nome do botao de acordo com o nome da classe
-    const nameEnd = this.constructor.name.indexOf('Creator')
+    const nameEnd = this.constructor.className.indexOf('Creator')
 
-    const buttonName = `new-${this.constructor.name
+    const buttonName = `new-${this.constructor.className
       .slice(0, nameEnd)
       .toLowerCase()}`
 
@@ -85,7 +87,7 @@ export default class Creator extends Drawable {
 
   // Retorna a instancia do singleton
   static getInstance() {
-    const instancesArray = Drawable.drawableInstances[this.name]
+    const instancesArray = Drawable.drawableInstances[this.className]
 
     return instancesArray && Object.values(instancesArray)[0]
   }

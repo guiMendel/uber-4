@@ -6,6 +6,8 @@ import Heap from './DataStructures/Heap'
 // 3. Fornece um vetor ordenado de cada uma dessas propriedades lidas
 
 export default class SortProperties {
+  static className = 'SortProperties'
+
   // Guarda os heaps das propriedades ordenadas
   properties = {}
 

@@ -8,6 +8,8 @@ import Map from './Map'
 
 // Este arquivo interpreta o conteudo de um arquivo e adiciona as entidades correspondentes
 export default class FileParser {
+  static className = "FileParser"
+
   static #internalParse(
     fileData,
     headerTransaltor,

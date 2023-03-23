@@ -5,23 +5,25 @@ import Edge from './Edge'
 
 // Define como desenhar as flechas que indicam o sentido de uma rua
 export default class ArrowIndicators extends Drawable {
+  static className = 'ArrowIndicators'
+
   constructor() {
     // Sera um singleton
     if (
-      Drawable.drawableInstances[ArrowIndicators.name] &&
-      Drawable.drawableInstances[ArrowIndicators.name][0] != undefined
+      Drawable.drawableInstances[ArrowIndicators.className] &&
+      Drawable.drawableInstances[ArrowIndicators.className][0] != undefined
     )
-      return Drawable.drawableInstances[ArrowIndicators.name][0]
+      return Drawable.drawableInstances[ArrowIndicators.className][0]
 
     super(0, {})
   }
 
   // Desenha triangulos de direcao para cada rua
   draw(drawer) {
-    if (Drawable.drawableInstances[Edge.name] == undefined) return
+    if (Drawable.drawableInstances[Edge.className] == undefined) return
 
     // Para cada aresta
-    for (const edge of Object.values(Drawable.drawableInstances[Edge.name])) {
+    for (const edge of Object.values(Drawable.drawableInstances[Edge.className])) {
       this.drawForEdge(edge, drawer)
     }
   }

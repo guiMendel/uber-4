@@ -2,6 +2,8 @@ import Camera from './Camera'
 
 // Este modulo fornece facilidade para realizar IO com o mapa
 export default class IO {
+  static className = "IO"
+
   // Conhece a atual posicao do cursor em tela
   static mouse = {
     // Coordenadas

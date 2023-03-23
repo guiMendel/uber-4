@@ -2,6 +2,8 @@ import Drawable from './Drawable'
 
 // Singleton que fornece metodos para debug
 export default class Debug extends Drawable {
+  static className = 'Debug'
+
   static #instance = null
 
   // Stores which lines to draw
