@@ -350,9 +350,6 @@ export default function generateCityBlocks(
   lowSpeedLaneProportion = 5,
   highSpeedLaneProportion = 5
 ) {
-  // REMOVE THIS ASAP
-  numberOfBlocks = 1
-
   // Reset everything
   Coordinate.reset()
   Block.reset()
@@ -564,18 +561,9 @@ function generateStreetsForBlocks(vertexOmitChance, edgeOmitChance) {
     const origin = Coordinate.instances[street.origin]
     const target = Coordinate.instances[street.target]
 
-    console.log(
-      'Creating street. id, origin and target:',
-      streetId,
-      origin,
-      target
-    )
-
     const edge = new Edge(streetId++, origin.getVertex(), target.getVertex(), {
       mapSpeed: defaultLaneSpeed(),
     })
-
-    console.log('resulting edge: ', edge)
   }
 }
 

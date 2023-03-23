@@ -82,7 +82,9 @@ export function generateRandomStreets(
     new Edge(
       edgeId,
       Drawable.drawableInstances[Vertex.className][edgeId],
-      Drawable.drawableInstances[Vertex.className][randomVertexIdExcept(edgeId)],
+      Drawable.drawableInstances[Vertex.className][
+        randomVertexIdExcept(edgeId)
+      ],
       {
         mapSpeed: randomSpeed(),
       }
@@ -94,7 +96,9 @@ export function generateRandomStreets(
     new Edge(
       edgeId + numberOfVertices,
       Drawable.drawableInstances[Vertex.className][edgeId],
-      Drawable.drawableInstances[Vertex.className][randomVertexIdExcept(edgeId)],
+      Drawable.drawableInstances[Vertex.className][
+        randomVertexIdExcept(edgeId)
+      ],
       {
         mapSpeed: randomSpeed(),
       }
@@ -103,8 +107,6 @@ export function generateRandomStreets(
 }
 
 export function generateRandomCars(numberOfCars = 4) {
-  console.log('total edges:', Edge.instances)
-
   // Gerar carros
   for (let carId = 0; carId < numberOfCars; carId++) {
     // Pega uma aresta
@@ -112,8 +114,6 @@ export function generateRandomCars(numberOfCars = 4) {
 
     // Pega um deslocamento
     const displacement = Random.rangeFloat(0, edge.mapDistance)
-
-    console.log('Generating car for edge ', edge)
 
     new Car(
       carId,
