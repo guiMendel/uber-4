@@ -89,8 +89,6 @@ export default class Simulation {
 
     this.#time = 0
 
-    console.log(Drawable.drawableInstances)
-
     CarCreator.getInstance().reset()
     ClientCreator.getInstance().reset()
     StreetCreator.getInstance().reset()

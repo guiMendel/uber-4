@@ -1,6 +1,7 @@
-import { getDistance } from '../../helpers/vectorDistance'
+import { getDistance, getSquaredDistance } from '../../helpers/vectorDistance'
 import IO from '../IO'
 import Configuration from '../../configuration/Configuration'
+import Camera from '../Camera'
 
 // Classe que define uma entidade capaz de ser desenhada em tela
 export default class Drawable {
@@ -67,6 +68,26 @@ export default class Drawable {
     return getDistance(this, IO.mouse.mapCoords)
   }
 
+  #sounds = {}
+
+  registerSound(sound, baseVolume) {
+    this.#sounds[sound] = { sound: new Audio(sound), baseVolume }
+    this.#sounds[sound].sound.volume = baseVolume
+
+    return this.#sounds[sound].sound
+  }
+
+  // Plays a sound
+  playSound(soundPath) {
+    const { sound } = this.#sounds[soundPath]
+
+    if (sound == null) throw new Error('No sound ' + soundPath)
+
+    sound.pause()
+    sound.currentTime = 0
+    sound.play()
+  }
+
   // Permite alterar o valor de uma propriedade do drawable ao longo de multiplos frames, dada uma condicao
   animate({
     property,
@@ -112,7 +133,19 @@ export default class Drawable {
   }
 
   // Permite agir dentro da simulacao
-  simulationStep(deltaTime) {}
+  simulationStep() {
+    if (this.x != undefined && this.y != undefined) {
+      const distance = getDistance(this, Camera.position)
+
+      const inverseLerp = (value, min, max) =>
+        (Math.min(Math.max(value, min), max) - min) / (max - min)
+
+      for (const { sound, baseVolume } of Object.values(this.#sounds)) {
+        sound.volume =
+          baseVolume * ((1 - inverseLerp(distance, 0, 500)) * 0.8 + 0.2)
+      }
+    }
+  }
 
   destroy() {
     // Limpa as referencias deste objeto

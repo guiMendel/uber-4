@@ -11,6 +11,9 @@ import {
 import { cos, sin } from '../../helpers/trigonometry'
 import SortProperties from '../SortProperties'
 
+import engine from '../../assets/sounds/engine.mp3'
+import honk from '../../assets/sounds/honk.mp3'
+
 const cancelCarSelect = 'car-select-cancel'
 
 // Define os carros
@@ -140,7 +143,25 @@ export default class Car extends Drawable {
       }
     })
 
+    this.registerSound(engine, 0.6)
+    this.registerSound(honk, 0.05)
+
+    const engineOnSelect = (car) => {
+      if (car && car.id == this.id) this.vroom()
+    }
+
+    Car.addEventListener('select', engineOnSelect)
+    this.onDestroy.push(() => Car.removeEventListener('select', engineOnSelect))
+
     Car.raiseEvent('new', this)
+  }
+
+  vroom() {
+    this.playSound(engine)
+  }
+
+  honk() {
+    this.playSound(honk)
   }
 
   draw(drawer) {
@@ -170,6 +191,8 @@ export default class Car extends Drawable {
   }
 
   simulationStep(deltaTime) {
+    super.simulationStep(deltaTime)
+
     // Fica paradao se nao tem rota
     if (this.assignedRoute == null) return
 

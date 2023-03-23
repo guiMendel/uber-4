@@ -35,7 +35,6 @@ export default class Creator extends Drawable {
       .toLowerCase()}`
 
     const buttonCallback = () => {
-      console.log('Button hit for ' + this.constructor.name)
       this.constructor.isActive = true
     }
     IO.addButtonListener(buttonName, buttonCallback)

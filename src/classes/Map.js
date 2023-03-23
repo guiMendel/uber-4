@@ -128,13 +128,12 @@ export default class Map {
     this.music.loop = true
     this.music.volume = 0.4
 
-    const playMusic = () => {
-      this.music.play().then(console.log).catch(console.log)
-      console.log(this.music.src)
-      window.removeEventListener('click', playMusic)
-    }
-
-    window.addEventListener('click', playMusic)
+    const musicPlayToken = setInterval(() => {
+      this.music
+        .play()
+        .then(() => clearInterval(musicPlayToken))
+        .catch(console.log)
+    }, 200)
 
     // Inicia as iteracoes
     const start = async () => {

@@ -13,6 +13,10 @@ import {
   getDistance,
 } from '../../helpers/vectorDistance'
 
+import hm1 from '../../assets/sounds/hm1.mp3'
+import hm2 from '../../assets/sounds/hm2.mp3'
+import Random from '../Random'
+
 const alterDestinationKey = 'client-alter-destination'
 
 // Fases de uma rota
@@ -205,6 +209,8 @@ export default class Client extends Drawable {
   // Caso o cliente estava no estado hovered na ultima iteracao
   wasHovered = false
 
+  sound = Random.sample([hm1, hm2])
+
   constructor(id, location, destination, image, rotation) {
     // Invoca construtor pai
     super(id, Client.nameProperties(location, destination))
@@ -250,10 +256,18 @@ export default class Client extends Drawable {
     // Levanta quando for destruido
     this.onDestroy.push(() => Client.raiseEvent('delete', this))
 
+    const onSelect = (client) => {
+      if (client && client.id == this.id) this.playSound(this.sound)
+    }
+    Client.addEventListener('select', onSelect)
+    this.onDestroy.push(() => Client.removeEventListener('select', onSelect))
+
     Client.raiseEvent('new', this)
 
     if (Client.highestId == undefined || Client.highestId < this.id)
       Client.highestId = this.id
+
+    this.registerSound(this.sound, 0.2)
   }
 
   draw(drawer) {
@@ -305,6 +319,8 @@ export default class Client extends Drawable {
   }
 
   simulationStep(deltaTime) {
+    super.simulationStep(deltaTime)
+
     if (this.selectedRoute == null) return
 
     // Helper para andar ate a posicao
@@ -360,13 +376,18 @@ export default class Client extends Drawable {
         const walkDistance = clientWalkSpeed * deltaTime * pixelsPerKilometer
 
         // Se estiver
-        if (getDistance(this.selectedRoute.stepper.car, this) <= walkDistance) {
+        const { car } = this.selectedRoute.stepper
+
+        if (getDistance(car, this) <= walkDistance) {
           // Avanca a fase
           this.routePhase++
 
+          // Play sfx
+          car.vroom()
+
           // Ajusta o source na nova rota para ser o carro em vez do rendez vous
           // Assim o desenho da rota fica correto
-          this.selectedRoute.stepper.source = this.selectedRoute.stepper.car
+          this.selectedRoute.stepper.source = car
         }
       },
 
@@ -384,6 +405,9 @@ export default class Client extends Drawable {
         ) {
           // Atualiza coordenadas
           Object.assign(this, this.selectedRoute.projectionCoords)
+
+          // Play sfx
+          car.honk()
 
           // Finaliza a rota e anda o resto
           this.routePhase = null

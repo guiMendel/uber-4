@@ -27,6 +27,7 @@ export default class ClientCreator extends Creator {
   clientResetter = null
 
   reset() {
+    this.autoGeneration = false
     this.clientResetter()
     super.reset()
   }
@@ -65,7 +66,9 @@ export default class ClientCreator extends Creator {
     IO.addButtonListener('delete-clients', eraseCallback)
 
     // Listen to auto generation toggle
-    const autoGenCallback = ({ value }) => (this.autoGeneration = value)
+    const autoGenCallback = ({ value }) => {
+      this.autoGeneration = value
+    }
     IO.addButtonListener('auto-generate-clients', autoGenCallback)
 
     // Start client generation
@@ -180,7 +183,14 @@ export default class ClientCreator extends Creator {
       })
 
       // Gen the client
-      new Client((Client.highestId ?? 0) + 1, randomCoords(), randomCoords())
+      const client = new Client(
+        (Client.highestId ?? 0) + 1,
+        randomCoords(),
+        randomCoords()
+      )
+
+      // Play sound
+      client.playSound(client.sound)
     }
 
     // Start timeout for next generation
