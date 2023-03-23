@@ -21,6 +21,7 @@ export default function Credits() {
         <b>Asset credits:</b>
         <li>Car image: Ihor Biliavskyi</li>
         <li>People images: ONYXprj</li>
+        <li>Music: Seduction Jazz, by Francesco Biondi (FreeGroove)</li>
       </ul>
     </>
   )
