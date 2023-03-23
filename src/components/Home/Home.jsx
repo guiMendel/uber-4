@@ -12,6 +12,7 @@ import Camera from '../../classes/Camera'
 import IO from '../../classes/IO'
 import Map from '../../classes/Map'
 import Simulation from '../../classes/Simulation'
+import MenuSFX from '../../classes/MenuSFX'
 
 export default function Home({ hideHomeScreen }) {
   const [mapParams, setMapParams] = useState({ method: null, parameters: {} })
@@ -44,7 +45,7 @@ export default function Home({ hideHomeScreen }) {
     )
 
   // Function to generate a callback that sets a state to a value
-  const bindSecondMenu = (value) => () =>
+  const setSecondMenu = (value) =>
     setSecondScreenComponent((currentValue) => {
       if (value == currentValue) value = null
       setThirdScreenComponent(null)
@@ -76,6 +77,13 @@ export default function Home({ hideHomeScreen }) {
     Simulation.centerCamera()
   }
 
+  const hoverSFX = () => MenuSFX.playHover()
+
+  const bindClick = (menu) => () => {
+    setSecondMenu(menu)
+    MenuSFX.playClick()
+  }
+
   return (
     <div className="home-container">
       {/* Upper curtain */}
@@ -101,7 +109,8 @@ export default function Home({ hideHomeScreen }) {
         >
           {/* Create new map */}
           <button
-            onClick={bindSecondMenu('new-map')}
+            onClick={bindClick('new-map')}
+            onMouseEnter={hoverSFX}
             className={menuOptionClass('new-map', secondScreenComponent)}
           >
             New Map
@@ -109,7 +118,8 @@ export default function Home({ hideHomeScreen }) {
 
           {/* Access simulation options */}
           <button
-            onClick={bindSecondMenu('configuration')}
+            onClick={bindClick('configuration')}
+            onMouseEnter={hoverSFX}
             className={menuOptionClass('configuration', secondScreenComponent)}
           >
             Configuration
@@ -117,7 +127,8 @@ export default function Home({ hideHomeScreen }) {
 
           {/* See credits */}
           <button
-            onClick={bindSecondMenu('credits')}
+            onClick={bindClick('credits')}
+            onMouseEnter={hoverSFX}
             className={menuOptionClass('credits', secondScreenComponent)}
           >
             Credits
@@ -133,7 +144,7 @@ export default function Home({ hideHomeScreen }) {
           >
             <IoIosArrowBack
               className="back icon"
-              onClick={bindSecondMenu(null)}
+              onClick={bindClick(null)}
             />
 
             {/* Show component if there is one */}

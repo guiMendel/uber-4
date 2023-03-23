@@ -4,6 +4,7 @@ import Slider from '../../Slider/Slider'
 import convertCase from '../../../helpers/convertCase'
 import { useEffect, useState } from 'react'
 import Configuration from '../../../configuration/Configuration'
+import MenuSFX from '../../../classes/MenuSFX'
 
 // Returns configurable parameters for a tab
 function getTabParametersEntries(configurationTab) {
@@ -63,6 +64,13 @@ export default function ThirdScreen({ owner }) {
     })
   }
 
+  const hoverSFX = () => MenuSFX.playHover()
+
+  const bindClick = (menu) => () => {
+    setValues(menu)
+    MenuSFX.playClick()
+  }
+
   return (
     <>
       <div className="configuration-parameters-tab">
@@ -96,7 +104,9 @@ export default function ThirdScreen({ owner }) {
                     setValue={(value) => setValueFor(configurationName, value)}
                     min={configurationParams.min}
                     max={configurationParams.max}
-                    floatingPoint={Number.isInteger(configurationParams.default) == false}
+                    floatingPoint={
+                      Number.isInteger(configurationParams.default) == false
+                    }
                   />
                 ) : (
                   // Colors
@@ -129,7 +139,8 @@ export default function ThirdScreen({ owner }) {
       </div>
 
       <button
-        onClick={() => setValues(getInitialValues(owner))}
+        onMouseEnter={hoverSFX}
+        onClick={bindClick(getInitialValues(owner))}
         className="reset-button"
       >
         Reset

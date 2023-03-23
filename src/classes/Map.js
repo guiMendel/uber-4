@@ -24,6 +24,8 @@ import Drawable from './Drawables/Drawable'
 import generateCityBlocks from '../helpers/mapGenerators/generateCityBlocks.'
 import Vertex from './Drawables/Vertex'
 
+import mainTheme from '../assets/sounds/jazz.mp3'
+
 // Classe singleton que governa o mapa, os desenhos do mapa e suas atualizacoes
 export default class Map {
   // Guarda a unica instancia do mapa
@@ -78,6 +80,12 @@ export default class Map {
     return sorted[sorted.length - 1].y
   }
 
+  // Music
+  music = new Audio(mainTheme)
+  // music = new Audio('./src/assets/honk.mp3')
+  // music = new Audio('../assets/honk.mp3')
+  // music = new Audio('https://vincens2005.github.io/vr/Nyan%20Cat%20[original].mp3')
+
   // Initializes map given a method and parameters
   generateMap(method, parameters) {
     // Destroy previous map
@@ -114,6 +122,19 @@ export default class Map {
 
     // Define o singleton
     Map.instance = this
+
+    // Play music
+    // this.music.src = './src/assets/honk.mp3'
+    this.music.loop = true
+    this.music.volume = 0.4
+
+    const playMusic = () => {
+      this.music.play().then(console.log).catch(console.log)
+      console.log(this.music.src)
+      window.removeEventListener('click', playMusic)
+    }
+
+    window.addEventListener('click', playMusic)
 
     // Inicia as iteracoes
     const start = async () => {

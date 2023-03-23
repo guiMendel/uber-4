@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import Slider from '../../Slider/Slider'
 import Random from '../../../classes/Random'
 import convertCase from '../../../helpers/convertCase'
+import MenuSFX from '../../../classes/MenuSFX'
 
 export default function ThirdScreen({ startSimulation, configuration, owner }) {
   // Initializes the parameterValues object
@@ -21,6 +22,13 @@ export default function ThirdScreen({ startSimulation, configuration, owner }) {
   const [parameterValues, setParameterValues] = useState(initialParameterValues)
 
   useEffect(() => setParameterValues(initialParameterValues), [configuration])
+
+  const hoverSFX = () => MenuSFX.playHover()
+
+  const bindClick = (params) => () => {
+    startSimulation(params)
+    MenuSFX.playProjectorButton()
+  }
 
   return (
     <>
@@ -50,9 +58,8 @@ export default function ThirdScreen({ startSimulation, configuration, owner }) {
       </div>
 
       <button
-        onClick={() =>
-          startSimulation({ method: owner, parameters: parameterValues })
-        }
+        onMouseEnter={hoverSFX}
+        onClick={bindClick({ method: owner, parameters: parameterValues })}
         className="start-simulation"
       >
         Start
