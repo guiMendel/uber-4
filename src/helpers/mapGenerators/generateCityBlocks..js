@@ -558,6 +558,15 @@ function generateStreetsForBlocks(vertexOmitChance, edgeOmitChance) {
     )
       continue
 
+    console.log(
+      'Creating street. id, origin and target:',
+      streetId,
+      origin,
+      target
+    )
+
+    console.log(origin.getVertex(), target.getVertex())
+
     const origin = Coordinate.instances[street.origin]
     const target = Coordinate.instances[street.target]
 

@@ -111,6 +111,8 @@ export function generateRandomCars(numberOfCars = 4) {
     // Pega um deslocamento
     const displacement = Random.rangeFloat(0, edge.mapDistance)
 
+    console.log('Generating car for edge ', edge)
+
     new Car(
       carId,
       edge,
