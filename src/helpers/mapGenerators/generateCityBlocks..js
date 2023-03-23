@@ -558,6 +558,9 @@ function generateStreetsForBlocks(vertexOmitChance, edgeOmitChance) {
     )
       continue
 
+    const origin = Coordinate.instances[street.origin]
+    const target = Coordinate.instances[street.target]
+
     console.log(
       'Creating street. id, origin and target:',
       streetId,
@@ -566,9 +569,6 @@ function generateStreetsForBlocks(vertexOmitChance, edgeOmitChance) {
     )
 
     console.log(origin.getVertex(), target.getVertex())
-
-    const origin = Coordinate.instances[street.origin]
-    const target = Coordinate.instances[street.target]
 
     new Edge(streetId++, origin.getVertex(), target.getVertex(), {
       mapSpeed: defaultLaneSpeed(),
