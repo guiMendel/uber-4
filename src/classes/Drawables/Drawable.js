@@ -87,7 +87,7 @@ export default class Drawable {
 
     sound.pause()
     sound.currentTime = 0
-    sound.play()
+    sound.play().catch(() => {})
   }
 
   // Permite alterar o valor de uma propriedade do drawable ao longo de multiplos frames, dada uma condicao
