@@ -75,6 +75,8 @@ export default function Home({ hideHomeScreen }) {
     Map.instance.generateMap(mapParams.method, mapParams.parameters)
 
     Simulation.centerCamera()
+
+    Map.instance.music.volume *= 0.5
   }
 
   const hoverSFX = () => MenuSFX.playHover()
@@ -142,10 +144,7 @@ export default function Home({ hideHomeScreen }) {
               'second menu' + (thirdScreenComponent == null ? '' : ' faded')
             }
           >
-            <IoIosArrowBack
-              className="back icon"
-              onClick={bindClick(null)}
-            />
+            <IoIosArrowBack className="back icon" onClick={bindClick(null)} />
 
             {/* Show component if there is one */}
             <SecondScreen

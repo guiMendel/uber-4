@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import IO from '../../classes/IO'
+import MenuSFX from '../../classes/MenuSFX'
 import './Button.css'
 
 // Componente de botao que automaticamente se inscreve em buttons de IO
@@ -31,9 +32,17 @@ export default function Button({
     IO.triggerButton(name, { value: !value, setValue })
   }
 
+  const hoverSFX = () => MenuSFX.playHover()
+
+  const bindClick = () => () => {
+    activate()
+    MenuSFX.playClick()
+  }
+
   return (
     <button
-      onClick={activate}
+      onMouseEnter={hoverSFX}
+      onClick={bindClick()}
       style={
         isSwitch && value
           ? { backgroundColor: 'rgb(58, 58, 241)', color: 'white' }
