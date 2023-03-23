@@ -1,7 +1,6 @@
-import seedGraph from '../helpers/seedGraph'
+import generateRandomMap from '../helpers/mapGenerators/generateRandomMap'
 import delay from '../helpers/delay'
-import theme from '../configuration/theme'
-import appConfig from '../configuration/appConfig'
+import Configuration from '../configuration/Configuration'
 import ArrowIndicators from './Drawables/ArrowIndicators'
 
 import redCar from '../assets/red-car.png'
@@ -21,9 +20,11 @@ import ClientCreator from './Drawables/Creators/ClientCreator'
 import StreetCreator from './Drawables/Creators/StreetCreator'
 import Car from './Drawables/Car'
 import CarCreator from './Drawables/Creators/CarCreator'
+import Drawable from './Drawables/Drawable'
+import generateCityBlocks from '../helpers/mapGenerators/generateCityBlocks.'
+import Vertex from './Drawables/Vertex'
 
-// Extrai valores uteis
-const { carWidth, clientWidth } = theme
+import mainTheme from '../assets/sounds/jazz.mp3'
 
 // Classe singleton que governa o mapa, os desenhos do mapa e suas atualizacoes
 export default class Map {
@@ -59,12 +60,80 @@ export default class Map {
     error: [],
   }
 
+  static get lowestX() {
+    return Vertex.sortedCoords.get('x')[0].x
+  }
+
+  static get lowestY() {
+    return Vertex.sortedCoords.get('y')[0].y
+  }
+
+  static get highestX() {
+    const sorted = Vertex.sortedCoords.get('x')
+
+    return sorted[sorted.length - 1].x
+  }
+
+  static get highestY() {
+    const sorted = Vertex.sortedCoords.get('y')
+
+    return sorted[sorted.length - 1].y
+  }
+
+  // Music
+  music = new Audio(mainTheme)
+  // music = new Audio('./src/assets/honk.mp3')
+  // music = new Audio('../assets/honk.mp3')
+  // music = new Audio('https://vincens2005.github.io/vr/Nyan%20Cat%20[original].mp3')
+
+  // Initializes map given a method and parameters
+  generateMap(method, parameters) {
+    // Destroy previous map
+    if (method == 'random') {
+      generateRandomMap(
+        parameters.numberOfVertices,
+        parameters.numberOfCars,
+        parameters.initialClients,
+        parameters.mapWidth,
+        parameters.mapHeight,
+        parameters.minDistanceBetweenVertices
+      )
+    }
+
+    if (method == 'city-blocks') {
+      generateCityBlocks(
+        parameters.numberOfBlocks,
+        parameters.blockSize,
+        parameters.numberOfCars,
+        parameters.initialClients,
+        parameters.blocksAngle,
+        parameters.vertexOmitChance,
+        parameters.edgeOmitChance,
+        parameters.lowSpeedLaneProportion,
+        parameters.highSpeedLaneProportion
+      )
+    }
+  }
+
   constructor(canvasContext, { method, parameters }) {
     // Se ja ha uma instancia, use ela
-    if (Map.instance != undefined) return Map.instance
+    // if (Map.instance != undefined) return Map.instance
+    if (Map.instance != undefined) throw new Error('Duplicating map instance')
 
     // Define o singleton
     Map.instance = this
+
+    // Play music
+    // this.music.src = './src/assets/honk.mp3'
+    this.music.loop = true
+    this.music.volume = 0.4
+
+    const musicPlayToken = setInterval(() => {
+      this.music
+        .play()
+        .then(() => clearInterval(musicPlayToken))
+        .catch(console.log)
+    }, 200)
 
     // Inicia as iteracoes
     const start = async () => {
@@ -75,16 +144,7 @@ export default class Map {
       Camera.setup(canvasContext)
 
       // Generate map
-      if (method == 'random') {
-        seedGraph(
-          parameters.numberOfVertices,
-          parameters.numberOfCars,
-          parameters.numberOfClients,
-          parameters.mapWidth,
-          parameters.mapHeight,
-          parameters.minDistanceBetweenVertices
-        )
-      }
+      this.generateMap(method, parameters)
 
       Car.setup()
       Client.setup()
@@ -114,7 +174,7 @@ export default class Map {
         this.drawer.drawFrame()
 
         // Espera o tempo de fps
-        await delay(1 / appConfig.maxFramesPerSecond)
+        await delay(1 / Configuration.getInstance().general.maxFramesPerSecond)
       }
     }
 
@@ -152,17 +212,19 @@ export default class Map {
   // Resolve assim que um novo frame comecar
   static async endOfFrame() {
     return new Promise((resolve) => {
-      function resolveAndUnsubcribe() {
+      function resolveAndUnsubscribe() {
         resolve()
-        Map.removeEventListener('newframe', resolveAndUnsubcribe)
+        Map.removeEventListener('newframe', resolveAndUnsubscribe)
       }
 
-      this.addEventListener('newframe', resolveAndUnsubcribe)
+      this.addEventListener('newframe', resolveAndUnsubscribe)
     })
   }
 
   async loadAssets() {
     return new Promise((resolve, reject) => {
+      const { carWidth, clientWidth } = Configuration.getInstance().theme
+
       // Prepara um array para armazenar as imagens de clientes
       this.clientImage = []
 
@@ -220,7 +282,7 @@ export default class Map {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe Map nao fornece um eventListener do tipo "${type}"`
+        `The Map class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -230,7 +292,7 @@ export default class Map {
   static removeEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe Map nao fornece um eventListener do tipo "${type}"`
+        `The Map class doesn't provide an eventListener of type "${type}"`
       )
 
     const index = this.listeners[type].indexOf(callback)

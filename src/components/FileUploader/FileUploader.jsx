@@ -36,7 +36,7 @@ export default function FileUploader({ show, hide, parser }) {
 
     // Configura o leitor
     reader.onerror = () => {
-      throw new Error('Falha em ler arquivo')
+      throw new Error('Failed to read file')
     }
 
     reader.onloadend = () => setContent(reader.result)
@@ -66,7 +66,7 @@ export default function FileUploader({ show, hide, parser }) {
           accept=".txt"
           onChange={handleFileInputChange}
         />
-        ou arraste o arquivo para este painel
+        or drag the file to this panel
       </p>
 
       <textarea

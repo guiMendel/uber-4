@@ -7,47 +7,62 @@ import Coordinates from '../Coordinates/Coordinates'
 import ErrorDisplay from '../ErrorDisplay/ErrorDisplay'
 import SimulationControl from '../SimulationControl/SimulationControl'
 
-
 // Icones
 import { FaUserPlus, FaPencilAlt, FaCarSide, FaPlus } from 'react-icons/fa'
+import { useEffect, useState } from 'react'
+import IO from '../../classes/IO'
 
-export default function Simulation({mapParams}) {
+export default function Simulation({ mapParams }) {
+  const [ioActive, setIOActive] = useState(IO.active)
+
+  useEffect(() => {
+    const updateIOView = (value) => setIOActive(value)
+
+    IO.addEventListener('setactive', updateIOView)
+
+    return () => IO.removeEventListener('setactive', updateIOView)
+  }, [])
+
   return (
     <div className="simulation-view">
       {/* Curtain that reveals the simulation */}
       <div className="curtain"></div>
-      
+
       <Canvas mapParams={mapParams} />
 
       {/* Mostra erros conforme eles aparecem */}
       <ErrorDisplay />
 
-      {/* Espaco em que aparecem os controles da interacao atual com o mapa */}
-      <InteractionControl />
+      {ioActive && (
+        <>
+          {/* Espaco em que aparecem os controles da interacao atual com o mapa */}
+          <InteractionControl />
 
-      {/* Mostra as coordenadas do cursor */}
-      <Coordinates />
+          {/* Mostra as coordenadas do cursor */}
+          <Coordinates />
 
-      {/* Botao de pausar e retomar simulacao */}
-      <SimulationControl />
+          {/* Botao de pausar e retomar simulacao */}
+          <SimulationControl />
 
-      {/* Contem os botoes de acoes do mapa */}
-      <div className="map actions">
-        <Button name={'new-street'} help={'Alterar ruas'}>
-          <FaPencilAlt />
-        </Button>
+          {/* Contem os botoes de acoes do mapa */}
+          <div className="map actions">
+            <Button name={'new-street'} help={'Alter streets'}>
+              <FaPencilAlt />
+            </Button>
 
-        <Button name={'new-client'} help={'Adicionar novos clientes'}>
-          <FaUserPlus />
-        </Button>
+            <Button name={'new-client'} help={'Add new clients'}>
+              <FaUserPlus />
+            </Button>
 
-        <Button name={'new-car'} help={'Adicionar novos carros'}>
-          <div className="new-car-icons">
-            <FaCarSide className="car-icon" />
-            <FaPlus className="plus-icon" />
+            <Button name={'new-car'} help={'Add new cars'}>
+              <div className="new-car-icons">
+                <FaCarSide className="car-icon" />
+                <FaPlus className="plus-icon" />
+              </div>
+            </Button>
           </div>
-        </Button>
-      </div>
+        </>
+      )}
     </div>
   )
 }

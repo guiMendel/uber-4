@@ -213,14 +213,107 @@ input[type='number'] {
   font-size: 1.8rem;
 }
 
-.actions .search-client .client{
+.actions .search-client .client {
   position: absolute;
   min-width: unset;
 
   font-size: 0.7rem;
   /* max-width: 0.2rem;
   max-height: 0.2rem; */
-  
+
+  /* top: 0.005rem; */
+  left: 0.4rem;
+}
+
+/* CLIENT CREATOR */
+
+.interaction-control .generation-params-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20rem;
+
+  gap: 1rem;
+}
+
+.interaction-control .generation-params-container .generation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.3rem;
+}
+
+.interaction-control .generation-params-container .generation-param {
+  border-radius: 20px;
+
+  background-color: rgb(209, 209, 209);
+  width: 3rem;
+
+  padding: 0.3rem 0.5rem;
+
+  text-align: end;
+}
+
+.toggle-auto-generate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.5rem;
+
+  user-select: none;
+
+  margin-right: 0.5rem;
+
+  cursor: url(../../assets/link.cur), auto;
+
+  --color: rgb(126, 126, 126);
+  color: var(--color);
+}
+
+.toggle-auto-generate:hover {
+  filter: brightness(0.96);
+}
+
+.toggle-auto-generate .toggler {
+  width: 1rem;
+  height: 1rem;
+
+  border-radius: 50%;
+
+  background-color: var(--color);
+
+  border: 5px solid white;
+  box-shadow: 0 0 5px 1px rgba(149, 149, 149, 0.2);
+
+  transition: all 100ms;
+}
+
+.off {
+  color: rgb(179, 179, 179);
+  --color: rgb(179, 179, 179);
+}
+
+.off .toggler {
+  background-color: white;
+}
+
+.actions .search-client {
+  position: relative;
+
+  font-size: 1.8rem;
+}
+
+.actions .search-client .client {
+  position: absolute;
+  min-width: unset;
+
+  font-size: 0.7rem;
+  /* max-width: 0.2rem;
+  max-height: 0.2rem; */
+
   /* top: 0.005rem; */
   left: 0.4rem;
 }

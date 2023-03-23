@@ -1,15 +1,25 @@
-.simulation-toggle-container {
+.simulation-main-control {
   position: fixed;
   top: 2rem;
   right: 2rem;
 
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  gap: 1rem;
+
+  user-select: none;
+}
+
+.simulation-control-section {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
 }
 
-.simulation-toggle-container .toggle-container {
+.simulation-control-section .toggle-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,7 +27,7 @@
   gap: 1rem;
 }
 
-.simulation-toggle-container span {
+.simulation-control-section span {
   font-family: 'Share Tech Mono', monospace;
 }
 
@@ -29,4 +39,18 @@
 
 .toggle-simulation.custom-button svg {
   min-width: unset;
+}
+
+.simulation-control-section .slider {
+  width: 100%;
+
+  font-size: 1.4rem;
+}
+
+.simulation-control-section.timescale {
+  width: 100%;
+}
+
+.clock-icon {
+  font-size: 1.8rem;
 }

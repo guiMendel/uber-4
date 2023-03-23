@@ -69,7 +69,7 @@ function findBestAssignment(wrappedRoutes) {
     // Previne um erro
     if (assignment == undefined)
       throw new Error(
-        'Falha em encontrar a melhor atribuicao das rotas encontradas: as atribuicoes possiveis se esgotaram inesperadamente'
+        'Failed to find best assignment of encountered routes: possible assignments vanished unexpectedly'
       )
 
     // Se nao tem mais rotas para atribuir a partir desta, encontramos a melhor atribuicao
@@ -103,7 +103,6 @@ function addRoutes(routes, wrappedRoutes, config, parent = null) {
       // Se tiver um pai, filtra as rotas cujo segundo recurso eh igual ao do pai (o primeiro ja vem filtrado)
 
       if (parent != null) {
-        // console.log(routeSet, routeId, routeSet[routeId])
         if (
           route.stepper[config.secondResource].id ==
           parent.route.stepper[config.secondResource].id
@@ -131,7 +130,7 @@ function addRoutes(routes, wrappedRoutes, config, parent = null) {
 // Para uso no algoritmo A* de atribuicao de rotas/clientes
 class RouteAssignment {
   constructor(route, parent, remainingRoutes, config) {
-    if (route == null) throw new Error('Rota nula!')
+    if (route == null) throw new Error('Null route!')
 
     const { resource } = config
 

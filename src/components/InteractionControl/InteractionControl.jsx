@@ -13,10 +13,12 @@ import ClientCreator from '../../classes/Drawables/Creators/ClientCreator'
 import ClientCreatorButtons from './ClientCreatorButtons'
 import CarCreatorButtons from './CarCreatorButtons'
 import CarCreator from '../../classes/Drawables/Creators/CarCreator'
+import ClientCreatorControl from './ClientCreatorControl'
 
 // Mapeia as interaction keys com componentes
 const interactionKeyMap = {
   [StreetCreator.name]: StreetCreatorControl,
+  [ClientCreator.name]: ClientCreatorControl,
   [Client.name]: ClientRouteControl,
 }
 

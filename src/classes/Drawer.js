@@ -1,5 +1,4 @@
-import appConfig from '../configuration/appConfig'
-import theme from '../configuration/theme'
+import Configuration from '../configuration/Configuration'
 import {
   angleBetween,
   displacePoint,
@@ -7,9 +6,6 @@ import {
 } from '../helpers/vectorDistance'
 import Camera from './Camera'
 import Drawable from './Drawables/Drawable'
-
-const { drawOrder } = appConfig
-const { mapBackground } = theme
 
 // Um wrapper de context que fornece metodos mais simples de utilziar e automatiza alguns processos
 export default class Drawer {
@@ -21,28 +17,21 @@ export default class Drawer {
 
     // Garante que todas as subclasses de Drawable estejam definidos em drawOrder
     const missingClass = drawableSubclasses.find(
-      (element) => !drawOrder.includes(element)
+      (element) =>
+        !Configuration.getInstance().general.drawOrder.includes(element)
     )
 
     if (missingClass != undefined)
       throw new Error(
-        `Voce esqueceu de definir o drawOrder para a seguinte classe Drawable: ${missingClass}`
+        `You forgot to define the drawOrder for the Drawable class: ${missingClass}`
       )
-
-    // Garante que todas definicoes em drawOrder sejam subclasses de Drawable
-    const extraClass = drawOrder.find(
-      (element) => !drawableSubclasses.includes(element)
-    )
-
-    // if (extraClass != undefined)
-    //   throw new Error(
-    //     `Voce forneceu em drawOrder uma classe nao definida como subclasse de Drawable: ${extraClass}`
-    //   )
   }
 
   // Desenha o frame atual da tela
   drawFrame() {
-    const { fillRect } = this.drawWith({ style: mapBackground })
+    const { fillRect } = this.drawWith({
+      style: Configuration.getInstance().theme.mapBackground,
+    })
 
     // Limpa a tela desenhando background em tudo que eh visivel
     fillRect(Camera.ScreenToMap(0, 0), {
@@ -51,7 +40,8 @@ export default class Drawer {
     })
 
     // Renderiza as instancias em ordem
-    for (const drawableClassName of drawOrder) {
+    for (const drawableClassName of Configuration.getInstance().general
+      .drawOrder) {
       if (Drawable.drawableInstances[drawableClassName] == undefined) continue
 
       // Desenha cada instancia desta classe

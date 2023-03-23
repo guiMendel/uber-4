@@ -13,17 +13,17 @@ export default function StreetCreatorButtons() {
       <Button
         name={'upload-streets'}
         onClick={() => setShowUploadPanel(!showUploadPanel)}
-        help={'Ler ruas de arquivo'}
-        rigthTooltip
+        help={'Read streets from file'}
+        rightTooltip
       >
         <FaFileExport />
       </Button>
 
       <Button
         name={'delete-streets'}
-        help={'Apagar ruas'}
+        help={'Erase streets'}
         isSwitch
-        rigthTooltip
+        rightTooltip
       >
         <FaEraser />
       </Button>

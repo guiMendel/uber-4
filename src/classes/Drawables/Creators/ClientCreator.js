@@ -1,10 +1,11 @@
-import theme from '../../../configuration/theme'
+import Configuration from '../../../configuration/Configuration'
 import IO from '../../IO'
 import Map from '../../Map'
+import Random from '../../Random'
+import Simulation from '../../Simulation'
 import Client from '../Client'
+import Vertex from '../Vertex'
 import Creator from './Creator'
-
-const { highlightColor, clientDestinationRadius } = theme
 
 const eraseClientsToken = 'erase-clients'
 const clientPositionToken = 'client-position'
@@ -17,11 +18,25 @@ export default class ClientCreator extends Creator {
   // Reflete o estado do botao de apagar clientes
   eraseClients = { isActive: false, set: null }
 
+  // Whether auto generation is on
+  autoGeneration = true
+
+  // Cooldown of client auto generation, in seconds
+  clientAutoGenerateCooldown = { min: 0.5, max: 1 }
+
+  clientResetter = null
+
+  reset() {
+    this.autoGeneration = false
+    this.clientResetter()
+    super.reset()
+  }
+
   constructor() {
     super()
 
     // Ouve botao de apagar clientes
-    IO.addButtonListener('delete-clients', ({ value, setValue }) => {
+    const eraseCallback = ({ value, setValue }) => {
       // Inicia o modo apagar clientes
 
       // Se ja possui um set
@@ -47,10 +62,28 @@ export default class ClientCreator extends Creator {
         this.eraseClients.isActive = newValue
         setValue(newValue)
       }
-    })
+    }
+    IO.addButtonListener('delete-clients', eraseCallback)
+
+    // Listen to auto generation toggle
+    const autoGenCallback = ({ value }) => {
+      this.autoGeneration = value
+    }
+    IO.addButtonListener('auto-generate-clients', autoGenCallback)
+
+    // Start client generation
+    this.scheduleClientGeneration()
+
+    this.clientResetter = () => {
+      IO.removeButtonListener('delete-clients', eraseCallback)
+      IO.removeButtonListener('auto-generate-clients', autoGenCallback)
+    }
   }
 
   onDraw(drawer) {
+    const { highlightColor, clientDestinationRadius } =
+      Configuration.getInstance().theme
+
     const { drawImage, fillArc } = drawer.drawWith({
       opacity: 0.5,
       style: highlightColor,
@@ -113,6 +146,55 @@ export default class ClientCreator extends Creator {
 
     // Reinicia criacao
     this.#nextCreateClient = null
+  }
+
+  // Wait a cooldown and generate a client
+  scheduleClientGeneration() {
+    setTimeout(
+      () => this.generateClient(),
+      Math.max(
+        1000,
+        Random.rangeFloat(
+          this.clientAutoGenerateCooldown.min,
+          this.clientAutoGenerateCooldown.max
+        ) * 1000
+      )
+    )
+  }
+
+  // Generate a client automatically
+  generateClient() {
+    // If simulation is not running or auto generation is off, skip client creation
+    if (this.autoGeneration && Simulation.isRunning) {
+      // Get the vertices sorted by position
+      const sortedX = Vertex.sortedCoords.get('x')
+      const sortedY = Vertex.sortedCoords.get('y')
+
+      // Get a random coordinate
+      const randomCoords = () => ({
+        x:
+          sortedX.length > 0
+            ? Random.rangeFloat(sortedX[0].x, sortedX[sortedX.length - 1].x)
+            : Random.rangeFloat(-100, 100),
+        y:
+          sortedY.length > 0
+            ? Random.rangeFloat(sortedY[0].y, sortedY[sortedY.length - 1].y)
+            : Random.rangeFloat(-100, 100),
+      })
+
+      // Gen the client
+      const client = new Client(
+        (Client.highestId ?? 0) + 1,
+        randomCoords(),
+        randomCoords()
+      )
+
+      // Play sound
+      client.playSound(client.sound)
+    }
+
+    // Start timeout for next generation
+    this.scheduleClientGeneration()
   }
 
   get nextClient() {

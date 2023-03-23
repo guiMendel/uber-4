@@ -1,15 +1,6 @@
-import theme from '../../configuration/theme'
+import Configuration from '../../configuration/Configuration'
 import ArrowIndicators from './ArrowIndicators'
 import Drawable from './Drawable'
-
-const {
-  selectedRouteHighlight,
-  selectedRouteHighlightBeforeRdv,
-  streetWidth,
-  clientWalkPathLineGap,
-  clientWalkPathLineSize,
-  clientWalkPathWidth,
-} = theme
 
 // Este singleton permite destacar as arestas que compoem uma rota
 export default class RouteHighlighter {
@@ -26,6 +17,9 @@ export default class RouteHighlighter {
   }
 
   draw(drawer, highlightedNode) {
+    const { selectedRouteHighlight, selectedRouteHighlightBeforeRdv } =
+      Configuration.getInstance().theme
+
     // Pega o carro e o cliente
     const { car, client } = highlightedNode.stepper
 
@@ -54,7 +48,7 @@ export default class RouteHighlighter {
     // Desenha uma linha de destaque das arestas
     const { strokePath, fillArc } = drawer.drawWith({
       style: color,
-      lineWidth: 1.5 * streetWidth,
+      lineWidth: 1.5 * Configuration.getInstance().theme.streetWidth,
     })
 
     // Desenha o destaque
@@ -90,7 +84,11 @@ export default class RouteHighlighter {
       strokePath(node.stepper.source, destination ?? node.edge.destination)
     }
 
-    if (destination == null) fillArc(node.edge.destination, 0.75 * streetWidth)
+    if (destination == null)
+      fillArc(
+        node.edge.destination,
+        0.75 * Configuration.getInstance().theme.streetWidth
+      )
   }
 
   drawVertices(node, drawer) {
@@ -114,6 +112,12 @@ export default class RouteHighlighter {
   }
 
   drawClientWalkLine(client, rendezVous, drawer, color) {
+    const {
+      clientWalkPathWidth,
+      clientWalkPathLineGap,
+      clientWalkPathLineSize,
+    } = Configuration.getInstance().theme
+
     const { frettedPath } = drawer.drawWith({
       style: color,
       lineWidth: clientWalkPathWidth,
@@ -130,7 +134,10 @@ export default class RouteHighlighter {
   }
 
   static drawClientWalkRoute(client, drawer) {
-    const instance = this.#getInstance()
+    const { streetWidth, selectedRouteHighlight } =
+      Configuration.getInstance().theme
+
+    const instance = this.getInstance()
 
     instance.drawClientWalkLine(
       client,
@@ -150,12 +157,12 @@ export default class RouteHighlighter {
 
   // Dado um node, destaca a rota correspondente
   static highlightRoute(node, drawer) {
-    const instance = this.#getInstance()
+    const instance = this.getInstance()
 
     instance.draw(drawer, node)
   }
 
-  static #getInstance() {
+  static getInstance() {
     if (this.#instance == undefined) return new RouteHighlighter()
     else return this.#instance
   }

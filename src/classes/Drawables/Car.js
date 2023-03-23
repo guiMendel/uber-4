@@ -1,6 +1,6 @@
 import Drawable from './Drawable'
 import Map from '../Map'
-import theme from '../../configuration/theme'
+import Configuration from '../../configuration/Configuration'
 import Client from './Client'
 import IO from '../IO'
 import {
@@ -8,10 +8,11 @@ import {
   displacePoint,
   getDistance,
 } from '../../helpers/vectorDistance'
-import { cos, sin } from '../../helpers/trygonometry'
+import { cos, sin } from '../../helpers/trigonometry'
 import SortProperties from '../SortProperties'
 
-const { highlightColor, clientHoverGrow } = theme
+import engine from '../../assets/sounds/engine.mp3'
+import honk from '../../assets/sounds/honk.mp3'
 
 const cancelCarSelect = 'car-select-cancel'
 
@@ -117,7 +118,7 @@ export default class Car extends Drawable {
     this.animate({
       property: 'scale',
       min: 1,
-      max: clientHoverGrow,
+      max: Configuration.getInstance().theme.clientHoverGrow,
       condition: () => Client.selected != null && this.isHovered,
     })
 
@@ -142,12 +143,30 @@ export default class Car extends Drawable {
       }
     })
 
+    this.registerSound(engine, 0.6)
+    this.registerSound(honk, 0.05)
+
+    const engineOnSelect = (car) => {
+      if (car && car.id == this.id) this.vroom()
+    }
+
+    Car.addEventListener('select', engineOnSelect)
+    this.onDestroy.push(() => Car.removeEventListener('select', engineOnSelect))
+
     Car.raiseEvent('new', this)
+  }
+
+  vroom() {
+    this.playSound(engine)
+  }
+
+  honk() {
+    this.playSound(honk)
   }
 
   draw(drawer) {
     const { drawImage, strokeArc } = drawer.drawWith({
-      style: highlightColor,
+      style: Configuration.getInstance().theme.highlightColor,
       lineWidth: 5,
     })
 
@@ -172,6 +191,8 @@ export default class Car extends Drawable {
   }
 
   simulationStep(deltaTime) {
+    super.simulationStep(deltaTime)
+
     // Fica paradao se nao tem rota
     if (this.assignedRoute == null) return
 
@@ -289,8 +310,12 @@ export default class Car extends Drawable {
     // Dada a posicao inicial e aresta, descobrimos em que parte da rua o carro esta, e com isso qual a real posicao inicial dele
     const { x, y } = edge.getProjectionCoordinates({ x: realX, y: realY })
 
-    // console.log(`Original: ${realX}, ${realY}\nNew: ${x}, ${y}\n\n`)
-
     return { x, y, edge }
+  }
+
+  static resetAll() {
+    super.resetAll()
+    this.sortedCoords.clear()
+    this.#selected = null
   }
 }

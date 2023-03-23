@@ -1,6 +1,6 @@
 import Car from '../../classes/Drawables/Car'
 import Drawable from '../../classes/Drawables/Drawable'
-import appConfig from '../../configuration/appConfig'
+import Configuration from '../../configuration/Configuration'
 import AStarStepper, { newNodeHeap } from './AStarStepper'
 
 // Este modulo fornece um metodo que, dado um cliente, descobre para qual coordenada ele deve se deslocar, e quais o melhores carros que podem lhe buscar nesta coordenada e lhe deixar e seu destino final
@@ -23,9 +23,6 @@ import AStarStepper, { newNodeHeap } from './AStarStepper'
 //    -> Custo total eh max(g + h.car, h.client)
 // 3. Para cada vizinho de node, calcular tentativeG = g + time. Se forem maiores que o atual g deste vizinho (ou se ele ainda nao tiver g), coloca node como seu novo pai e atualiza seu g. Adicionar este vizinho a openNodes, e atualizar sua posicao na lista de melhores nos, ordenada por custo total
 // 4. Se openNodes nao estiver vazio, retorne para o passo 2.
-
-const { pathExpansionIterations, newBestPathReward, countOfNodesToConsider } =
-  appConfig
 
 // Realiza todas as iteracoes dos steppers fornecidos
 // Retorna um heap com os melhores nodes encontrados
@@ -57,7 +54,11 @@ async function expandSteppers(getTotalIterations, makeSteppers) {
   // Passa por cada stepper coleta seus melhores nodes
   for (const stepper of steppers) {
     // Pega os N melhores nodes deste stepper
-    for (let i = 0; i < countOfNodesToConsider; i++) {
+    for (
+      let i = 0;
+      i < Configuration.getInstance().general.countOfNodesToConsider;
+      i++
+    ) {
       const node = stepper.closedNodes.pop()
 
       if (node == undefined) break
@@ -74,6 +75,9 @@ async function expandSteppers(getTotalIterations, makeSteppers) {
 
 // Encontra as rotas mais rapidas par aque um cliente chegue em seu destino, e com quais carros
 export default async function getBestRoutesFor(client) {
+  const { pathExpansionIterations, newBestPathReward, countOfNodesToConsider } =
+    Configuration.getInstance().general
+
   // Contara as iteracoes totais. Ja coloca o valor inicial
   let totalIterations = pathExpansionIterations
 

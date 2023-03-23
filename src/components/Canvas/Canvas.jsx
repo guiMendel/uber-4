@@ -8,7 +8,7 @@ export default function Canvas({mapParams}) {
 
   useEffect(() => {
     // Garantir que o canvas tenha sido referenciado
-    if (canvasRef == null) throw new Error('Falha em referenciar o canvas')
+    if (canvasRef == null) throw new Error('Failed to reference the canvas')
 
     // Configurate canvas
     // TODO: fazer redesenhar o canvas sempre que alterar as dimensoes
@@ -18,7 +18,7 @@ export default function Canvas({mapParams}) {
     const context = canvasRef.current.getContext('2d')
 
     // Garantir que o contexto foi gerado com sucesso
-    if (context == null) throw new Error('Falha em obter o contexto')
+    if (context == null) throw new Error('Failed to obtain the canvas context')
 
     // Comecar a renderizar as figuras no canvas
     new Map(context, mapParams)
@@ -26,7 +26,7 @@ export default function Canvas({mapParams}) {
 
   return (
     <canvas id='canvas' ref={canvasRef}>
-      Não foi possível carregar o conteúdo do aplicativo.
+      Failed to load the app's content.
     </canvas>
   )
 }

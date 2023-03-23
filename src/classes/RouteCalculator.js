@@ -2,12 +2,10 @@ import IO from './IO'
 import getBestRoutesFor from '../modules/getBestRoutesFor'
 import Client from './Drawables/Client'
 import { getDistance } from '../helpers/vectorDistance'
-import appConfig from '../configuration/appConfig'
+import Configuration from '../configuration/Configuration'
 import Car from './Drawables/Car'
 import assignRoutes from '../modules/assignRoutes'
 import Simulation from './Simulation'
-
-const { clientWalkSpeed, pixelsPerKilometer } = appConfig
 
 // Fornece a classe responsavel por saber quando e como calcular as rotas dos clientes, e o que fazer depois
 export default class RouteCalculator {
@@ -54,6 +52,9 @@ export default class RouteCalculator {
   // Faz o caluclo das melhores rotas para o cliente fornecido
   static async calculate(client, noRaise = false) {
     if (client == null) return
+
+    const { pixelsPerKilometer, clientWalkSpeed } =
+      Configuration.getInstance().general
 
     // Encontra o tempo para ir andando ate o objetivo
     const walkTime =
@@ -139,7 +140,7 @@ export default class RouteCalculator {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe IO nao fornece um eventListener do tipo "${type}"`
+        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)

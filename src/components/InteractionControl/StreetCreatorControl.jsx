@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 import StreetCreator from '../../classes/Drawables/Creators/StreetCreator'
 import Edge from '../../classes/Drawables/Edge'
-import appConfig from '../../configuration/appConfig'
-
-const { pixelsPerKilometer } = appConfig
+import Random from '../../classes/Random'
+import Configuration from '../../configuration/Configuration'
 
 // Gera uma velocidade aleatoria
-const randomSpeed = () => Math.round(Math.random() * (100 - 30) + 30)
+const randomSpeed = () => Random.rangeInt(30, 100)
 
 // Um componente com a interface para configurar a criacao de nvoas ruas
 export default function StreetCreatorControl() {
@@ -29,7 +28,7 @@ export default function StreetCreatorControl() {
     // Se tiver uma rua selecionada, altera a velocidade da rua
     if (isStreetSelected) {
       StreetCreator.getInstance().selectedEdge.mapSpeed =
-        target.value * pixelsPerKilometer
+        target.value * Configuration.getInstance().general.pixelsPerKilometer
 
       // Atualiza os valores recorde
       Edge.updateRecordEdges()
@@ -38,7 +37,10 @@ export default function StreetCreatorControl() {
 
   // Avisa a classe de criar ruas da velocidade
   function applySpeed(overrideSpeed) {
-    StreetCreator.setStreetSpeed((overrideSpeed ?? speed) * pixelsPerKilometer)
+    StreetCreator.setStreetSpeed(
+      (overrideSpeed ?? speed) *
+        Configuration.getInstance().general.pixelsPerKilometer
+    )
   }
 
   function randomizeSpeed(forceRandomize) {
@@ -56,7 +58,12 @@ export default function StreetCreatorControl() {
 
     // Atualiza o indicador de velocidade
     if (selectedEdge != null) {
-      setSpeed(Math.round(selectedEdge.mapSpeed / pixelsPerKilometer))
+      setSpeed(
+        Math.round(
+          selectedEdge.mapSpeed /
+            Configuration.getInstance().general.pixelsPerKilometer
+        )
+      )
     } else {
       randomizeSpeed(true)
     }
@@ -82,7 +89,7 @@ export default function StreetCreatorControl() {
   return (
     <div className="interaction-control">
       {/* Titulo */}
-      <h1>Velocidade</h1>
+      <h1>Speed</h1>
 
       {/* Area de controle */}
       <div className="speed-input-container">
@@ -93,7 +100,7 @@ export default function StreetCreatorControl() {
             className={`toggle-random ${!isRandom && 'off'}`}
             onClick={() => setIsRandom(!isRandom)}
           >
-            <label>Aleatoria</label>
+            <label>Random</label>
             <div className="toggler"></div>
           </span>
         )}

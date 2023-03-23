@@ -1,14 +1,10 @@
-import appConfig from '../../../configuration/appConfig'
-import theme from '../../../configuration/theme'
+import Configuration from '../../../configuration/Configuration'
 import { findFittest, unorderedFindFittest } from '../../../helpers/search'
 import IO from '../../IO'
 import Map from '../../Map'
 import Car from '../Car'
 import Edge from '../Edge'
 import Creator from './Creator'
-
-const { highlightColor, streetWidth } = theme
-const { maxCarSnapDistance } = appConfig
 
 const eraseCarsToken = 'erase-cars'
 
@@ -20,16 +16,22 @@ export default class CarCreator extends Creator {
   // Posicao na qual criar o carro
   carPosition = { x: null, y: null, edge: null }
 
+  carResetter = null
+
+  reset() {
+    this.carResetter()
+    super.reset()
+  }
+
   constructor() {
     super()
 
     // Quando o mouse mover, atualiza a posicao do carro
-    IO.addEventListener('mousemove', (movement) =>
-      this.setCarPosition(movement)
-    )
+    const mouseMoveCallback = (movement) => this.setCarPosition(movement)
+    IO.addEventListener('mousemove', mouseMoveCallback)
 
     // Ouve botao de apagar carros
-    IO.addButtonListener('delete-cars', ({ value, setValue }) => {
+    const eraseCallback = ({ value, setValue }) => {
       // Inicia o modo apagar carros
 
       // Se ja possui um set
@@ -51,13 +53,22 @@ export default class CarCreator extends Creator {
         this.eraseCars.isActive = newValue
         setValue(newValue)
       }
-    })
+    }
+    IO.addButtonListener('delete-cars', eraseCallback)
+
+    this.carResetter = () => {
+      IO.removeEventListener('mousemove', mouseMoveCallback)
+      IO.removeButtonListener('delete-cars', eraseCallback)
+    }
   }
 
   setCarPosition({ mapPosition: mouse }) {
     if (!this.constructor.isActive) return
 
-    const maxDistance = maxCarSnapDistance + streetWidth / 2
+    const { streetWidth } = Configuration.getInstance().theme
+
+    const maxDistance =
+      Configuration.getInstance().general.maxCarSnapDistance + streetWidth / 2
 
     // Pega as 4 listas ordenadas
     const leftSorted = Edge.sortedCoords.get('leftVertexX')
@@ -129,6 +140,8 @@ export default class CarCreator extends Creator {
 
   onDraw(drawer) {
     if (this.carPosition.edge == null) return
+
+    const { highlightColor } = Configuration.getInstance().theme
 
     const { drawImage, frettedPath } = drawer.drawWith({
       opacity: 0.5,

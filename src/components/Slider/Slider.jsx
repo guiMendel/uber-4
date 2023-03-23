@@ -4,13 +4,25 @@ import { useEffect } from 'react'
 
 let handlerCache = null
 
-export default function Slider({ value, setValue, min, max }) {
+export default function Slider({
+  value,
+  setValue,
+  min,
+  max,
+  noNumber,
+  floatingPoint,
+}) {
   // Reference to track element
   const trackElement = useRef(null)
 
   // Sets the value but clamps it beforehand
-  const setValueStable = (newValue) =>
-    setValue(Math.max(Math.min(max, Math.round(parseFloat(newValue))), min))
+  const setValueStable = (newValue) => {
+    const value = floatingPoint
+      ? Math.round(parseFloat(newValue) * 100) / 100
+      : Math.round(parseFloat(newValue))
+
+    setValue(Math.max(Math.min(max, value), min))
+  }
 
   const handleClick = (event) => {
     // Get bounding box of track
@@ -49,11 +61,13 @@ export default function Slider({ value, setValue, min, max }) {
 
   return (
     <div className="slider">
-      <input
-        value={value}
-        onChange={(event) => setValueStable(event.target.value)}
-        type="number"
-      />
+      {noNumber ? null : (
+        <input
+          value={value}
+          onChange={(event) => setValueStable(event.target.value)}
+          type="number"
+        />
+      )}
 
       <div className="track" onMouseDown={handleMouseDown} ref={trackElement}>
         <div

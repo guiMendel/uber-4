@@ -1,4 +1,4 @@
-import { cos, sin } from './trygonometry'
+import { cos, sin } from './trigonometry'
 
 export function getSquaredDistance(vertexA, vertexB) {
   const xDistance = Math.pow(vertexA.x - vertexB.x, 2)

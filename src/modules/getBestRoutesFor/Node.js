@@ -1,8 +1,6 @@
 import Debug from '../../classes/Drawables/Debug'
-import appConfig from '../../configuration/appConfig'
+import Configuration from '../../configuration/Configuration'
 import { displacePoint, getDistance } from '../../helpers/vectorDistance'
-
-const { pixelsPerKilometer, clientWalkSpeed } = appConfig
 
 // Define cada no do A*
 export default class Node {
@@ -52,6 +50,9 @@ export default class Node {
 
   // Retorna o valor de h sobre esse no. Consulta o hCache, mas se n tiver registro, realiza o calculo e registra
   get h() {
+    const { clientWalkSpeed, pixelsPerKilometer } =
+      Configuration.getInstance().general
+
     // Se houver um valor excepcional de h para este no, usamos ele
     if (this.#exceptionalH != undefined) return this.#exceptionalH
 
@@ -76,8 +77,6 @@ export default class Node {
       // Dividimos pela velocidade do carro nesta aresta
       car: distances.projection / this.edge.mapSpeed,
     }
-
-    // console.log('Calculado h:', h)
 
     this.projectionCoords = displacePoint(
       this.edge.source,
@@ -119,6 +118,9 @@ export default class Node {
   // Deve ser utilziado somente no node inicial, quando o carro se encontra em algum ponto da aresta
   // Nos demais casos, o carro vai ser considerado em source
   calculateExceptionalH(source) {
+    const { clientWalkSpeed, pixelsPerKilometer } =
+      Configuration.getInstance().general
+
     // Pegamos as distancias do cliente ate essa aresta
     const distances = this.edge.getDistances(this.stepper.destination)
 
@@ -170,8 +172,6 @@ export default class Node {
 
       this.debugLines.push(Debug.drawLine(this.stepper.destination, source))
     }
-
-    // console.log('Calculado h excepcional:', this.#exceptionalH)
   }
 
   // Verifica se o novo pai resultaria num custo menor

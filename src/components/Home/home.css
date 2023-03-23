@@ -1,4 +1,8 @@
 .home-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+
   width: 100%;
   height: 100vh;
 
@@ -44,6 +48,8 @@
   margin-top: 3rem;
 
   width: 100%;
+
+  flex: 1;
 }
 
 .home-container .menus > div {
@@ -140,5 +146,41 @@
 
   to {
     transform: translateY(130vh);
+  }
+}
+
+.header-link {
+  color: rgb(0, 98, 140);
+  text-decoration: underline;
+
+  transition: filter 100ms;
+}
+
+.header-link:hover {
+  filter: brightness(1.5);
+}
+
+.credits-text {
+  text-align: justify;
+  line-height: 1.3rem;
+}
+
+.mobile-alert {
+  margin-top: 3rem;
+
+  font-weight: 500;
+  font-style: italic;
+  text-shadow: 1px, 1px, 2px, black;
+
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .home-container .menus {
+    display: none;
+  }
+
+  .mobile-alert {
+    display: unset;
   }
 }

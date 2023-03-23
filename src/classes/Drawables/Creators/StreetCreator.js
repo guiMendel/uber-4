@@ -1,5 +1,4 @@
-import appConfig from '../../../configuration/appConfig'
-import theme from '../../../configuration/theme'
+import Configuration from '../../../configuration/Configuration'
 import { findFittest, unorderedFindFittest } from '../../../helpers/search'
 import { angleBetween, getDistance } from '../../../helpers/vectorDistance'
 import IO from '../../IO'
@@ -9,10 +8,6 @@ import Drawable from '../Drawable'
 import Edge from '../Edge'
 import Vertex from '../Vertex'
 import Creator from './Creator'
-
-const { streetColorSlowest, streetWidth, highlightColor, eraseColor } = theme
-
-const { newStreetVertexSnapRange } = appConfig
 
 const streetSourceCancelToken = 'create-street-source-cancel'
 const eraseStreetsToken = 'erase-streets'
@@ -74,6 +69,13 @@ export default class StreetCreator extends Creator {
   // Reflete o estado do botao de apagar ruas
   eraseStreets = { isActive: false, set: null }
 
+  streetResetter = null
+
+  reset() {
+    this.streetResetter()
+    super.reset()
+  }
+
   constructor() {
     super()
 
@@ -81,12 +83,13 @@ export default class StreetCreator extends Creator {
     this.arrowDrawable = Drawable.drawableInstances[ArrowIndicators.name][0]
 
     // Cancela qualquer vertex move quando soltar o botao
-    IO.addEventListener('leftup', () => {
+    const releaseCallback = () => {
       StreetCreator.moveVertexCancelToken.cancelled = true
-    })
+    }
+    IO.addEventListener('leftup', releaseCallback)
 
     // Ouve botao de apagar ruas
-    IO.addButtonListener('delete-streets', ({ value, setValue }) => {
+    const eraseCallback = ({ value, setValue }) => {
       // Inicia o modo apagar ruas
 
       // Se ja possui um set
@@ -112,10 +115,19 @@ export default class StreetCreator extends Creator {
         this.eraseStreets.isActive = newValue
         setValue(newValue)
       }
-    })
+    }
+    IO.addButtonListener('delete-streets', eraseCallback)
+
+    this.streetResetter = () => {
+      IO.removeEventListener('leftup', releaseCallback)
+      IO.removeButtonListener('delete-streets', eraseCallback)
+    }
   }
 
   onDraw(drawer) {
+    const { highlightColor, eraseColor, slowestStreetColor, streetWidth } =
+      Configuration.getInstance().theme
+
     // Detecta se o mouse esta sobre um vertice
     this.detectVertexHover()
 
@@ -165,7 +177,7 @@ export default class StreetCreator extends Creator {
     }
 
     const { fillArc, strokePath } = drawer.drawWith({
-      style: streetColorSlowest,
+      style: slowestStreetColor,
       opacity: 0.5,
       lineWidth: streetWidth,
     })
@@ -214,6 +226,8 @@ export default class StreetCreator extends Creator {
   }
 
   highlightEdge(edge, drawer, color) {
+    const { highlightColor, streetWidth } = Configuration.getInstance().theme
+
     const { strokePath, fillArc } = drawer.drawWith({
       style: color ?? highlightColor,
       lineWidth: streetWidth * 1.5,
@@ -409,7 +423,9 @@ export default class StreetCreator extends Creator {
     const { mapCoords: mouse } = IO.mouse
 
     // Distancia maxima ate o cursor
-    const maxDistance = streetWidth / 2 + newStreetVertexSnapRange
+    const maxDistance =
+      Configuration.getInstance().theme.streetWidth / 2 +
+      Configuration.getInstance().general.newStreetVertexSnapRange
 
     const xSortedVertices = Vertex.sortedCoords.get('x')
 
@@ -435,7 +451,7 @@ export default class StreetCreator extends Creator {
     const { mapCoords: mouse } = IO.mouse
 
     // Distancia maxima ate o cursor
-    const maxDistance = streetWidth / 2
+    const maxDistance = Configuration.getInstance().theme.streetWidth / 2
 
     // Pega as 4 listas ordenadas
     const leftSorted = Edge.sortedCoords.get('leftVertexX')
@@ -475,13 +491,6 @@ export default class StreetCreator extends Creator {
       maxDistance
     )
 
-    // console.log(`
-    // left: [${leftBounded}]
-    // right: [${rightBounded}]
-    // upper: [${upperBounded}]
-    // lower: [${lowerBounded}]
-    // `)
-
     const boundArray = [leftBounded, rightBounded, upperBounded, lowerBounded]
     const sortedArrays = [leftSorted, rightSorted, upperSorted, lowerSorted]
 
@@ -495,16 +504,6 @@ export default class StreetCreator extends Creator {
       // Esse parametro solicite que retorne o indice
       true
     )
-
-    // for (
-    //   let i = boundArray[shortestIntervalIndex][0];
-    //   i < boundArray[shortestIntervalIndex][1];
-    //   i++
-    // ) {
-    //   this.highlightEdge(sortedArrays[shortestIntervalIndex][i], drawer, 'red')
-    // }
-
-    // console.log(['left', 'right', 'upper', 'lower'][shortestIntervalIndex])
 
     // Buscando dentro deste intervalo somente, encontramos qual aresta esta mais proxima do mouse
     this.hoveredEdge = unorderedFindFittest(
@@ -535,7 +534,7 @@ export default class StreetCreator extends Creator {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe IO nao fornece um eventListener do tipo "${type}"`
+        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -545,7 +544,7 @@ export default class StreetCreator extends Creator {
   static removeEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe IO nao fornece um eventListener do tipo "${type}"`
+        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
       )
 
     const index = this.listeners[type].indexOf(callback)

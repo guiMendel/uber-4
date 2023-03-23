@@ -1,13 +1,6 @@
-import appConfig from '../../configuration/appConfig'
-import theme from '../../configuration/theme'
-import Heap from '../DataStructures/Heap'
+import Configuration from '../../configuration/Configuration'
 import SortProperties from '../SortProperties'
 import Drawable from './Drawable'
-
-// Facil acesso
-const { pixelsPerKilometer } = appConfig
-
-const { streetWidth, streetColorSlowest } = theme
 
 // Define um vertice
 export default class Vertex extends Drawable {
@@ -19,6 +12,8 @@ export default class Vertex extends Drawable {
 
   // Converte de quilometros para pixels, mas tambem centraliza coordenada (0,0) no centro do mapa
   static realToMap({ x, y }) {
+    const { pixelsPerKilometer } = Configuration.getInstance().general
+
     return {
       x: x * pixelsPerKilometer,
       y: y * pixelsPerKilometer,
@@ -52,8 +47,11 @@ export default class Vertex extends Drawable {
 
   // Se desenha
   draw(drawer, color) {
+    const { streetWidth, slowestStreetColor } =
+      Configuration.getInstance().theme
+
     // Desenha um arco em sua posicao
-    const { fillArc } = drawer.drawWith({ style: color ?? streetColorSlowest })
+    const { fillArc } = drawer.drawWith({ style: color ?? slowestStreetColor })
 
     fillArc(this, streetWidth / 2)
   }
@@ -63,5 +61,10 @@ export default class Vertex extends Drawable {
     return isAlreadyConverted
       ? { x: realX, y: realY }
       : Vertex.realToMap({ x: realX, y: realY })
+  }
+
+  static resetAll() {
+    super.resetAll()
+    this.sortedCoords.clear()
   }
 }

@@ -1,10 +1,13 @@
-import appConfig from '../configuration/appConfig'
-import { cos, sin } from '../helpers/trygonometry'
+import Configuration from '../configuration/Configuration'
+import { cos, sin } from '../helpers/trigonometry'
 import { angleBetween, getDistance } from '../helpers/vectorDistance'
 import IO from './IO'
 import Map from './Map'
+import Random from './Random'
 
-const { cameraPanSpeed } = appConfig
+const initialWanderSpeed = 1
+const wanderMirrorVariation = 0.8
+const wanderSlack = 100
 
 // Define uma classe que permite deslocar a visao do canvas
 export default class Camera {
@@ -16,6 +19,8 @@ export default class Camera {
 
   // Armazena o context
   static #context
+
+  static wander = true
 
   static get translation() {
     return this.#translation
@@ -49,12 +54,73 @@ export default class Camera {
     }
   }
 
+  static wanderVelocity = { x: 0, y: 0 }
+
+  static update() {
+    this.pan()
+
+    if (this.wander == false) return
+
+    if (this.wanderVelocity.x == 0 || this.wanderVelocity.y == 0) {
+      const angle = Random.rangeFloat(0, 2 * Math.PI)
+
+      this.wanderVelocity = {
+        x: initialWanderSpeed * Math.cos(angle),
+        y: initialWanderSpeed * Math.sin(angle),
+      }
+    }
+
+    // Apply velocity
+    this.translate({ x: -this.wanderVelocity.x, y: -this.wanderVelocity.y })
+
+    const rotate = (angle) => {
+      this.wanderVelocity = {
+        x:
+          Math.cos(angle) * this.wanderVelocity.x -
+          Math.sin(angle) * this.wanderVelocity.y,
+        y:
+          Math.sin(angle) * this.wanderVelocity.x +
+          Math.cos(angle) * this.wanderVelocity.y,
+      }
+    }
+
+    // rotate(Random.rangeFloat(-wanderConstantVariation, wanderConstantVariation))
+
+    // Mirror velocity on an axis and apply slight angle variation
+    const mirrorOn = (axis) => {
+      this.wanderVelocity[axis] = -this.wanderVelocity[axis]
+
+      rotate(Random.rangeFloat(-wanderMirrorVariation, wanderMirrorVariation))
+    }
+
+    const cameraCenter = {
+      x: -(Camera.translation.x - window.innerWidth / 2),
+      y: -(Camera.translation.y - window.innerHeight / 2),
+    }
+
+    if (cameraCenter.x - window.innerWidth / 2 + wanderSlack < Map.lowestX)
+      mirrorOn('x')
+    else if (
+      cameraCenter.x + window.innerWidth / 2 - wanderSlack >
+      Map.highestX
+    )
+      mirrorOn('x')
+
+    if (cameraCenter.y - window.innerHeight / 2 + wanderSlack < Map.lowestY)
+      mirrorOn('y')
+    else if (
+      cameraCenter.y + window.innerHeight / 2 - wanderSlack >
+      Map.highestY
+    )
+      mirrorOn('y')
+  }
+
   // Inicia as funcoes da Camera
   static setup(context) {
     this.#context = context
 
     // Desloca a visao para a origem
-    this.reset()
+    // this.reset()
 
     // Sempre que usuario arrastar com botao direito, desloque a camera
     IO.addEventListener('mouserightdrag', this.translate)
@@ -70,7 +136,7 @@ export default class Camera {
       Camera.translation = Camera.translation
     })
 
-    Map.addEventListener('newframe', () => this.pan())
+    Map.addEventListener('newframe', () => this.update())
   }
 
   // Move a camera
@@ -106,6 +172,8 @@ export default class Camera {
   // Se ha um destino, se desloca ate ele
   static pan() {
     if (this.panDestination.x == null) return
+
+    const { cameraPanSpeed } = Configuration.getInstance().general
 
     // Descobre se ja esta perto o suficiente
     if (getDistance(this.position, this.panDestination) <= cameraPanSpeed) {

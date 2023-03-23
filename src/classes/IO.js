@@ -31,10 +31,23 @@ export default class IO {
     rightup: [],
     cancel: [],
     mousemove: [],
+    setactive: [],
   }
 
   // Guarda um callback que deve ser executado em vez de emitir um cancel no proximo comando de cancel
   static overrideCancelCallbacks = {}
+
+  // Caso o IO com a simulacao esta ativo
+  static #active = false
+
+  static get active() {
+    return this.#active
+  }
+
+  static set active(value) {
+    this.#active = value
+    this.#raiseEvent('setactive', value)
+  }
 
   // Inicia as funcoes do IO
   static setup() {
@@ -116,8 +129,22 @@ export default class IO {
     } else this.buttonListeners[buttonName].push(listener)
   }
 
+  static removeButtonListener(buttonName, listener) {
+    if (this.buttonListeners[buttonName] == undefined)
+      throw new Error(
+        `The IO class doesn't provide a buttonListener of name "${buttonName}"`
+      )
+
+    const index = this.buttonListeners[buttonName].indexOf(listener)
+
+    if (index == -1) return
+
+    this.buttonListeners[buttonName].splice(index, 1)
+  }
+
   static triggerButton(buttonName, payload) {
-    if (this.buttonListeners[buttonName] == undefined) return
+    if (this.buttonListeners[buttonName] == undefined || this.active == false)
+      return
 
     for (const listener of this.buttonListeners[buttonName]) listener(payload)
   }
@@ -131,6 +158,8 @@ export default class IO {
   }
 
   static triggerCancel() {
+    if (this.active == false) return
+
     // Se houver override
     const cancelCallbacks = Object.entries(this.overrideCancelCallbacks)
 
@@ -152,7 +181,7 @@ export default class IO {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe IO nao fornece um eventListener do tipo "${type}"`
+        `The IO class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -162,7 +191,7 @@ export default class IO {
   static removeEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe IO nao fornece um eventListener do tipo "${type}"`
+        `The IO class doesn't provide an eventListener of type "${type}"`
       )
 
     const index = this.listeners[type].indexOf(callback)
@@ -174,10 +203,10 @@ export default class IO {
 
   // Permite levantar eventos
   static #raiseEvent(type, payload) {
+    if (this.active == false) return
+
     if (this.listeners[type] == undefined)
-      throw new Error(
-        `Tentativa em IO de levantar evento de tipo inexistente "${type}"`
-      )
+      throw new Error(`Attempt to raise event of unknown type "${type}"`)
 
     for (const listener of this.listeners[type]) listener(payload)
   }

@@ -1,9 +1,55 @@
 export default {
-  'city-blocks': {},
+  'city-blocks': {
+    numberOfBlocks: {
+      type: 'number',
+      min: 1,
+      max: 120,
+      randMin: 10,
+      randMax: 70,
+    },
+    blockSize: {
+      type: 'number',
+      min: 90,
+      max: 400,
+      unit: 'px',
+      randMin: 100,
+      randMax: 200,
+    },
+    numberOfCars: { type: 'number', min: 0, max: 15, randMin: 3, randMax: 10 },
+    initialClients: {
+      type: 'number',
+      min: 0,
+      max: 5,
+      randMin: 1,
+      randMax: 3,
+    },
+    blocksAngle: { type: 'number', min: 0, max: 90 },
+    vertexOmitChance: {
+      type: 'number',
+      min: 0,
+      max: 95,
+      randMin: 0,
+      randMax: 30,
+    },
+    edgeOmitChance: { type: 'number', min: 0, max: 95, randMin: 15 },
+    lowSpeedLaneProportion: {
+      type: 'number',
+      min: 0,
+      max: 50,
+      randMax: 20,
+    },
+    highSpeedLaneProportion: {
+      type: 'number',
+      min: 0,
+      max: 50,
+      randMin: 10,
+      randMax: 20,
+    },
+  },
   random: {
     numberOfVertices: { type: 'number', min: 2, max: 30 },
     numberOfCars: { type: 'number', min: 0, max: 15 },
-    numberOfClients: { type: 'number', min: 0, max: 40 },
+    initialClients: { type: 'number', min: 0, max: 5 },
     mapWidth: {
       type: 'number',
       min: 500,

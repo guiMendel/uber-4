@@ -1,15 +1,7 @@
-import theme from '../../configuration/theme'
-import { sin, cos } from '../../helpers/trygonometry'
+import Configuration from '../../configuration/Configuration'
+import { sin, cos } from '../../helpers/trigonometry'
 import Drawable from './Drawable'
 import Edge from './Edge'
-
-const {
-  streetArrowColor,
-  streetArrowHeight,
-  streetArrowInterval,
-  streetWidth,
-  streetArrowWidth,
-} = theme
 
 // Define como desenhar as flechas que indicam o sentido de uma rua
 export default class ArrowIndicators extends Drawable {
@@ -36,6 +28,9 @@ export default class ArrowIndicators extends Drawable {
 
   // Desenha as setas da aresta fornecida
   drawForEdge(edge, drawer, options) {
+    const { streetArrowHeight, streetArrowInterval } =
+      Configuration.getInstance().theme
+
     // A comecar da origem da aresta, desenhar flechas ao longo dela, e ir deslocando o ponto de desenho
     let displacement = 0
 
@@ -56,6 +51,13 @@ export default class ArrowIndicators extends Drawable {
 
   // x e y devem apontar para o centro da base do triangulo
   drawArrow(x, y, pointAngle, drawer, options) {
+    const {
+      streetWidth,
+      streetArrowColor,
+      streetArrowWidth,
+      streetArrowHeight,
+    } = Configuration.getInstance().theme
+
     // Permite obter as coordenadas x, y desloacadas no angulo indicado, numa distancia indicada
     // Ja torna o angulo relativo ao angulo de rotacao do triangulo, e soma 90 para que 0 seja a direita
     const displacement = (amount, angle) => ({

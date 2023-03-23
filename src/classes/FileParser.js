@@ -1,12 +1,10 @@
-import appConfig from '../configuration/appConfig'
+import Configuration from '../configuration/Configuration'
 import Camera from './Camera'
 import Car from './Drawables/Car'
 import Client from './Drawables/Client'
 import Edge from './Drawables/Edge'
 import Vertex from './Drawables/Vertex'
 import Map from './Map'
-
-const { pixelsPerKilometer } = appConfig
 
 // Este arquivo interpreta o conteudo de um arquivo e adiciona as entidades correspondentes
 export default class FileParser {
@@ -180,8 +178,9 @@ export default class FileParser {
 
     // Define como instanciar a aresta dado o seu prototipo
     const prototypeInstantiator = (prototype) => {
-      // Cria cliente
+      const { pixelsPerKilometer } = Configuration.getInstance().general
 
+      // Cria cliente
       let client
 
       try {
@@ -228,6 +227,8 @@ export default class FileParser {
     }
 
     const prototypeInstantiator = (prototype) => {
+      const { pixelsPerKilometer } = Configuration.getInstance().general
+
       // Recupera a aresta
       const edge = Edge.instances[prototype.edgeId]
 

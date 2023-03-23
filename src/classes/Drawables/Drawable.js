@@ -1,10 +1,7 @@
-import { getDistance } from '../../helpers/vectorDistance'
+import { getDistance, getSquaredDistance } from '../../helpers/vectorDistance'
 import IO from '../IO'
-import theme from '../../configuration/theme'
-import appConfig from '../../configuration/appConfig'
-
-const { generalAnimationSpeed } = theme
-const { maxFramesPerSecond } = appConfig
+import Configuration from '../../configuration/Configuration'
+import Camera from '../Camera'
 
 // Classe que define uma entidade capaz de ser desenhada em tela
 export default class Drawable {
@@ -32,11 +29,11 @@ export default class Drawable {
       if (result === true) return existingDrawable
 
       throw new Error(
-        `Tentativa de inserir nova instancia de "${
+        `Attempt to insert new instance of "${
           this.name
-        }" com id repetido, mas o campo "${result}" difere.\nValor preexistente: ${JSON.stringify(
+        }" with repeated id, but the field "${result}" differs.\nPrevious value: ${JSON.stringify(
           existingDrawable[result]
-        )}. Valor novo ${JSON.stringify(properties[result])}`
+        )}. New value: ${JSON.stringify(properties[result])}`
       )
     }
 
@@ -65,16 +62,45 @@ export default class Drawable {
     // Deve possuir coordenadas x e y
     if (this.x == undefined || this.y == undefined)
       throw new Error(
-        `Impossivel determinar distancia do cursor para Drawable de classe "${this.constructor.name}", que nao possui coordenadas x e y`
+        `Impossible to determine distance between cursor and Drawable class "${this.constructor.name}", that has no x & y coordinates`
       )
 
     return getDistance(this, IO.mouse.mapCoords)
   }
 
+  #sounds = {}
+
+  registerSound(sound, baseVolume) {
+    this.#sounds[sound] = { sound: new Audio(sound), baseVolume }
+    this.#sounds[sound].sound.volume = baseVolume
+
+    return this.#sounds[sound].sound
+  }
+
+  // Plays a sound
+  playSound(soundPath) {
+    const { sound } = this.#sounds[soundPath]
+
+    if (sound == null) throw new Error('No sound ' + soundPath)
+
+    sound.pause()
+    sound.currentTime = 0
+    sound.play()
+  }
+
   // Permite alterar o valor de uma propriedade do drawable ao longo de multiplos frames, dada uma condicao
-  animate({ property, min, max, condition, speed = generalAnimationSpeed }) {
+  animate({
+    property,
+    min,
+    max,
+    condition,
+    speed = Configuration.getInstance().theme.generalAnimationSpeed,
+  }) {
     // Descobre o quato alterar a cada frame
-    const frameAlteration = (max - min) / speed / maxFramesPerSecond
+    const frameAlteration =
+      (max - min) /
+      speed /
+      Configuration.getInstance().general.maxFramesPerSecond
 
     this.animations.push(() => {
       if (condition()) {
@@ -103,11 +129,23 @@ export default class Drawable {
   // Abstract
   // Permite desenhar na tela
   draw(drawer) {
-    throw new Error('Este método deve ser implementado por uma classe filho')
+    throw new Error('This method must be implemented by a child class')
   }
 
   // Permite agir dentro da simulacao
-  simulationStep(deltaTime) {}
+  simulationStep() {
+    if (this.x != undefined && this.y != undefined) {
+      const distance = getDistance(this, Camera.position)
+
+      const inverseLerp = (value, min, max) =>
+        (Math.min(Math.max(value, min), max) - min) / (max - min)
+
+      for (const { sound, baseVolume } of Object.values(this.#sounds)) {
+        sound.volume =
+          baseVolume * ((1 - inverseLerp(distance, 0, 500)) * 0.8 + 0.2)
+      }
+    }
+  }
 
   destroy() {
     // Limpa as referencias deste objeto
@@ -124,7 +162,7 @@ export default class Drawable {
   static addEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe ${this.name} nao fornece um eventListener do tipo "${type}"`
+        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
       )
 
     this.listeners[type].push(callback)
@@ -144,7 +182,7 @@ export default class Drawable {
   static removeEventListener(type, callback) {
     if (this.listeners[type] == undefined)
       throw new Error(
-        `A classe ${this.name} nao fornece um eventListener do tipo "${type}"`
+        `The ${this.name} class doesn't provide an eventListener of type "${type}"`
       )
 
     const index = this.listeners[type].indexOf(callback)
@@ -167,5 +205,9 @@ export default class Drawable {
     } while (instanceArray && instanceArray[newId] != undefined)
 
     return newId
+  }
+
+  static resetAll() {
+    this.drawableInstances = {}
   }
 }

@@ -1,21 +1,37 @@
 import { createContext } from 'react'
 import { useState } from 'react'
+import Random from './classes/Random'
 import Home from './components/Home/Home'
 import Simulation from './components/Simulation/Simulation'
 import './styles/App.css'
+
+// Initial parameters for map preview
+const initialParameters = {
+  method: 'city-blocks',
+  parameters: {
+    numberOfBlocks: Random.rangeInt(80, 100),
+    blockSize: Random.rangeInt(150, 170),
+    numberOfCars: Random.rangeInt(5, 11),
+    initialClients: Random.rangeInt(2, 5),
+    blocksAngle: Random.rangeFloat(0, 90),
+    vertexOmitChance: 7,
+    edgeOmitChance: 30,
+    lowSpeedLaneProportion: 10,
+    highSpeedLaneProportion: 15,
+  },
+}
 
 export default function App() {
   // Whether to show map or title screen
   const [showTitleScreen, setShowTitleScreen] = useState(true)
 
-  const [mapParams, setMapParams] = useState({ method: null })
+  return (
+    <>
+      <Simulation mapParams={initialParameters} />
 
-  return showTitleScreen ? (
-    <Home
-      startSimulation={() => setShowTitleScreen(false)}
-      setMapParams={setMapParams}
-    />
-  ) : (
-    <Simulation mapParams={mapParams} />
+      {showTitleScreen && (
+        <Home hideHomeScreen={() => setShowTitleScreen(false)} />
+      )}
+    </>
   )
 }
