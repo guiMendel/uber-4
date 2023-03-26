@@ -10,12 +10,13 @@ export default class RouteHighlighter {
 
   constructor() {
     if (RouteHighlighter.#instance != undefined)
-      return RouteHighlighter.#instance
+      throw new Error('Duplicating route highlighter')
 
     RouteHighlighter.#instance = this
 
     // Guarda uma referencia ao arrow drawable
-    this.arrowDrawable = Drawable.drawableInstances[ArrowIndicators.className][0]
+    this.arrowDrawable =
+      Drawable.drawableInstances[ArrowIndicators.className][0]
   }
 
   draw(drawer, highlightedNode) {

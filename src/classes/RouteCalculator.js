@@ -19,7 +19,9 @@ export default class RouteCalculator {
 
   static setup() {
     // Observa a selecao do botao de calcular rota
-    IO.addButtonListener('select-route', () => this.calculate(Client.selected))
+    IO.addButtonListener('select-route', () =>
+      this.calculate(Client.selected, false, true)
+    )
 
     IO.addButtonListener(
       'auto-assign',
@@ -52,7 +54,7 @@ export default class RouteCalculator {
   }
 
   // Faz o caluclo das melhores rotas para o cliente fornecido
-  static async calculate(client, noRaise = false) {
+  static async calculate(client, noRaise = false, useSelectedCar = false) {
     if (client == null) return
 
     const { pixelsPerKilometer, clientWalkSpeed } =
@@ -65,8 +67,8 @@ export default class RouteCalculator {
       clientWalkSpeed
 
     // Descarta as rotas mais lentas que o tempo de caminhada
-    const bestRoutes = await getBestRoutesFor(client).then((bestNodes) =>
-      bestNodes.filter((route) => route.totalCost <= walkTime)
+    const bestRoutes = await getBestRoutesFor(client, useSelectedCar).then(
+      (bestNodes) => bestNodes.filter((route) => route.totalCost <= walkTime)
     )
 
     // Levanta evento com as rotas calculadas

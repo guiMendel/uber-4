@@ -74,7 +74,7 @@ async function expandSteppers(getTotalIterations, makeSteppers) {
 }
 
 // Encontra as rotas mais rapidas par aque um cliente chegue em seu destino, e com quais carros
-export default async function getBestRoutesFor(client) {
+export default async function getBestRoutesFor(client, useSelectedCar = false) {
   const { pathExpansionIterations, newBestPathReward, countOfNodesToConsider } =
     Configuration.getInstance().general
 
@@ -86,7 +86,7 @@ export default async function getBestRoutesFor(client) {
     () => totalIterations,
     // Steppers para cada carro
     (hCache, iterationCallbacks) => {
-      return getSubsetOfCarsFor(client).map((car) => {
+      return getSubsetOfCarsFor(client, useSelectedCar).map((car) => {
         const stepper = new AStarStepper(
           client,
           car,
@@ -161,9 +161,9 @@ export default async function getBestRoutesFor(client) {
 }
 
 // Seleciona o subconjunto de carros que serao analisados para encontrar um melhor caminho para o cliente fornecido
-function getSubsetOfCarsFor(client) {
+function getSubsetOfCarsFor(client, useSelectedCar = false) {
   // Se tiver um carro selecionado, usa somente ele
-  if (Car.selected != null) return [Car.selected]
+  if (Car.selected != null && useSelectedCar) return [Car.selected]
 
   // Pega todos os carros que nao estejam ja ocupados (ou estao ocupados por este cliente)
   return Object.values(Car.instances).filter(
