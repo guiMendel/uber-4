@@ -2,7 +2,7 @@ import Camera from './Camera'
 
 // Este modulo fornece facilidade para realizar IO com o mapa
 export default class IO {
-  static className = "IO"
+  static className = 'IO'
 
   // Conhece a atual posicao do cursor em tela
   static mouse = {
@@ -169,7 +169,12 @@ export default class IO {
       const id = cancelCallbacks[0][0]
       const callback = cancelCallbacks[0][1]
 
-      callback()
+      try {
+        callback()
+      } catch (error) {
+        console.error(error)
+      }
+
       delete this.overrideCancelCallbacks[id]
 
       return

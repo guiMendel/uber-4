@@ -19,7 +19,7 @@ export default class Configuration {
       },
 
       timescale: {
-        default: 0.04,
+        default: 0.03,
         min: 1 / (60 * 60),
         max: 0.3,
         description:

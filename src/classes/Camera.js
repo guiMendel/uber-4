@@ -8,11 +8,12 @@ import Random from './Random'
 const initialWanderSpeed = 1
 const wanderMirrorVariation = 0.8
 const wanderSlack = 100
+const bounceCooldown = 1000
 
 // Define uma classe que permite deslocar a visao do canvas
 export default class Camera {
-  static className = "Camera"
-  
+  static className = 'Camera'
+
   // Para qual posicao deslocar a camera a cada frame
   static panDestination = { x: null, y: null }
 
@@ -58,6 +59,8 @@ export default class Camera {
 
   static wanderVelocity = { x: 0, y: 0 }
 
+  static bounceReady = true
+
   static update() {
     this.pan()
 
@@ -75,6 +78,8 @@ export default class Camera {
     // Apply velocity
     this.translate({ x: -this.wanderVelocity.x, y: -this.wanderVelocity.y })
 
+    if (this.bounceReady == false) return
+
     const rotate = (angle) => {
       this.wanderVelocity = {
         x:
@@ -90,6 +95,9 @@ export default class Camera {
 
     // Mirror velocity on an axis and apply slight angle variation
     const mirrorOn = (axis) => {
+      this.bounceReady = false
+      setTimeout(() => (this.bounceReady = true), bounceCooldown)
+
       this.wanderVelocity[axis] = -this.wanderVelocity[axis]
 
       rotate(Random.rangeFloat(-wanderMirrorVariation, wanderMirrorVariation))
