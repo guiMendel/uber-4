@@ -13,6 +13,7 @@ import IO from '../../classes/IO'
 import Map from '../../classes/Map'
 import Simulation from '../../classes/Simulation'
 import MenuSFX from '../../classes/MenuSFX'
+import Instructions from './Instructions/Instructions'
 
 export default function Home({ hideHomeScreen }) {
   const [mapParams, setMapParams] = useState({ method: null, parameters: {} })
@@ -27,6 +28,7 @@ export default function Home({ hideHomeScreen }) {
     'new-map': NewMap,
     configuration: Configuration,
     credits: Credits,
+    instructions: Instructions,
   }
   const SecondScreen = secondScreenOptions[secondScreenComponent]
 
@@ -125,6 +127,15 @@ export default function Home({ hideHomeScreen }) {
             className={menuOptionClass('configuration', secondScreenComponent)}
           >
             Configuration
+          </button>
+
+          {/* See instructions */}
+          <button
+            onClick={bindClick('instructions')}
+            onMouseEnter={hoverSFX}
+            className={menuOptionClass('instructions', secondScreenComponent)}
+          >
+            Instructions
           </button>
 
           {/* See credits */}

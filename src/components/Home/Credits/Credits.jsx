@@ -1,6 +1,6 @@
 export default function Credits() {
   return (
-    <>
+    <div className="text-panel">
       <h2>
         Cabber by{' '}
         <a
@@ -23,6 +23,6 @@ export default function Credits() {
         <li>People images: ONYXprj</li>
         <li>Music: Seduction Jazz, by Francesco Biondi (FreeGroove)</li>
       </ul>
-    </>
+    </div>
   )
 }

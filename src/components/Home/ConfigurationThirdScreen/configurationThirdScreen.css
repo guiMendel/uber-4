@@ -49,7 +49,7 @@
   transform: translateY(-20px);
   opacity: 0;
 
-  margin-bottom: -10%;
+  margin-bottom: -1.5rem;
 }
 
 .title-description {
@@ -61,5 +61,5 @@
 }
 
 .description-icon {
-  color: rgb(184, 184, 184);
+  color: rgb(57, 114, 136);
 }

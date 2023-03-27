@@ -50,10 +50,13 @@
   width: 100%;
 
   flex: 1;
+
+  max-height: 80%;
 }
 
 .home-container .menus > div {
   width: 33.3%;
+  max-height: 100%;
 }
 
 .home-container .menu {
@@ -61,6 +64,8 @@
   gap: 2rem;
 
   animation: slide-in 400ms;
+
+  overflow-y: auto;
 }
 
 .home-container .menu.faded {
@@ -160,9 +165,33 @@
   filter: brightness(1.5);
 }
 
+.text-panel {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+
+  padding: 20px;
+
+  overflow-y: auto;
+  max-height: 100%;
+}
+
 .credits-text {
   text-align: justify;
   line-height: 1.3rem;
+  display: inline;
+  /* margin-top: -1rem; */
+
+  box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.19);
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 0.5rem;
+
+  /* margin: 0 20px 0 20px; */
+}
+
+.credits-text b {
+  color: black;
 }
 
 .mobile-alert {
